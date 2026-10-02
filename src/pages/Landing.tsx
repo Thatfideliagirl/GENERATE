@@ -81,6 +81,12 @@ export default function Landing() {
       <header className="lp-top">
         <nav className="lp-nav" aria-label="Main">
           <img className="lp-logo" src="./logo.png" alt={BRAND} width={180} height={40} />
+          <ul className="lp-links">
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#try">Try it</a></li>
+            <li><a href="#features">What it does</a></li>
+            <li><a href="#who">Who it is for</a></li>
+          </ul>
           <button className="lp-btn ghost" onClick={go}>
             {cta}
           </button>
@@ -92,17 +98,24 @@ export default function Landing() {
           <div className="lp-hero-text">
             <p className="lp-label lp-kicker">Invoices, receipts and contracts</p>
             <h1 className="lp-h1">
-              Send it before they <em>forget.</em>
+              Documents that carry <em>your name.</em>
             </h1>
             <p className="lp-lede">
-              Your name, your logo and your signature on every document. Make one in a minute, then send it on WhatsApp.
+              Your logo, your details and your signature on every one. Make it in a minute, then send it on WhatsApp before your client forgets.
             </p>
             <div className="lp-cta-row">
               <button className="lp-btn brass" onClick={go}>
                 {cta}
               </button>
-              <span className="lp-note">Free to use. Works on your phone.</span>
+              <a className="lp-btn line" href="#how">
+                See how it works
+              </a>
             </div>
+            <ul className="lp-ticks">
+              <li>Free to use</li>
+              <li>Works on your phone</li>
+              <li>No design skills needed</li>
+            </ul>
           </div>
           <div className="lp-hero-art">
             <Photo
@@ -119,18 +132,35 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="lp-statement" aria-labelledby="what">
+        <section className="lp-statement" id="how" aria-labelledby="what">
           <div className="lp-statement-text">
-            <p className="lp-label" id="what">
-              What it does
-            </p>
-            <Rise>
-              <p className="lp-big">
-                Generate makes invoices, receipts and contracts that carry your name, your logo and your signature. You fill in the job.
-                It does the adding up, keeps count of who has paid, who paid part and who is late, and hands you a PDF or a WhatsApp message
-                to send. Nothing else.
-              </p>
-            </Rise>
+            <p className="lp-label">How it works</p>
+            <h2 className="lp-h2" id="what">
+              From setup to sent in three steps.
+            </h2>
+            <ol className="lp-steps">
+              <li>
+                <span className="lp-n num">01</span>
+                <div>
+                  <h3>Set up once</h3>
+                  <p>Add your logo, your business details and your signature. You never type them again.</p>
+                </div>
+              </li>
+              <li>
+                <span className="lp-n num">02</span>
+                <div>
+                  <h3>Fill in the job</h3>
+                  <p>Pick an invoice, receipt or contract. Add your client and what you did. The adding up is done for you.</p>
+                </div>
+              </li>
+              <li>
+                <span className="lp-n num">03</span>
+                <div>
+                  <h3>Send it</h3>
+                  <p>Download the PDF or send it straight on WhatsApp.</p>
+                </div>
+              </li>
+            </ol>
           </div>
           <Photo
             src={IMAGES.desk}
@@ -143,7 +173,7 @@ export default function Landing() {
           />
         </section>
 
-        <section className="lp-try" aria-labelledby="try">
+        <section className="lp-try" id="try" aria-labelledby="try">
           <div className="lp-try-head">
             <p className="lp-label">Try it now</p>
             <h2 className="lp-h2" id="try">
@@ -181,11 +211,11 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="lp-story" aria-labelledby="story">
+        <section className="lp-story" id="features" aria-labelledby="story">
           <div className="lp-story-in">
             <p className="lp-label lp-on-dark">Part payments and reminders</p>
             <h2 className="lp-h2 lp-on-dark" id="story">
-              Tunde pays half. You still know what is left.
+              Built for how you get paid. Tunde pays half, you still know what is left.
             </h2>
             <ol className="lp-days">
               <li>
@@ -210,6 +240,11 @@ export default function Landing() {
                 </blockquote>
               </li>
             </ol>
+            <dl className="lp-feats">
+              <div><dt>Any currency</dt><dd>Naira, dollar, pound or euro on every document.</dd></div>
+              <div><dt>A dashboard that counts</dt><dd>What is waiting, what came in and what is overdue.</dd></div>
+              <div><dt>Made for your trade</dt><dd>Quick items for hair, food, design, photography, fashion and consulting.</dd></div>
+            </dl>
           </div>
         </section>
 
@@ -238,7 +273,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="lp-who" aria-labelledby="who">
+        <section className="lp-who" id="who" aria-labelledby="who">
           <p className="lp-label">Who it is for</p>
           <h2 className="lp-h2" id="who">
             If someone still owes you, this is for you.
