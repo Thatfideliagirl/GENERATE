@@ -1,0 +1,41 @@
+import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
+import type { Profile } from '../lib/types'
+
+export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
+  if (profile.logo) {
+    return <img src={profile.logo} alt="" style={{ height: size, maxWidth: size * 2.4, objectFit: 'contain' }} />
+  }
+  const letter = (profile.name || 'V').trim()[0].toUpperCase()
+  return (
+    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * 0.5) }}>
+      {letter}
+    </span>
+  )
+}
+
+export function AppHeader({ profile }: { profile: Profile }) {
+  return (
+    <header className="top">
+      <Link to="/app" className="brand">
+        <BrandMark profile={profile} />
+        <span>{profile.name}</span>
+      </Link>
+      <Link className="btn g" to="/app/profile">
+        Profile
+      </Link>
+    </header>
+  )
+}
+
+export function PageHeader({ title, onBack, right }: { title: string; onBack: () => void; right?: ReactNode }) {
+  return (
+    <header className="top">
+      <button className="btn g" onClick={onBack}>
+        Back
+      </button>
+      <div className="ttl2">{title}</div>
+      {right ?? <span />}
+    </header>
+  )
+}
