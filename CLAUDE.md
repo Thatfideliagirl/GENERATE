@@ -34,7 +34,7 @@ Emerald #0F4D3C, ivory #F6F1E7 and #FBF8F1, brass gold #B08D57. Headings use Fra
 ## What is not built yet (in this order)
 1. Supabase: real email accounts, a supabaseRepo, row level security so each user sees only their own documents, a profiles table and a documents table (store each document as jsonb plus id, user_id, type, status, updated_at).
 2. Owner admin page for Coco: list of signups showing name, business name, business type, trade, signup date and email. The admin must NOT be able to read anyone's documents. Add a privacy page that says so (Nigeria data protection law applies).
-3. Landing page images. Coco will generate them in ChatGPT: a pen resting on a contract with a brass seal on a green desk, a flat lay desk with a phone showing an invoice, a close up of a hand signing. They will be sent with no text in the images. Place them on the landing page with a gentle pop up or parallax feel.
+3. Landing page images. The landing page is rebuilt and shows marked placeholders for three images (hero pen on contract, desk flat lay, hand signing). When Coco sends the files, convert to webp, put them in public/images and set the paths in the IMAGES object at the top of src/pages/Landing.tsx. Width and height props on each Photo already match the intended crop.
 4. Client signing links for contracts, and a pay page.
 5. Username and email changes, password reset.
 6. Small polish: contract template cards currently show raw {{placeholders}} in their preview text, resolve them.
