@@ -23,7 +23,7 @@ html{scroll-behavior:smooth}
 .lp-h2{font-size:clamp(30px,4.4vw,54px);line-height:1.06;margin-top:12px}
 .lp-body{font-size:18px;line-height:1.6;margin:18px 0 0;max-width:32em}
 .lp-small{font-size:14px;line-height:1.5;color:var(--mu);margin:16px 0 0;padding-left:14px;border-left:2px solid var(--br);max-width:32em}
-.lp-sec{max-width:1280px;margin:0 auto;padding:var(--gap) var(--gx) 0}
+.lp-sec{padding:var(--gap) max(var(--gx),calc((100% - 1280px)/2))}
 
 /* buttons that press down */
 .lp-btn{font:600 16px/1 var(--ui);padding:15px 24px;min-height:48px;border-radius:2px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:transform .08s ease,box-shadow .08s ease;-webkit-tap-highlight-color:transparent}
@@ -63,16 +63,8 @@ html{scroll-behavior:smooth}
 .lp-ticks{list-style:none;display:flex;flex-wrap:wrap;gap:8px 24px;margin:26px 0 0;padding:0;font-size:14px;color:#CFC8B6}
 .lp-ticks li::before{content:'';display:inline-block;width:7px;height:7px;background:var(--br);margin-right:9px;transform:rotate(45deg) translateY(-1px)}
 
-/* paper sheets in the hero */
-.lp-hero-art{position:relative;padding:18px 0 10px;min-height:340px}
-.lp-back{position:absolute;background:var(--sf);color:var(--ink);box-shadow:0 22px 40px -22px rgba(0,0,0,.6);padding:16px 18px;width:58%;display:grid;gap:12px;align-content:start}
-.lp-back .lp-type{font:italic 400 26px/1 var(--hd);color:var(--em)}
-.lp-back i{display:block;height:1px;background:var(--ln)}
-.lp-back.one{right:-2%;top:0;transform:rotate(5deg);height:72%}
-.lp-back.two{left:-3%;top:34%;transform:rotate(-4deg);height:56%}
-
 /* the receipt that writes itself */
-.lp-doc{position:relative;margin-left:auto;margin-right:6%;width:min(88%,380px);background:var(--sf);color:var(--ink);padding:22px 24px 18px;box-shadow:0 1px 0 rgba(20,37,31,.15),0 26px 44px -18px rgba(10,30,22,.65);transform:rotate(-1.6deg);border-top:5px solid var(--em);font-family:var(--hd)}
+.lp-doc{position:relative;justify-self:center;width:min(100%,400px);background:var(--sf);color:var(--ink);padding:22px 24px 18px;box-shadow:0 1px 0 rgba(20,37,31,.15),0 26px 44px -18px rgba(10,30,22,.65);transform:rotate(-1.6deg);border-top:5px solid var(--em);font-family:var(--hd)}
 .lp-doc .lp-label{color:var(--brass-ink)}
 .lp-doc.wait{opacity:0}
 .lp-doc.play{animation:lp-up 1s cubic-bezier(.2,.7,.2,1) .15s both}
@@ -106,6 +98,7 @@ html{scroll-behavior:smooth}
 /* section heads sit left, content sits beside them on wide screens */
 .lp-sec-head{max-width:30em}
 .lp-how,.lp-features,.lp-who{display:grid;gap:28px}
+.lp-how-text{min-width:0}
 
 /* how it works */
 .lp-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
@@ -145,7 +138,6 @@ html{scroll-behavior:smooth}
 .lp-eg b{font-weight:600;color:var(--em);margin-left:6px}
 
 /* try it */
-.lp-try{padding-bottom:var(--gap)}
 .lp-try-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;margin-top:26px}
 .lp-try-paper,.lp-try-fields{min-width:0}
 .lp-seg{margin:0 0 22px;border-radius:2px;border-color:var(--ink)}
@@ -178,11 +170,12 @@ html{scroll-behavior:smooth}
 .lp-foot p{margin:0;font-size:14px;color:var(--mu);max-width:44em}
 
 @media (min-width:900px){
+  .lp-h1{font-size:clamp(54px,5.4vw,82px)}
   .lp-links{display:flex}
-  .lp-hero{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;column-gap:5vw;padding-inline:max(var(--gx),calc((100% - 1280px)/2))}
+  .lp-hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;column-gap:3vw;padding-inline:max(var(--gx),calc((100% - 1280px)/2))}
   .lp-hero>*{max-width:none;margin:0}
-  .lp-hero-art{min-height:520px;display:flex;align-items:center}
   .lp-how,.lp-features,.lp-who{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);column-gap:6vw;align-items:start}
+  .lp-how{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center}
   .lp-feats{grid-template-columns:1fr 1fr;column-gap:40px;border-top:0}
   .lp-feats>div{border-top:1px solid var(--ink)}
   .lp-feats>div:nth-child(even){transform:translateY(34px)}
@@ -193,7 +186,7 @@ html{scroll-behavior:smooth}
 }
 @media (max-width:420px){
   .lp-link-btn{display:none}
-  .lp-doc{width:92%;padding:18px 18px 14px;margin-right:4%}
+  .lp-doc{width:100%;padding:18px 18px 14px}
   .lp-doc-name{font-size:17px}
   .lp-eg{font-size:14px}
 }
@@ -212,3 +205,38 @@ html{scroll-behavior:smooth}
 /* Bodoni gets very thin at display sizes, so small headings use its sturdier optical size */
 .landing h3,.lp-trade,.lp-n,.lp-feats dt,.lp-field input,.lp-field select,.lp-back .lp-type,.lp-doc-name,.lp-doc-total .num{font-variation-settings:'opsz' 14;font-weight:500}
 .landing .lp-h2{font-variation-settings:'opsz' 36}
+
+/* v4: bands with their own surfaces, plaster texture on the green ones */
+.landing{
+  --plaster-em:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22420%22 height=%22420%22%3E%3Cfilter id=%22p%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.03%22 numOctaves=%225%22 seed=%229%22 stitchTiles=%22stitch%22 result=%22n%22/%3E%3CfeDiffuseLighting in=%22n%22 surfaceScale=%222.6%22 diffuseConstant=%221.1%22 lighting-color=%22%230F4F3E%22%3E%3CfeDistantLight azimuth=%22235%22 elevation=%2250%22/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23p)%22/%3E%3C/svg%3E");
+  --plaster-dk:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22420%22 height=%22420%22%3E%3Cfilter id=%22p%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.03%22 numOctaves=%225%22 seed=%229%22 stitchTiles=%22stitch%22 result=%22n%22/%3E%3CfeDiffuseLighting in=%22n%22 surfaceScale=%222.6%22 diffuseConstant=%221.1%22 lighting-color=%22%230E4535%22%3E%3CfeDistantLight azimuth=%22235%22 elevation=%2250%22/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23p)%22/%3E%3C/svg%3E");
+  --speck:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22260%22%3E%3Cfilter id=%22g%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.1%22 numOctaves=%223%22 seed=%223%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 .96  0 0 0 0 .92  0 0 0 0 .8  0 0 0 1.6 -.72%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23g)%22 opacity=%22.5%22/%3E%3C/svg%3E");
+  --speck-dk:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22260%22%3E%3Cfilter id=%22g%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.0%22 numOctaves=%223%22 seed=%225%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 0  0 0 0 0 .08  0 0 0 0 .05  0 0 0 1.6 -.7%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23g)%22 opacity=%22.45%22/%3E%3C/svg%3E");
+}
+
+/* hero: green plaster wall, a feelable grain, and the pencil picture */
+.lp-hero{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto;gap:24px}
+.lp-hero-img{position:relative;container-type:inline-size;justify-self:center;width:100%;max-width:760px}
+.lp-hero-img img{display:block;width:100%;height:auto;filter:drop-shadow(0 26px 30px rgba(0,0,0,.35))}
+.lp-count{position:absolute;left:47%;top:67.8%;width:7.6cqw;height:3.3cqw;transform:translate(-50%,-50%) rotate(-7deg);background:#F7F1E8;display:flex;align-items:center;justify-content:center;font:600 1.62cqw/1 'Fraunces',Georgia,serif;font-variation-settings:'opsz' 36;color:#0F4D3C;letter-spacing:-.01em;white-space:nowrap}
+
+/* the receipt beside the steps */
+.lp-doc{box-shadow:0 1px 0 rgba(20,37,31,.15),0 26px 44px -22px rgba(20,37,31,.55)}
+
+/* bands: every section sits on its own surface */
+.lp-how{background:var(--bg) var(--grain)}
+.lp-features{background:var(--speck),var(--plaster-dk),#0B3A2D;background-size:260px 260px,420px 420px,auto;color:var(--on);border-top:4px solid var(--br)}
+.lp-features .lp-label{color:var(--brass-lt)}
+.lp-features .lp-h2{color:var(--on)}
+.lp-features .lp-feats{border-top-color:rgba(217,187,130,.5)}
+.lp-features .lp-feats>div{border-color:rgba(217,187,130,.5)}
+.lp-features .lp-feats dt{color:var(--on)}
+.lp-features .lp-feats dd{color:#D5CEBB}
+.lp-contracts{background:#FFFDF8;border-top:1px solid var(--ln)}
+.lp-who{background:#E6DABB var(--grain);border-top:1px solid #CDBF9C;border-bottom:1px solid #CDBF9C}
+.lp-who .lp-index{border-top-color:var(--ink)}
+.lp-who .lp-index li{border-bottom-color:#C9BA95}
+.lp-who .lp-eg{color:#3A3426}
+.lp-try{background:var(--sf);background-image:repeating-linear-gradient(to bottom,transparent 0 39px,rgba(176,141,87,.16) 39px 40px)}
+.lp-end{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto}
+.lp-how-text .lp-steps{margin-top:26px}

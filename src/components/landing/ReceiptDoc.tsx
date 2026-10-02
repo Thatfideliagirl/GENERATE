@@ -9,7 +9,7 @@ const fmt = (n: number) => '₦' + Math.round(n).toLocaleString('en-NG')
  * a signature drawn stroke by stroke, then a stamp. It plays one time on load.
  * With reduced motion it simply shows the finished receipt.
  */
-export function HeroDoc() {
+export function ReceiptDoc() {
   const [still] = useState(prefersReducedMotion)
   const [total, setTotal] = useState(still ? TOTAL : 0)
   const [ref, seen] = useReveal<HTMLDivElement>(0.55)

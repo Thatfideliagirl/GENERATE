@@ -6,7 +6,8 @@ import { sampleDocAndProfile } from '../lib/factory'
 import { money } from '../lib/format'
 import { LookControls } from '../components/LookControls'
 import { PaperPreview } from '../components/PaperPreview'
-import { HeroDoc } from '../components/landing/HeroDoc'
+import { HeroArt } from '../components/landing/HeroArt'
+import { ReceiptDoc } from '../components/landing/ReceiptDoc'
 import { SignSheet } from '../components/landing/SignSheet'
 import { useStore } from '../data/store'
 
@@ -115,23 +116,11 @@ export default function Landing() {
               <li>No design skills needed</li>
             </ul>
           </div>
-          <div className="lp-hero-art">
-            <div className="lp-back one" aria-hidden="true">
-              <span className="lp-type">Contract</span>
-              <i />
-              <i />
-              <i />
-            </div>
-            <div className="lp-back two" aria-hidden="true">
-              <span className="lp-type">Invoice</span>
-              <i />
-              <i />
-            </div>
-            <HeroDoc />
-          </div>
+          <HeroArt />
         </section>
 
         <section className="lp-sec lp-how" id="how" aria-labelledby="how-h">
+          <div className="lp-how-text">
           <div className="lp-sec-head">
             <p className="lp-label">How it works</p>
             <h2 className="lp-h2" id="how-h">
@@ -149,6 +138,8 @@ export default function Landing() {
               </li>
             ))}
           </ol>
+          </div>
+          <ReceiptDoc />
         </section>
 
         <section className="lp-sec lp-features" id="features" aria-labelledby="feat-h">
