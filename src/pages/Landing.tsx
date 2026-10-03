@@ -5,8 +5,7 @@ import type { Style } from '../lib/types'
 import { LookControls } from '../components/LookControls'
 import { PaperPreview } from '../components/PaperPreview'
 import { HeroArt } from '../components/landing/HeroArt'
-import { FeatureStage } from '../components/landing/FeatureStage'
-import { PhoneChat } from '../components/landing/PhoneChat'
+import { HowSteps } from '../components/landing/HowSteps'
 import { Reveal } from '../components/landing/Reveal'
 import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
 import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
@@ -24,10 +23,21 @@ const PRICES: Record<string, [number, number]> = {
   other: [80000, 45000],
 }
 
+const FEATURES = [
+  { t: 'Invoices, receipts and contracts', d: 'Three kinds of document in one place. Start a contract from a template and change any line.' },
+  { t: 'Your name on everything', d: 'Your logo, details and signature, set up once. Six layouts, six fonts and any colour you like.' },
+  { t: 'Part payments', d: 'Take a deposit now and the balance later. The balance on the invoice updates by itself.' },
+  { t: 'A dashboard that keeps count', d: 'See what is waiting to be paid, what is part paid, what came in and what is overdue.' },
+  { t: 'Send on WhatsApp', d: 'One tap opens WhatsApp to your client with the message ready. Friendly, firm and final reminders too.' },
+  { t: 'Any currency', d: 'Naira, dollar, pound or euro on every document.' },
+  { t: 'A clean PDF', d: 'One tidy page you can save, print or send anywhere.' },
+  { t: 'Made for your trade', d: 'Starter items for hair, food, design, photography, fashion and consulting.' },
+]
+
 const STEPS = [
-  { t: 'Start with your details', d: 'Add your logo, business information and signature once. We\u2019ll remember them for you.' },
-  { t: 'Make the document', d: 'Choose an invoice, receipt or contract. Add your client and the details of the job.' },
-  { t: 'Send it your way', d: 'Download it as a PDF or send it straight to your client on WhatsApp.' },
+  { t: 'Start with your details', d: 'Add your logo, business information and signature once. We\u2019ll remember them for you.', say: 'Details first. Once is enough.' },
+  { t: 'Make the document', d: 'Choose an invoice, receipt or contract. Add your client and the details of the job.', say: 'Pick a document. The adding up is done.' },
+  { t: 'Send it your way', d: 'Download it as a PDF or send it straight to your client on WhatsApp.', say: 'Tap send. WhatsApp opens, message ready.' },
 ]
 
 const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
@@ -123,28 +133,7 @@ export default function Landing() {
         </section>
 
         <section className="lp-sec lp-how" id="how" aria-labelledby="how-h">
-          <div className="lp-how-text">
-            <Reveal className="lp-sec-head">
-              <p className="lp-label">How it works</p>
-              <h2 className="lp-h2" id="how-h">
-                From setup to sent in three steps.
-              </h2>
-            </Reveal>
-            <ol className="lp-steps">
-              {STEPS.map((st, i) => (
-                <Reveal as="li" key={st.t} delay={0.1 + i * 0.14}>
-                  <span className="lp-n num">0{i + 1}</span>
-                  <div>
-                    <h3>{st.t}</h3>
-                    <p>{st.d}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
-          <Reveal delay={0.2} className="lp-how-paper">
-            <PhoneChat message={chat} client="Tunde Bello" file="Invoice-0042.pdf" />
-          </Reveal>
+          <HowSteps steps={STEPS} message={chat} />
         </section>
 
         <section className="lp-sec lp-features" id="features" aria-labelledby="feat-h">
@@ -154,7 +143,14 @@ export default function Landing() {
               Everything you need to get paid.
             </h2>
           </Reveal>
-          <FeatureStage />
+          <dl className="lp-feats">
+            {FEATURES.map((f, i) => (
+              <Reveal key={f.t} delay={0.06 * (i % 4)}>
+                <dt>{f.t}</dt>
+                <dd>{f.d}</dd>
+              </Reveal>
+            ))}
+          </dl>
         </section>
 
         <section className="lp-sec lp-who" id="who" aria-labelledby="who-h">

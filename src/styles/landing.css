@@ -71,10 +71,10 @@ html{scroll-behavior:smooth}
 
 /* how it works */
 .lp-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
-.lp-steps li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;padding:18px 0;border-bottom:1px solid var(--ln)}
+.lp-steps li{display:block;padding:0;border-bottom:1px solid var(--ln);position:relative}
 .lp-n{font:400 clamp(32px,3.6vw,46px)/1 var(--hd);color:var(--brass-ink)}
-.lp-steps h3{font:500 clamp(22px,2.2vw,28px)/1.1 var(--hd);margin:0 0 6px}
-.lp-steps p{margin:0;font-size:17px;line-height:1.5;max-width:30em;color:#3A453F}
+.lp-step-t{display:block;font:500 clamp(22px,2.2vw,28px)/1.1 var(--hd);font-variation-settings:'opsz' 14;margin:0 0 6px}
+.lp-step-d{display:block;font-size:17px;line-height:1.5;max-width:30em;color:#3A453F}
 
 /* features */
 .lp-feats{margin:0;padding:0;display:grid;border-top:1px solid var(--ink)}
@@ -337,88 +337,8 @@ html{scroll-behavior:smooth}
 .lp-phone.play .lp-msg.text{animation-delay:1.3s}
 @keyframes lp-pop{to{opacity:1;transform:none}}
 
-/* features: a list and a small animated picture */
-.lp-features{display:block}
-.lp-fs{display:grid;gap:22px;margin-top:30px}
-.lp-fs-stage{background:rgba(7,38,29,.55);border:1px solid rgba(217,187,130,.4);border-radius:26px;min-height:300px;display:grid;place-items:center;padding:20px;overflow:hidden;box-shadow:inset 0 0 40px rgba(0,0,0,.25)}
-.lp-fs-view{width:100%;display:grid;place-items:center;animation:lp-fade2 .5s ease both}
 @keyframes lp-fade2{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.lp-fs-list{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid rgba(217,187,130,.4)}
-.lp-fs-list button{position:relative;display:grid;grid-template-columns:34px 1fr;column-gap:10px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid rgba(217,187,130,.3);padding:13px 4px;color:#D5CEBB;cursor:pointer;font:inherit;transition:color .25s ease,background .25s ease}
-.lp-fs-list button:hover{color:#F6F1E7}
-.lp-fs-list button:focus-visible{outline:3px solid var(--brass-lt);outline-offset:-3px}
-.lp-fs-n{grid-row:1;font:400 15px var(--hd);color:var(--brass-lt);padding-top:3px}
-.lp-fs-t{grid-column:2;font:500 clamp(18px,1.8vw,23px)/1.2 var(--hd);font-variation-settings:'opsz' 14;color:inherit}
-.lp-fs-d{grid-column:2;font-size:15px;line-height:1.5;max-height:0;overflow:hidden;opacity:0;transition:max-height .45s ease,opacity .35s ease,margin .35s ease}
-.lp-fs-list button.on{color:#F6F1E7;background:linear-gradient(90deg,rgba(217,187,130,.1),transparent)}
-.lp-fs-list button.on .lp-fs-d{max-height:90px;opacity:1;margin-top:5px;color:#D5CEBB}
-.lp-fs-bar{position:absolute;left:0;bottom:-1px;height:2px;background:var(--brass-lt);width:100%;transform-origin:left;animation:lp-bar linear both}
-@keyframes lp-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@media (min-width:900px){
-  .lp-fs{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:center}
-  .lp-fs-stage{order:2;min-height:380px;position:sticky;top:24px}
-  .lp-fs-list{order:1}
-}
 
-/* the little pictures */
-.fv{width:100%;max-width:360px;color:#14251F;font-family:var(--ui)}
-.fv i{display:block;height:6px;border-radius:3px;background:#DDD3BC}
-.fv-sheets{position:relative;height:240px}
-.fv-sheet{position:absolute;left:50%;top:10px;width:170px;height:220px;background:#FBF8F1;border-top:5px solid #0F4D3C;padding:12px;display:grid;gap:9px;align-content:start;box-shadow:0 14px 24px -12px rgba(0,0,0,.6);animation:lp-fan .9s cubic-bezier(.2,.8,.3,1.1) both}
-.fv-sheet span{font:italic 500 20px var(--hd);color:#0F4D3C}
-.fv-sheet.s0{margin-left:-185px;--r:-9deg;animation-delay:.1s}
-.fv-sheet.s1{margin-left:-92px;--r:0deg;animation-delay:.2s;z-index:1}
-.fv-sheet.s2{margin-left:0px;--r:9deg;animation-delay:.3s;z-index:2}
-@keyframes lp-fan{from{opacity:0;transform:translateY(30px) rotate(0)}to{opacity:1;transform:rotate(var(--r))}}
-.fv-name{display:grid;gap:18px;justify-items:center}
-.fv-doc{width:260px;background:#FBF8F1;padding:16px;display:grid;gap:10px;border-top:6px solid #0F4D3C;box-shadow:0 14px 24px -12px rgba(0,0,0,.6);animation:lp-brand 7s linear infinite}
-.fv-doc-head{display:flex;align-items:center;gap:10px;font:500 17px var(--hd)}
-.fv-logo{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#0F4D3C;color:#F6F1E7;font:500 16px var(--hd);animation:lp-brandbg 7s linear infinite}
-@keyframes lp-brand{0%,18%{border-top-color:#0F4D3C}20%,38%{border-top-color:#1F3A5F}40%,58%{border-top-color:#7A1F2B}60%,78%{border-top-color:#5B2A4E}80%,98%{border-top-color:#0E6B73}100%{border-top-color:#0F4D3C}}
-@keyframes lp-brandbg{0%,18%{background:#0F4D3C}20%,38%{background:#1F3A5F}40%,58%{background:#7A1F2B}60%,78%{background:#5B2A4E}80%,98%{background:#0E6B73}100%{background:#0F4D3C}}
-.fv-sig path{fill:none;stroke:#14251F;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;animation:lp-draw2 2s ease-in-out .4s both}
-@keyframes lp-draw2{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-.fv-swatches{display:flex;gap:10px}
-.fv-swatches span{width:26px;height:26px;border-radius:50%;border:2px solid #F6F1E7;animation:lp-pop2 .5s ease both}
-.fv-swatches span:nth-child(2){animation-delay:.1s}.fv-swatches span:nth-child(3){animation-delay:.2s}.fv-swatches span:nth-child(4){animation-delay:.3s}.fv-swatches span:nth-child(5){animation-delay:.4s}
-@keyframes lp-pop2{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
-.fv-card{background:#FBF8F1;padding:20px;box-shadow:0 14px 24px -12px rgba(0,0,0,.6);border-top:6px solid #0F4D3C}
-.fv-k{margin:0;font:600 11px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:#7A5C28}
-.fv-big{margin:4px 0 14px;font:500 38px/1 var(--hd);color:#0F4D3C}
-.fv-track{height:12px;border-radius:6px;background:#DDD3BC;overflow:hidden}
-.fv-track span{display:block;height:100%;width:40%;background:#B08D57;border-radius:6px;transform-origin:left;animation:lp-bar 1.4s cubic-bezier(.2,.8,.2,1) .3s both}
-.fv-two{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-size:13px;color:#4B5148}
-.fv-two b{display:block;font:600 17px var(--ui);color:#14251F}
-.fv-dash{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fv-dash div{background:#FBF8F1;padding:14px;border-radius:4px;box-shadow:0 10px 18px -12px rgba(0,0,0,.6)}
-.fv-dash span{display:block;font-size:12px;color:#6B6A5C;line-height:1.2}
-.fv-dash b{display:block;margin-top:6px;font:500 24px/1 var(--hd);color:#0F4D3C}
-.fv-dash em{grid-column:1/-1;font-style:normal;font-size:11px;color:#CFC8B6;text-align:right}
-.fv-chat{display:grid;gap:8px;max-width:300px}
-.fv-chat .lp-msg{animation:lp-pop .5s cubic-bezier(.2,.9,.3,1.2) both}
-.fv-chat .lp-msg.text{animation-delay:.6s}
-.fv-tones{display:flex;gap:8px;justify-self:end}
-.fv-tones span{font-size:12px;padding:4px 10px;border:1px solid rgba(217,187,130,.7);border-radius:99px;color:#E7E0CF}
-.fv-cur{display:grid;gap:20px;justify-items:center}
-.fv-cur .fv-big{color:#F6F1E7;font-size:56px;margin:0;animation:lp-fade2 .45s ease both}
-.fv-cur div{display:flex;gap:10px}
-.fv-cur span{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(217,187,130,.6);color:#E7E0CF;font:500 22px var(--hd);transition:background .3s ease,color .3s ease}
-.fv-cur span.on{background:#D9BB82;color:#14251F;border-color:#D9BB82}
-.fv-pdf{display:grid;gap:16px;justify-items:center}
-.fv-page{position:relative;width:150px;height:200px;background:#FBF8F1;padding:16px 14px;display:grid;gap:9px;align-content:start;box-shadow:0 14px 24px -12px rgba(0,0,0,.6);clip-path:polygon(0 0,calc(100% - 30px) 0,100% 30px,100% 100%,0 100%);animation:lp-fan2 .9s cubic-bezier(.2,.8,.3,1.1) both}
-.fv-page span{font:italic 500 19px var(--hd);color:#0F4D3C}
-.fv-page b{margin-top:8px;font:500 20px var(--hd);color:#0F4D3C}
-@keyframes lp-fan2{from{opacity:0;transform:translateY(34px) rotate(-6deg)}to{opacity:1;transform:none}}
-.fv-pdf p{margin:0;text-align:center;color:#F6F1E7}
-.fv-pdf p b{display:block;font-size:15px}
-.fv-pdf p span{font-size:13px;color:#CFC8B6}
-.fv-trade{display:grid;gap:16px}
-.fv-trade>div{display:flex;flex-wrap:wrap;gap:8px}
-.fv-trade>div span{font-size:13px;padding:6px 12px;border-radius:99px;border:1px solid rgba(217,187,130,.55);color:#E7E0CF;transition:background .3s ease,color .3s ease}
-.fv-trade>div span.on{background:#D9BB82;color:#14251F;border-color:#D9BB82}
-.fv-trade ul{list-style:none;margin:0;padding:12px 16px;background:#FBF8F1;display:grid;gap:7px;box-shadow:0 14px 24px -12px rgba(0,0,0,.6);animation:lp-fade2 .45s ease both}
-.fv-trade li{font-size:14px;padding-bottom:7px;border-bottom:1px solid #DDD3BC}
-.fv-trade li:last-child{border-bottom:0;padding-bottom:0}
 
 /* who is it for: centred, pictures sit inside the cream frames, the pencil rests on the last one */
 .lp-who{text-align:center}
@@ -453,10 +373,6 @@ html{scroll-behavior:smooth}
 }
 
 @media (max-width:520px){
-  .fv-sheets{height:200px}
-  .fv-sheet{width:128px;height:176px;padding:10px;gap:7px}
-  .fv-sheet span{font-size:16px}
-  .fv-sheet.s0{margin-left:-142px}.fv-sheet.s1{margin-left:-70px}.fv-sheet.s2{margin-left:2px}
   .lp-pic{aspect-ratio:4/3}
 }
 @media (max-width:1319px){
@@ -466,3 +382,34 @@ html{scroll-behavior:smooth}
 @media (max-width:1319px){
   .lp-pencil{clip-path:none;-webkit-mask-image:linear-gradient(#000 0,#000 40%,transparent 50%);mask-image:linear-gradient(#000 0,#000 40%,transparent 50%)}
 }
+
+/* v9: how it works with the pencil beside the phone, features back to the plain list */
+.lp-how-in{display:grid;gap:36px}
+.lp-how-in>*{min-width:0}
+.lp-step-btn{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;width:100%;text-align:left;background:none;border:0;padding:18px 0 18px 14px;font:inherit;color:inherit;cursor:pointer;opacity:.5;transition:opacity .4s ease}
+.lp-steps li.cur .lp-step-btn,.lp-step-btn:hover{opacity:1}
+.lp-step-btn:focus-visible{outline:3px solid var(--em);outline-offset:-3px}
+.lp-steps li::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;background:var(--br);transform:scaleY(0);transform-origin:top;transition:transform .45s ease}
+.lp-steps li.cur::before{transform:scaleY(1)}
+.lp-steps li.cur .lp-n{color:var(--em)}
+.lp-how-stage{display:grid;justify-items:center}
+.lp-phone-wrap{position:relative;display:inline-block;max-width:100%}
+.lp-say,.lp-pencil2{display:none}
+@keyframes lp-hop{0%{transform:translateY(0)}35%{transform:translateY(-16px) rotate(-1.2deg)}70%{transform:translateY(2px)}100%{transform:none}}
+@keyframes lp-sway{0%,100%{transform:rotate(-.5deg)}50%{transform:rotate(.6deg)}}
+@media (min-width:900px){
+  .lp-how-in{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);column-gap:5vw;align-items:center}
+}
+@media (min-width:1200px){
+  .lp-how-stage{padding-top:215px}
+  .lp-phone-wrap{padding-right:190px}
+  .lp-pencil2{display:block;position:absolute;z-index:3;pointer-events:none;right:0;bottom:-22px;height:calc((100% + 12px) / .624);width:auto;transform-origin:50% 96%;filter:drop-shadow(0 14px 14px rgba(0,0,0,.3));animation:lp-hop .7s cubic-bezier(.3,1.5,.5,1) both,lp-sway 6s ease-in-out .8s infinite}
+  .lp-say{display:block;position:absolute;right:202px;top:-205px;max-width:215px;margin:0;background:#FBF8F1;color:#14251F;font:500 18px/1.25 var(--hd);font-variation-settings:'opsz' 14;padding:12px 16px;border-radius:18px 18px 4px 18px;box-shadow:0 14px 24px -12px rgba(20,37,31,.55);animation:lp-fade2 .5s ease both}
+  .lp-say::after{content:'';position:absolute;right:-9px;bottom:10px;border:9px solid transparent;border-left-color:#FBF8F1;border-right:0}
+}
+@keyframes lp-fade2{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* who is it for: no pencil on phones */
+@media (max-width:619px){.lp-pencil{display:none}.lp-frame.anyone{margin-top:0}}
+@media (prefers-reduced-motion:reduce){.lp-pencil2,.lp-say{animation:none!important}}
+.lp-how{display:block}
