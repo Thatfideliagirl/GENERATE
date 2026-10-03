@@ -21,6 +21,7 @@ export const defaultProfile = (): Profile => ({
   bank: { bank: '', acct: '', name: '' },
   logo: '',
   signature: '',
+  socials: { instagram: '', twitter: '', tiktok: '' },
   bizType: 'solo',
   trade: 'other',
   style: defaultStyle(),
@@ -58,6 +59,7 @@ export function newDoc(
     notes: '',
     method: 'Bank transfer',
     useSig: !!profile.signature,
+    showSocials: hasSocials(profile),
     style: clone(profile.style),
     currency: profile.currency,
     payments: [],
@@ -112,3 +114,6 @@ export function sampleDocAndProfile(style: Style): { doc: Doc; profile: Profile 
   }
   return { doc, profile }
 }
+
+/** True when the profile has at least one social media handle. */
+export const hasSocials = (p: Profile): boolean => !!p.socials && Object.values(p.socials).some((v) => v.trim())

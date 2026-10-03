@@ -47,8 +47,6 @@ export function SignUp() {
     if (!p.owner) return fail('Enter your name.')
     if (!isEmail(p.email)) return fail('Enter a valid email, like name@example.com.')
     if (!isPhone(p.phone)) return fail('Enter your phone or WhatsApp number, for example 0803 123 4567.')
-    if (p.bizType === 'other' && !(p.bizOther ?? '').trim()) return fail('Tell us what describes you, or pick one from the list.')
-    if (p.trade === 'other' && !(p.tradeOther ?? '').trim()) return fail('Tell us what you sell or do, or pick one from the list.')
     if (password.length < 8) return fail('Choose a password of at least 8 characters.')
     setBusy(true)
     try {
@@ -58,8 +56,8 @@ export function SignUp() {
           business: p.name,
           email: p.email,
           whatsapp: p.phone,
-          bizType: p.bizType === 'other' ? (p.bizOther ?? '').trim() : p.bizType,
-          trade: p.trade === 'other' ? (p.tradeOther ?? '').trim() : p.trade,
+          bizType: p.bizType === 'other' ? (p.bizOther ?? '').trim() || 'other' : p.bizType,
+          trade: p.trade === 'other' ? (p.tradeOther ?? '').trim() || 'other' : p.trade,
           password,
         },
         (s) => repo.save({ ...emptyData(), profile: p }, s.userId),

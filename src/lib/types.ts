@@ -43,6 +43,8 @@ export interface Doc {
   notes: string
   method: string
   useSig: boolean
+  /** Show the profile's social media handles at the bottom of the document. */
+  showSocials?: boolean
   style: Style
   currency: string
   payments: Payment[]
@@ -54,6 +56,12 @@ export interface Doc {
   end?: string
   createdAt: number
   updatedAt: number
+}
+
+export interface Socials {
+  instagram: string
+  twitter: string
+  tiktok: string
 }
 
 export interface Profile {
@@ -68,6 +76,7 @@ export interface Profile {
   bank: { bank: string; acct: string; name: string }
   logo: string
   signature: string
+  socials?: Socials
   bizType: string
   /** Filled in when bizType is other. */
   bizOther?: string

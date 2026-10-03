@@ -5,6 +5,7 @@ import { balanceOf, paidOf, totals } from '../lib/calc'
 import { fmtDate, money } from '../lib/format'
 import { accentOf, fontOf, layoutOf, paperOf, textOf } from '../lib/style'
 import { resolveText, toBlocks } from '../lib/text'
+import { socialLines } from '../lib/social'
 
 /**
  * The document itself: what gets previewed, downloaded as a PDF and sent.
@@ -23,6 +24,7 @@ export function DocumentPaper({ doc, profile }: { doc: Doc; profile: Profile }) 
   const c = doc.currency
   const t = totals(doc)
   const isReceipt = doc.type === 'receipt'
+  const socials = doc.showSocials ? socialLines(profile) : []
 
   return (
     <div className={`paper l-${layoutOf(style)} f-${fontOf(style)}`} style={cssVars}>
@@ -201,6 +203,15 @@ export function DocumentPaper({ doc, profile }: { doc: Doc; profile: Profile }) 
           </>
         )}
       </div>
+      {socials.length > 0 && (
+        <div className="soc">
+          {socials.map((s) => (
+            <span key={s.label}>
+              {s.label} <b>@{s.handle}</b>
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

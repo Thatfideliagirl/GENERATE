@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import type { Profile } from '../lib/types'
 import { BUSINESS_TYPES, CURRENCIES, TRADES } from '../lib/constants'
 import { readImage } from '../lib/image'
+import { SOCIALS } from '../lib/social'
 import { Field, Grid2, Section, SelectField } from './Fields'
 import { LookControls } from './LookControls'
 import { DrawSignatureModal, TypeSignatureModal } from './SignatureModals'
@@ -52,6 +53,23 @@ export function ProfileForm({ profile: p, onChange, showLook = true }: Props) {
         {p.trade === 'other' && (
           <Field label="Tell us what you sell or do" value={p.tradeOther ?? ''} onChange={(v) => onChange({ tradeOther: v })} placeholder="For example, event planning" />
         )}
+      </Section>
+
+      <Section title="Social media">
+        <p className="mu small" style={{ marginTop: 0 }}>
+          Optional. When you make an invoice, receipt or contract you can tick a box to print these at the bottom.
+        </p>
+        <Grid2>
+          {SOCIALS.map(({ key, label, placeholder }) => (
+            <Field
+              key={key}
+              label={label}
+              value={p.socials?.[key] ?? ''}
+              placeholder={placeholder}
+              onChange={(v) => onChange({ socials: { instagram: '', twitter: '', tiktok: '', ...p.socials, [key]: v } })}
+            />
+          ))}
+        </Grid2>
       </Section>
 
       <Section title="Logo">

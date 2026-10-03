@@ -5,6 +5,7 @@ import { CURRENCIES, DOC_LABEL, PAY_METHODS, TRADE_ITEMS, TRADES } from '../lib/
 import { balanceOf, paidOf, statusOf, totals } from '../lib/calc'
 import { clone, money, today, uid } from '../lib/format'
 import { newDoc } from '../lib/factory'
+import { socialLines } from '../lib/social'
 import { CONTRACT_TEMPLATES } from '../lib/templates'
 import { makePdf, pdfName, saveFile } from '../lib/pdf'
 import { reminderMessage, sendMessage, waLink } from '../lib/whatsapp'
@@ -120,6 +121,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
       fromId: doc.id,
       style: clone(doc.style),
       useSig: doc.useSig,
+      showSocials: doc.showSocials,
       issueDate: pm.date || today(),
       method: pm.method || 'Bank transfer',
       notes: left > 0 ? 'Balance remaining: ' + money(left, doc.currency) : 'Paid in full. Thank you.',
@@ -141,6 +143,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
       fromId: doc.id,
       style: clone(doc.style),
       useSig: doc.useSig,
+      showSocials: doc.showSocials,
     })
     openCopy(r, 'Invoice marked as paid')
   }
@@ -330,6 +333,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
                 <Section title="Notes">
                   <TextArea value={doc.notes} onChange={(v) => patch({ notes: v })} placeholder="Thank you for your business." />
                   <SignatureToggle doc={doc} profile={profile} patch={patch} onSaveFirst={() => persist(doc)} />
+                  <SocialsToggle doc={doc} profile={profile} patch={patch} />
                 </Section>
               </>
             )}
@@ -450,6 +454,22 @@ function TotalsBlock({ doc }: { doc: Doc }) {
   )
 }
 
+function SocialsToggle({ doc, profile, patch }: { doc: Doc; profile: Profile; patch: (p: Partial<Doc>) => void }) {
+  const lines = socialLines(profile)
+  if (!lines.length) {
+    return (
+      <p className="mu small">
+        Add your Instagram, Twitter or TikTok in your profile to print them at the bottom of documents.
+      </p>
+    )
+  }
+  return (
+    <label className="ck">
+      <input type="checkbox" checked={!!doc.showSocials} onChange={(e) => patch({ showSocials: e.target.checked })} /> Show my social media at the bottom
+    </label>
+  )
+}
+
 function SignatureToggle({ doc, profile, patch, onSaveFirst }: { doc: Doc; profile: Profile; patch: (p: Partial<Doc>) => void; onSaveFirst: () => void }) {
   if (profile.signature) {
     return (
@@ -519,6 +539,7 @@ function ContractForm({
         </p>
         <p className="mu small">Templates are plain starting points, not legal advice. Have a lawyer check important agreements.</p>
         <SignatureToggle doc={doc} profile={profile} patch={patch} onSaveFirst={onSaveFirst} />
+        <SocialsToggle doc={doc} profile={profile} patch={patch} />
       </Section>
     </>
   )
