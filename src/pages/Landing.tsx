@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BRAND, TRADES, TRADE_ITEMS } from '../lib/constants'
 import type { Style } from '../lib/types'
@@ -39,7 +39,10 @@ const FEATURES = [
 
 const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
 
-const WHO = [
+type Who = { k: string; icon: ReactNode; t: string; d: string; photo?: string }
+
+/** Set photo to a path such as ./images/freelancer.webp and it fills the picture space at the top of the frame. */
+const WHO: Who[] = [
   { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client. Send invoices and contracts with your own name and signature.' },
   { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place, and always know who has paid.' },
   { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out, from invoices to contracts.' },
@@ -173,7 +176,10 @@ export default function Landing() {
           <ul className="lp-frames">
             {WHO.map((w) => (
               <li key={w.k} className={'lp-frame ' + w.k}>
-                <span className="lp-ico">{w.icon}</span>
+                <div className="lp-pic">
+                  {w.photo && <img src={w.photo} width={640} height={400} alt="" loading="lazy" />}
+                  <span className="lp-ico">{w.icon}</span>
+                </div>
                 <h3>{w.t}</h3>
                 <p>{w.d}</p>
                 {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
