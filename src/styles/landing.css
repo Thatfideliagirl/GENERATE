@@ -482,3 +482,15 @@ html{scroll-behavior:smooth}
   .lp-frames{max-width:1060px;margin-top:90px}
   .lp-pencil{height:290px;top:-103px;right:18px;bottom:auto;clip-path:none;-webkit-mask-image:linear-gradient(#000 0,#000 40%,transparent 50%);mask-image:linear-gradient(#000 0,#000 40%,transparent 50%)}
 }
+
+/* v13: nav links on one line, pricing closes smoothly, no pencil below desktop */
+.lp-links{align-items:center}
+.lp-links>li{display:flex;align-items:center}
+.lp-links a,.lp-navlink{line-height:1.2;padding:8px 0;margin:0;font:500 15px/1.2 var(--ui);border-bottom:1.5px solid transparent;display:inline-block}
+.lp-drop{visibility:hidden;transition:grid-template-rows .55s cubic-bezier(.4,0,.2,1),visibility 0s linear .55s}
+.lp-drop.open{visibility:visible;transition:grid-template-rows .55s cubic-bezier(.4,0,.2,1),visibility 0s}
+.lp-drop-in{transition:opacity .4s ease,transform .55s cubic-bezier(.4,0,.2,1)}
+.lp-drop.open .lp-drop-in{transition:opacity .4s ease .1s,transform .55s cubic-bezier(.2,.7,.2,1) .05s}
+@media (max-width:1319px){.lp-pencil{display:none}.lp-frame.anyone{margin-top:0}.lp-frames{margin-top:44px}}
+@media (min-width:1320px){.lp-who{padding-top:clamp(120px,10vw,160px)}}
+@media (prefers-reduced-motion:reduce){.lp-drop,.lp-drop.open{transition:none}}
