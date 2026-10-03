@@ -181,7 +181,6 @@ html{scroll-behavior:smooth}
 .lp-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#EADFC4;color:var(--brass-ink);margin-bottom:16px}
 .lp-frame h3{font-size:22px;line-height:1.1;font-variation-settings:'opsz' 14}
 .lp-frame p{margin:8px 0 0;font-size:15px;line-height:1.45;color:#3A453F;max-width:15em}
-.lp-stack{display:block;margin-top:auto;width:100%;height:auto;-webkit-mask-image:radial-gradient(ellipse 74% 72% at 50% 52%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 74% 72% at 50% 52%,#000 60%,transparent 100%)}
 .lp-pencil{display:none;position:absolute;right:-136px;bottom:-6px;height:104%;width:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 14px 14px rgba(0,0,0,.3))}
 
 /* try it: compact, with the paper beside the controls */
@@ -244,5 +243,13 @@ html{scroll-behavior:smooth}
 .lp-contracts .lp-body{color:#E3DCC9}
 .lp-contracts .lp-small{color:#CFC8B6;border-left-color:var(--brass-lt)}
 .lp-try{border-top:4px solid var(--br)}
-.lp-stack{width:calc(100% + 18px);margin-inline:-9px;max-width:none}
 @media (min-width:900px){.lp-frame{min-height:350px}}
+
+/* frames hold write-ups only. The pencil is taller than the last frame and leans its hand on the top edge */
+.lp-frame{min-height:0;padding:24px 22px 26px}
+.lp-frame p{max-width:none}
+@media (min-width:900px){
+  .lp-frame{min-height:0}
+  .lp-frames{align-items:stretch;margin-top:90px}
+  .lp-pencil{height:161%;right:-134px;bottom:-22px}
+}

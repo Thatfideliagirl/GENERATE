@@ -40,10 +40,10 @@ const FEATURES = [
 const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
 
 const WHO = [
-  { k: 'free', n: 1, icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client.' },
-  { k: 'shop', n: 2, icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place.' },
-  { k: 'growing', n: 3, icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out.' },
-  { k: 'anyone', n: 4, icon: <PeopleIcon />, t: 'Anyone', d: 'If you send an invoice, receipt or contract, Generate is for you.' },
+  { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client. Send invoices and contracts with your own name and signature.' },
+  { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place, and always know who has paid.' },
+  { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out, from invoices to contracts.' },
+  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you send an invoice, receipt or contract, Generate is for you.' },
 ]
 
 export default function Landing() {
@@ -176,7 +176,6 @@ export default function Landing() {
                 <span className="lp-ico">{w.icon}</span>
                 <h3>{w.t}</h3>
                 <p>{w.d}</p>
-                <img className="lp-stack" src={`./images/who-${w.n}.webp`} width={w.n === 4 ? 340 : 356} height={186} alt="" loading="lazy" />
                 {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
               </li>
             ))}
