@@ -415,3 +415,6 @@ html{scroll-behavior:smooth}
   .sc.file b{font-size:2.4cqw}
   .sc-time{font-size:1.8cqw}
 }
+
+/* the sleeve in the growing brands picture runs straight into the edge of its frame */
+.lp-frame.growing .lp-pic>img.lp-cut{padding-right:0;object-position:right bottom}
