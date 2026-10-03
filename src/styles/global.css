@@ -90,3 +90,4 @@ textarea{resize:vertical;line-height:1.5}
 button,.btn{-webkit-tap-highlight-color:transparent}
 a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .logo-chip{display:block;height:44px;width:auto;background:#FBF8F1;border-radius:8px;padding:5px 12px;margin-bottom:14px}
+.top-end{display:flex;gap:4px;align-items:center}

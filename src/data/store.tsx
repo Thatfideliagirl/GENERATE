@@ -5,6 +5,7 @@ import { emptyData, nextNumber } from '../lib/factory'
 import { clone } from '../lib/format'
 import { normalise, repo } from './repo'
 import { useToast } from '../components/Toast'
+import { useAuth } from './session'
 
 interface Store {
   ready: boolean
@@ -22,23 +23,33 @@ const Ctx = createContext<Store | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const toast = useToast()
+  const { ready: authReady, session } = useAuth()
+  const userId = session?.userId ?? null
+  const uid = useRef<string | null>(null)
   const [data, setData] = useState<AppData>(emptyData())
   const [ready, setReady] = useState(false)
   const ref = useRef(data)
 
   useEffect(() => {
-    repo.load().then((d) => {
+    if (!authReady) return
+    let live = true
+    uid.current = userId
+    repo.load(userId).then((d) => {
+      if (!live) return
       ref.current = d
       setData(d)
       setReady(true)
     })
-  }, [])
+    return () => {
+      live = false
+    }
+  }, [authReady, userId])
 
   const commit = useCallback(
     (next: AppData) => {
       ref.current = next
       setData(next)
-      repo.save(next).catch(() => toast('Could not save on this device. Download a backup from Profile.'))
+      repo.save(next, uid.current).catch(() => toast('Could not save on this device. Download a backup from Profile.'))
     },
     [toast],
   )

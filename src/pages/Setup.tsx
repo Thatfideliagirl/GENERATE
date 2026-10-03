@@ -9,8 +9,8 @@ import { useToast } from '../components/Toast'
 export default function Setup() {
   const nav = useNavigate()
   const toast = useToast()
-  const { saveProfile } = useStore()
-  const [profile, setProfile] = useState<Profile>(defaultProfile())
+  const { saveProfile, data } = useStore()
+  const [profile, setProfile] = useState<Profile>(data.profile ?? defaultProfile())
   const [error, setError] = useState('')
 
   const change = (patch: Partial<Profile>) => {

@@ -11,7 +11,7 @@ import { Reveal } from '../components/landing/Reveal'
 import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
 import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
 import { sendMessage } from '../lib/whatsapp'
-import { useStore } from '../data/store'
+import { useAuth } from '../data/session'
 
 /** Sample prices for the live demo, matched to the first two starter items of each trade. */
 const PRICES: Record<string, [number, number]> = {
@@ -55,10 +55,10 @@ const WHO: Who[] = [
 
 export default function Landing() {
   const nav = useNavigate()
-  const { data } = useStore()
-  const hasProfile = !!data.profile
-  const go = () => nav(hasProfile ? '/app' : '/setup')
-  const cta = hasProfile ? 'Open my dashboard' : 'Start free'
+  const { session } = useAuth()
+  const go = () => nav(session ? '/app' : '/signup')
+  const signIn = () => nav(session ? '/app' : '/signin')
+  const cta = session ? 'Open my dashboard' : 'Start free'
 
   const [look, setLook] = useState<Style>({ layout: 'classic', font: 'editorial', accent: 'emerald', text: '#14251F', paper: 'white' })
   const [biz, setBiz] = useState('')
@@ -104,9 +104,11 @@ export default function Landing() {
             <button type="button" className="lp-link-btn lp-pricing-m" data-pricing-toggle aria-expanded={pricing} aria-controls="pricing-panel" onClick={() => setPricing((v) => !v)}>
               Pricing
             </button>
-            <button className="lp-link-btn" onClick={go}>
-              Sign in
-            </button>
+            {!session && (
+              <button className="lp-link-btn" onClick={signIn}>
+                Sign in
+              </button>
+            )}
             <button className="lp-btn ghost" onClick={go}>
               {cta}
             </button>

@@ -7,12 +7,14 @@ import { saveFile } from '../lib/pdf'
 import { PageHeader } from '../components/TopBar'
 import { ProfileForm } from '../components/ProfileForm'
 import { useStore } from '../data/store'
+import { useAuth } from '../data/session'
 import { useToast } from '../components/Toast'
 
 export default function ProfilePage({ profile: initial }: { profile: ProfileType }) {
   const nav = useNavigate()
   const toast = useToast()
   const { data, saveProfile, restore } = useStore()
+  const { session, signOut } = useAuth()
   const [profile, setProfile] = useState<ProfileType>(initial)
   const [error, setError] = useState('')
 
@@ -51,6 +53,23 @@ export default function ProfilePage({ profile: initial }: { profile: ProfileType
       <PageHeader title="Your profile" onBack={() => nav('/app')} />
       <main className="wrap">
         <ProfileForm profile={profile} onChange={change} />
+        <div className="sec">
+          <h3 className="s">Your account</h3>
+          <p className="mu small" style={{ marginTop: 0 }}>
+            Signed in as {session?.email}.
+          </p>
+          <div className="chips">
+            <button
+              className="btn"
+              onClick={async () => {
+                await signOut()
+                nav('/', { replace: true })
+              }}
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
         <div className="sec">
           <h3 className="s">Backup</h3>
           <p className="mu small" style={{ marginTop: 0 }}>

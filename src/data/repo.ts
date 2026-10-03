@@ -10,8 +10,8 @@ import { emptyData } from '../lib/factory'
  * Nothing else in the app needs to change.
  */
 export interface Repo {
-  load(): Promise<AppData>
-  save(data: AppData): Promise<void>
+  load(userId: string | null): Promise<AppData>
+  save(data: AppData, userId: string | null): Promise<void>
 }
 
 const KEY = 'vellum.v1'
@@ -32,17 +32,27 @@ function normalise(raw: Partial<AppData> | null): AppData {
   }
 }
 
+const USER_KEY = 'generate.data.'
+const ADOPTED = 'generate.adopted.v1'
+
 export const localRepo: Repo = {
-  async load() {
+  async load(userId) {
+    if (!userId) return emptyData()
     try {
-      const raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY)
+      let raw = localStorage.getItem(USER_KEY + userId)
+      if (raw == null && !localStorage.getItem(ADOPTED)) {
+        // The first account on this device takes over anything saved before accounts existed.
+        raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY)
+        localStorage.setItem(ADOPTED, userId)
+      }
       return normalise(raw ? JSON.parse(raw) : null)
     } catch {
       return emptyData()
     }
   },
-  async save(data) {
-    localStorage.setItem(KEY, JSON.stringify(data))
+  async save(data, userId) {
+    if (!userId) return
+    localStorage.setItem(USER_KEY + userId, JSON.stringify(data))
   },
 }
 

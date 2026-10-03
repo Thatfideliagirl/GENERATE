@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Profile } from '../lib/types'
+import { useAuth } from '../data/session'
 
 export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
   if (profile.logo) {
@@ -15,15 +16,23 @@ export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: num
 }
 
 export function AppHeader({ profile }: { profile: Profile }) {
+  const { session } = useAuth()
   return (
     <header className="top">
       <Link to="/app" className="brand">
         <BrandMark profile={profile} />
         <span>{profile.name}</span>
       </Link>
-      <Link className="btn g" to="/app/profile">
-        Profile
-      </Link>
+      <span className="top-end">
+        {session?.role === 'admin' && (
+          <Link className="btn g" to="/admin">
+            Owner
+          </Link>
+        )}
+        <Link className="btn g" to="/app/profile">
+          Profile
+        </Link>
+      </span>
     </header>
   )
 }

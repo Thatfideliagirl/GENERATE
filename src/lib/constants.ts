@@ -97,3 +97,9 @@ export const SIGNATURE_FONTS: [string, string][] = [
   ['Dancing Script', 'Casual'],
   ['Caveat', 'Handwritten'],
 ]
+
+/**
+ * Emails that can open the owner page. Only used by the on device demo accounts.
+ * With Supabase this becomes a role in the database, so change it there.
+ */
+export const ADMIN_EMAILS: string[] = ['adewoyeemmanuel77@gmail.com']

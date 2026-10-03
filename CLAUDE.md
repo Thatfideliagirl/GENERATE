@@ -31,12 +31,18 @@ WhatsApp: numbers starting with 0 get 234 added. Reminder tones: friendly, firm,
 ## Brand look
 Emerald #0F4D3C, ivory #F6F1E7 and #FBF8F1, brass gold #B08D57. Headings use Fraunces, interface uses Instrument Sans. The landing page alone uses Bodoni Moda for display and Hanken Grotesk for text, set as variables on .landing in landing.css. Light and dark mode both supported through CSS variables in global.css. Avoid generic gradients, purple, and template looking cards.
 
+## Accounts and owner page (demo built, Supabase still to connect)
+Routes: /signup, /signin, /forgot, /privacy, /admin, /setup (needs an account), /app (needs account and profile).
+src/data/auth.ts holds the AuthService interface and localAuth, a demo that keeps accounts on the device (password hashed with SHA-256, session in localStorage). To connect Supabase write supabaseAuth with the same functions (getSession, getAccount, signUp, signIn, signOut, sendReset, listSignups) and change the last line `export const auth = localAuth`. Set `demo: false` in it so the demo notes disappear. src/data/session.tsx is the React context (useAuth). Data is saved per user: repo.load(userId) and repo.save(data, userId), keyed generate.data.<id> locally. The first account on a device adopts older saved data.
+The owner page is src/pages/Admin.tsx. It only lists signups (name, business, type, trade, date, email) and must never load documents. ADMIN_EMAILS in lib/constants.ts decides who is owner in demo mode. With Supabase use a role, and Row Level Security must stop the owner reading the documents table. src/pages/Privacy.tsx is a draft that needs a lawyer.
+Sign up collects the WhatsApp number on purpose: it is the number the send on WhatsApp button uses (stored as profile.phone).
+
 ## What is not built yet (in this order)
-1. Supabase: real email accounts, a supabaseRepo, row level security so each user sees only their own documents, a profiles table and a documents table (store each document as jsonb plus id, user_id, type, status, updated_at).
-2. Owner admin page for Coco: list of signups showing name, business name, business type, trade, signup date and email. The admin must NOT be able to read anyone's documents. Add a privacy page that says so (Nigeria data protection law applies).
+1. Supabase: connect supabaseAuth (see above), a supabaseRepo, row level security so each user sees only their own documents, a profiles table and a documents table (store each document as jsonb plus id, user_id, type, status, updated_at).
+2. Owner admin page: built as a demo, needs Supabase so it lists every signup.
 3. Landing page images. The landing page has no photo slots now, Coco asked for none. If he sends pictures later, add them where he says.
 4. Client signing links for contracts, and a pay page.
-5. Username and email changes, password reset.
+5. Email change and the real password reset screen after the emailed link (the request screen exists).
 6. Small polish: contract template cards currently show raw {{placeholders}} in their preview text, resolve them.
 
 ## Testing
