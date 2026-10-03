@@ -63,42 +63,11 @@ html{scroll-behavior:smooth}
 .lp-ticks{list-style:none;display:flex;flex-wrap:wrap;gap:8px 24px;margin:26px 0 0;padding:0;font-size:14px;color:#CFC8B6}
 .lp-ticks li::before{content:'';display:inline-block;width:7px;height:7px;background:var(--br);margin-right:9px;transform:rotate(45deg) translateY(-1px)}
 
-/* the receipt that writes itself */
-.lp-doc{position:relative;justify-self:center;width:min(100%,400px);background:var(--sf);color:var(--ink);padding:22px 24px 18px;box-shadow:0 1px 0 rgba(20,37,31,.15),0 26px 44px -18px rgba(10,30,22,.65);transform:rotate(-1.6deg);border-top:5px solid var(--em);font-family:var(--hd)}
-.lp-doc .lp-label{color:var(--brass-ink)}
-.lp-doc.wait{opacity:0}
-.lp-doc.play{animation:lp-up 1s cubic-bezier(.2,.7,.2,1) .15s both}
-@keyframes lp-up{from{opacity:0;transform:translateY(40px) rotate(-5deg)}to{opacity:1;transform:rotate(-1.6deg)}}
-.lp-doc-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1.5px solid var(--br);padding-bottom:10px}
-.lp-doc-name{font-size:19px;font-weight:500;white-space:nowrap}
-.lp-doc-to{margin:14px 0 6px;display:grid;gap:3px}
 .lp-type{font-weight:500;font-size:17px}
-.lp-doc-lines{list-style:none;margin:0;padding:0;font-family:var(--ui);font-size:14px}
-.lp-doc-lines li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--ln)}
-.lp-doc-total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:12px}
-.lp-doc-total .num{font-size:30px;font-weight:500;color:var(--em)}
-.lp-doc-sign{position:relative;height:66px;margin-top:6px}
-.lp-doc-sign svg{position:absolute;left:0;bottom:0;display:block}
-.lp-doc-sign path,.lp-contract path{fill:none;stroke:#14251F;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
-.lp-doc-stamp{position:absolute;right:2px;bottom:6px;border:3px solid var(--stamp);color:var(--stamp);font:700 20px/1 var(--ui);letter-spacing:.2em;text-transform:uppercase;padding:7px 10px 7px 14px;border-radius:3px;transform:rotate(-10deg);opacity:.92;mix-blend-mode:multiply}
-.lp-doc.play .lp-doc-head .lp-doc-name{animation:lp-type 1s steps(16,end) .5s both}
-.lp-doc.play .lp-doc-to{animation:lp-fade .7s ease 1s both}
-.lp-doc.play .lp-doc-lines li{animation:lp-line .6s ease var(--d) both}
-.lp-doc.play .lp-doc-total{animation:lp-fade .6s ease 1.8s both}
-.lp-doc.play .s1{animation:lp-draw 1s ease-in-out 2.8s both}
-.lp-doc.play .s2{animation:lp-draw 1.1s ease-in-out 3.7s both}
-.lp-doc.play .s3{animation:lp-draw .5s ease-in-out 4.7s both}
-.lp-doc.play .lp-doc-stamp{animation:lp-stamp .45s cubic-bezier(.2,.9,.3,1.25) 5.4s both}
-@keyframes lp-type{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
-@keyframes lp-fade{from{opacity:0}to{opacity:1}}
-@keyframes lp-line{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
-@keyframes lp-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-@keyframes lp-stamp{from{opacity:0;transform:rotate(-10deg) scale(2.1)}to{opacity:.92;transform:rotate(-10deg) scale(1)}}
 
 /* section heads sit left, content sits beside them on wide screens */
 .lp-sec-head{max-width:30em}
 .lp-how,.lp-features,.lp-who{display:grid;gap:28px}
-.lp-how-text{min-width:0}
 
 /* how it works */
 .lp-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
@@ -114,32 +83,10 @@ html{scroll-behavior:smooth}
 .lp-feats dd{margin:6px 0 0;font-size:16px;line-height:1.5;color:#3A453F;max-width:30em}
 
 /* contracts */
-.lp-contracts{display:grid;gap:36px;align-items:center}
-.lp-contract{background:#fff;color:var(--ink);padding:24px 26px 22px;box-shadow:0 1px 0 rgba(20,37,31,.15),0 26px 44px -26px rgba(20,37,31,.6);border-top:5px solid var(--em);transform:rotate(1.2deg);max-width:460px;width:100%;justify-self:center}
-.lp-contract h3{font:500 26px/1.1 var(--hd);margin:8px 0 12px;color:var(--em)}
-.lp-contract ol{margin:0;padding-left:20px;font-size:14px;line-height:1.55;display:grid;gap:8px;color:#2F3A35}
-.lp-contract .lp-label{color:var(--brass-ink)}
-.lp-sig-row{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
-.lp-sig-row>div{display:flex;flex-direction:column;justify-content:flex-end;min-height:62px;border-bottom:1px solid var(--ink);padding-bottom:4px;position:relative}
-.lp-sig-row svg{display:block}
-.lp-sig-row i{flex:1}
-.lp-sig-row span{font-size:12px;color:var(--mu);margin-top:4px;position:absolute;top:100%;left:0;padding-top:4px}
-.lp-sig-row{padding-bottom:20px}
-.lp-contract:not(.signed) path{stroke-dashoffset:1}
-.lp-contract.signed .s1{animation:lp-draw 1s ease-in-out .3s both}
-.lp-contract.signed .s2{animation:lp-draw 1.1s ease-in-out 1.2s both}
 
 /* who it is for: an index of trades with a first invoice line each */
-.lp-index{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
-.lp-index li{display:flex;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid var(--ln)}
-.lp-trade{font:500 clamp(20px,2.2vw,30px)/1.1 var(--hd);flex:none}
-.lp-leader{flex:1;min-width:12px;border-bottom:2px dotted var(--br);transform:translateY(-4px)}
-.lp-eg{font-size:15px;color:#3A453F;text-align:right}
-.lp-eg b{font-weight:600;color:var(--em);margin-left:6px}
 
 /* try it */
-.lp-try-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;margin-top:26px}
-.lp-try-paper,.lp-try-fields{min-width:0}
 .lp-seg{margin:0 0 22px;border-radius:2px;border-color:var(--ink)}
 .lp-seg button{min-height:42px;font-family:var(--ui)}
 .lp-field{display:block;margin-bottom:18px}
@@ -154,15 +101,7 @@ html{scroll-behavior:smooth}
 .lp-sheet{margin:0;border:0;background:transparent;box-shadow:0 1px 0 rgba(20,37,31,.15),0 24px 50px -28px rgba(20,37,31,.55)}
 .lp-sheet .paper{min-height:600px}
 
-/* closing: a letter with a signature line */
-.lp-end{background:var(--em);border-top:4px solid var(--br);padding:clamp(40px,6vw,80px) var(--gx)}
-.lp-letter{background:var(--sf);max-width:760px;margin:0 auto;padding:clamp(26px,4vw,48px);box-shadow:0 28px 50px -24px rgba(0,0,0,.6);transform:rotate(-.8deg);border-top:5px solid var(--br)}
-.lp-letter .lp-h2{margin-top:0}
 .lp-sub{margin:12px 0 26px;font-size:18px;color:#3A453F}
-.lp-letter-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px 28px}
-.lp-signline{flex:1;min-width:140px;border-bottom:1.5px solid var(--ink);height:48px;position:relative}
-.lp-signline::before{content:'×';position:absolute;left:0;bottom:2px;font:400 22px var(--hd);color:var(--brass-ink)}
-.lp-signline span{position:absolute;top:100%;left:0;padding-top:4px;font-size:12px;color:var(--mu)}
 .lp-price{margin:34px 0 0;font-size:14px;line-height:1.5;color:var(--mu);border-top:1px solid var(--ln);padding-top:14px}
 
 .lp-foot{padding:30px var(--gx) 44px;max-width:1280px;margin:0 auto;display:grid;gap:12px}
@@ -174,36 +113,21 @@ html{scroll-behavior:smooth}
   .lp-links{display:flex}
   .lp-hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;column-gap:3vw;padding-inline:max(var(--gx),calc((100% - 1280px)/2))}
   .lp-hero>*{max-width:none;margin:0}
-  .lp-how,.lp-features,.lp-who{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);column-gap:6vw;align-items:start}
-  .lp-how{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center}
   .lp-feats{grid-template-columns:1fr 1fr;column-gap:40px;border-top:0}
   .lp-feats>div{border-top:1px solid var(--ink)}
   .lp-feats>div:nth-child(even){transform:translateY(34px)}
-  .lp-features{padding-bottom:34px}
-  .lp-contracts{grid-template-columns:minmax(0,1fr) minmax(0,.9fr);column-gap:6vw}
-  .lp-try-grid{grid-template-columns:320px minmax(0,640px);gap:48px;justify-content:start;align-items:start}
-  .lp-try-paper{position:sticky;top:20px}
 }
 @media (max-width:420px){
   .lp-link-btn{display:none}
-  .lp-doc{width:100%;padding:18px 18px 14px}
-  .lp-doc-name{font-size:17px}
-  .lp-eg{font-size:14px}
-}
-@media (max-width:560px){
-  .lp-index li{flex-wrap:wrap;gap:2px 12px}
-  .lp-leader{display:none}
-  .lp-eg{text-align:left;width:100%}
 }
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .lp-doc.play,.lp-doc.play *,.lp-contract.signed *{animation:none!important}
   .lp-btn{transition:none}
 }
 
 /* Bodoni gets very thin at display sizes, so small headings use its sturdier optical size */
-.landing h3,.lp-trade,.lp-n,.lp-feats dt,.lp-field input,.lp-field select,.lp-back .lp-type,.lp-doc-name,.lp-doc-total .num{font-variation-settings:'opsz' 14;font-weight:500}
+.landing h3,.lp-n,.lp-feats dt,.lp-field input,.lp-field select{font-variation-settings:'opsz' 14;font-weight:500}
 .landing .lp-h2{font-variation-settings:'opsz' 36}
 
 /* v4: bands with their own surfaces, plaster texture on the green ones */
@@ -221,22 +145,89 @@ html{scroll-behavior:smooth}
 .lp-count{position:absolute;left:47%;top:67.8%;width:7.6cqw;height:3.3cqw;transform:translate(-50%,-50%) rotate(-7deg);background:#F7F1E8;display:flex;align-items:center;justify-content:center;font:600 1.62cqw/1 'Fraunces',Georgia,serif;font-variation-settings:'opsz' 36;color:#0F4D3C;letter-spacing:-.01em;white-space:nowrap}
 
 /* the receipt beside the steps */
-.lp-doc{box-shadow:0 1px 0 rgba(20,37,31,.15),0 26px 44px -22px rgba(20,37,31,.55)}
 
 /* bands: every section sits on its own surface */
 .lp-how{background:var(--bg) var(--grain)}
-.lp-features{background:var(--speck),var(--plaster-dk),#0B3A2D;background-size:260px 260px,420px 420px,auto;color:var(--on);border-top:4px solid var(--br)}
 .lp-features .lp-label{color:var(--brass-lt)}
 .lp-features .lp-h2{color:var(--on)}
 .lp-features .lp-feats{border-top-color:rgba(217,187,130,.5)}
 .lp-features .lp-feats>div{border-color:rgba(217,187,130,.5)}
 .lp-features .lp-feats dt{color:var(--on)}
 .lp-features .lp-feats dd{color:#D5CEBB}
-.lp-contracts{background:#FFFDF8;border-top:1px solid var(--ln)}
-.lp-who{background:#E6DABB var(--grain);border-top:1px solid #CDBF9C;border-bottom:1px solid #CDBF9C}
-.lp-who .lp-index{border-top-color:var(--ink)}
-.lp-who .lp-index li{border-bottom-color:#C9BA95}
-.lp-who .lp-eg{color:#3A3426}
-.lp-try{background:var(--sf);background-image:repeating-linear-gradient(to bottom,transparent 0 39px,rgba(176,141,87,.16) 39px 40px)}
 .lp-end{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto}
+
+/* v5: green and ivory take turns, so every section edge is easy to see */
+.lp-sheet .paper{min-height:0}
+.lp-how,.lp-contracts,.lp-try{background:var(--bg) var(--grain)}
+.lp-contracts{display:grid;gap:36px}
+.lp-how-text{min-width:0}
 .lp-how-text .lp-steps{margin-top:26px}
+.lp-how-paper,.lp-contract-paper{min-width:0;width:100%;max-width:480px;justify-self:center}
+
+.lp-features,.lp-who{background:var(--speck),var(--plaster-dk),#0B3A2D;background-size:260px 260px,420px 420px,auto;color:var(--on);border-top:4px solid var(--br)}
+.lp-who{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto;display:block}
+.lp-features .lp-label,.lp-who .lp-label{color:var(--brass-lt)}
+.lp-features .lp-h2,.lp-who .lp-h2{color:var(--on)}
+.lp-who .lp-h2 em{font-style:italic;color:var(--brass-lt);font-weight:400}
+.lp-features .lp-feats{border-top-color:rgba(217,187,130,.5)}
+.lp-features .lp-feats>div{border-color:rgba(217,187,130,.45)}
+.lp-features .lp-feats dt{color:var(--on)}
+.lp-features .lp-feats dd{color:#D5CEBB}
+.lp-feats>div:nth-child(even){transform:none}
+
+/* who is it for: four frames with a stack of real documents in each */
+.lp-frames{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.lp-frame{position:relative;background:#F6F1E7 var(--grain);color:var(--ink);border-radius:22px;padding:22px 22px 0;box-shadow:0 24px 40px -24px rgba(0,0,0,.65);display:flex;flex-direction:column;min-height:420px;overflow:visible}
+.lp-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#EADFC4;color:var(--brass-ink);margin-bottom:16px}
+.lp-frame h3{font-size:22px;line-height:1.1;font-variation-settings:'opsz' 14}
+.lp-frame p{margin:8px 0 0;font-size:15px;line-height:1.45;color:#3A453F;max-width:15em}
+.lp-stack{position:relative;margin-top:auto;height:176px}
+.lp-mini{position:absolute;width:114px;height:161px;overflow:hidden;background:#fff;box-shadow:0 8px 18px -8px rgba(20,37,31,.55);bottom:0}
+.lp-mini-in{width:760px;transform:scale(.15);transform-origin:top left;pointer-events:none}
+.lp-mini.a{left:0;transform:rotate(-5deg);transform-origin:bottom left}
+.lp-mini.b{left:23%;z-index:2;height:171px;bottom:4px}
+.lp-mini.c{left:49%;transform:rotate(4deg);transform-origin:bottom left;width:106px;height:152px}
+.lp-pencil{display:none;position:absolute;right:-136px;bottom:-6px;height:104%;width:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 14px 14px rgba(0,0,0,.3))}
+
+/* try it: compact, with the paper beside the controls */
+.lp-try-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;max-width:1100px;margin:0 auto}
+.lp-try-fields,.lp-try-paper{min-width:0}
+.lp-try .lp-h2{font-size:clamp(28px,3.6vw,44px);max-width:14em}
+.lp-seg{margin:20px 0 18px;max-width:300px}
+.lp-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+.lp-field.wide{grid-column:1/-1}
+.lp-field{margin-bottom:14px}
+.lp-looks{margin-top:14px}
+.lp-looks>div{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+@media (max-width:619px){.lp-looks>div{grid-template-columns:1fr}}
+.lp-try-paper{max-width:420px;width:100%;justify-self:center}
+
+/* closing: a notepad with spiral binding */
+.lp-end{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto;border-top:4px solid var(--br);padding:clamp(56px,7vw,96px) var(--gx) clamp(40px,6vw,72px)}
+.lp-pad{position:relative;max-width:720px;margin:0 auto;padding:clamp(44px,5vw,64px) clamp(24px,4vw,52px) clamp(26px,4vw,40px);background:#FBF8F1 var(--grain);background-image:repeating-linear-gradient(to bottom,transparent 0 35px,rgba(176,141,87,.28) 35px 36px),var(--grain);background-position:0 10px,0 0;box-shadow:0 30px 50px -24px rgba(0,0,0,.65);transform:rotate(-.6deg);border-radius:4px 4px 8px 8px}
+.lp-pad::before{content:'';position:absolute;left:18px;right:18px;top:12px;height:20px;background:radial-gradient(circle 6px at 14px 10px,#0B3A2D 0 5.5px,transparent 6px) 0 0/28px 20px repeat-x}
+.lp-pad::after{content:'';position:absolute;left:18px;right:18px;top:-14px;height:46px;background:linear-gradient(90deg,transparent 9px,#C9C2AE 9px,#8E8873 13px,#D8D2BF 17px,transparent 17px) 0 0/28px 46px repeat-x;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));-webkit-mask:linear-gradient(#000 0 0);pointer-events:none}
+.lp-pad .lp-h2{margin-top:0}
+.lp-sub{margin:12px 0 24px;font-size:18px;color:#3A453F}
+.lp-price{margin:30px 0 0;font-size:14px;line-height:1.5;color:var(--mu);border-top:1px solid var(--ln);padding-top:14px}
+
+@media (min-width:620px){
+  .lp-frames{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (min-width:900px){
+  .lp-how,.lp-contracts{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);column-gap:6vw;align-items:center}
+  .lp-contracts{grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}
+  .lp-features{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);column-gap:5vw;align-items:start}
+  .lp-feats{grid-template-columns:1fr 1fr;column-gap:36px;border-top:0}
+  .lp-feats>div{border-top:1px solid rgba(217,187,130,.5);border-bottom:0}
+  .lp-frames{gap:16px;margin-top:40px}
+  .lp-frame{min-height:400px}
+  .lp-frames{padding-right:150px;grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lp-pencil{display:block}
+  .lp-try-grid{grid-template-columns:minmax(0,1fr) 400px;gap:56px;align-items:start}
+  .lp-try-paper{position:sticky;top:20px;margin:0}
+}
+@media (max-width:619px){
+  .lp-fields{grid-template-columns:1fr}
+  .lp-frame{min-height:0;padding-bottom:0}
+}

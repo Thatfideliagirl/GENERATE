@@ -2,16 +2,15 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BRAND, TRADES, TRADE_ITEMS } from '../lib/constants'
 import type { Style } from '../lib/types'
-import { sampleDocAndProfile } from '../lib/factory'
-import { money } from '../lib/format'
 import { LookControls } from '../components/LookControls'
 import { PaperPreview } from '../components/PaperPreview'
 import { HeroArt } from '../components/landing/HeroArt'
-import { ReceiptDoc } from '../components/landing/ReceiptDoc'
-import { SignSheet } from '../components/landing/SignSheet'
+import { MiniSheet } from '../components/landing/MiniSheet'
+import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
+import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
 import { useStore } from '../data/store'
 
-/** Sample prices for the live demo and the trades index, matched to the first two starter items of each trade. */
+/** Sample prices for the live demo, matched to the first two starter items of each trade. */
 const PRICES: Record<string, [number, number]> = {
   hair: [60000, 25000],
   food: [45000, 30000],
@@ -25,16 +24,32 @@ const PRICES: Record<string, [number, number]> = {
 const STEPS = [
   { t: 'Set up once', d: 'Add your logo, your business details and your signature. You never type them again.' },
   { t: 'Fill in the job', d: 'Pick an invoice, receipt or contract. Add your client and what you did. The adding up is done for you.' },
-  { t: 'Send it', d: 'Download the PDF or send it straight on WhatsApp.' },
+  { t: 'Send it', d: 'Download the PDF, or open WhatsApp to your client with the message already written.' },
 ]
 
 const FEATURES = [
-  { t: 'Part payments', d: 'Take a deposit now and the balance later. What is left updates by itself.' },
-  { t: 'WhatsApp reminders', d: 'Friendly, firm or final. Pick a tone and send it.' },
-  { t: 'Contracts with your signature', d: 'Three starter templates. Draw, upload or type your signature.' },
+  { t: 'Invoices, receipts and contracts', d: 'Three kinds of document in one place. Start a contract from a template and change any line.' },
+  { t: 'Your name on everything', d: 'Your logo, details and signature, set up once. Six layouts, six fonts and any colour you like.' },
+  { t: 'Part payments', d: 'Take a deposit now and the balance later. The balance on the invoice updates by itself.' },
+  { t: 'A dashboard that keeps count', d: 'See what is waiting to be paid, what is part paid, what came in and what is overdue.' },
+  { t: 'Send on WhatsApp', d: 'One tap opens WhatsApp to your client with the message ready. Friendly, firm and final reminders too.' },
   { t: 'Any currency', d: 'Naira, dollar, pound or euro on every document.' },
-  { t: 'A dashboard that keeps count', d: 'What is waiting to be paid, what came in and what is overdue.' },
-  { t: 'Made for your trade', d: 'Quick starter items for hair, food, design, photography, fashion and consulting.' },
+  { t: 'A clean PDF', d: 'One tidy page you can save, print or send anywhere.' },
+  { t: 'Made for your trade', d: 'Starter items for hair, food, design, photography, fashion and consulting.' },
+]
+
+const STYLES: Record<string, Style> = {
+  free: { layout: 'minimal', font: 'editorial', accent: 'emerald', text: '#14251F', paper: 'white' },
+  shop: { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' },
+  growing: { layout: 'bold', font: 'elegant', accent: 'navy', text: '#1F3A5F', paper: 'ivory' },
+  anyone: { layout: 'modern', font: 'serif', accent: 'burgundy', text: '#2B2B2B', paper: 'white' },
+}
+
+const WHO = [
+  { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client.' },
+  { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place.' },
+  { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out.' },
+  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you send an invoice, receipt or contract, Generate is for you.' },
 ]
 
 export default function Landing() {
@@ -51,24 +66,19 @@ export default function Landing() {
   const [kind, setKind] = useState<'invoice' | 'receipt'>('invoice')
 
   const sample = useMemo(() => {
-    const s = sampleDocAndProfile(look)
+    const make = kind === 'receipt' ? receiptSample : invoiceSample
+    const s = make(look, biz.trim() || 'Your brand', client.trim() || 'Your client')
     const names = TRADE_ITEMS[trade] ?? ['Logo design', 'Brand guide']
-    const [a, b] = PRICES[trade] ?? PRICES.other
+    const [x, y] = PRICES[trade] ?? PRICES.other
     s.doc.items = [
-      { d: names[0], q: '1', p: String(a) },
-      { d: names[1], q: '1', p: String(b) },
+      { d: names[0], q: '1', p: String(x) },
+      { d: names[1], q: '1', p: String(y) },
     ]
-    s.profile.name = biz.trim() || 'Your brand'
-    s.profile.bank.name = biz.trim() || 'Your brand'
-    s.doc.client.name = client.trim() || 'Your client'
-    s.doc.type = kind
-    if (kind === 'receipt') {
-      s.doc.status = 'paid'
-      s.doc.dueDate = ''
-      s.doc.notes = 'Thank you for your payment.'
-    }
     return s
   }, [look, biz, client, trade, kind])
+
+  const receipt = useMemo(() => receiptSample(STYLES.shop), [])
+  const contract = useMemo(() => contractSample(STYLES.shop), [])
 
   return (
     <div className="landing">
@@ -121,32 +131,34 @@ export default function Landing() {
 
         <section className="lp-sec lp-how" id="how" aria-labelledby="how-h">
           <div className="lp-how-text">
-          <div className="lp-sec-head">
-            <p className="lp-label">How it works</p>
-            <h2 className="lp-h2" id="how-h">
-              From setup to sent in three steps.
-            </h2>
+            <div className="lp-sec-head">
+              <p className="lp-label">How it works</p>
+              <h2 className="lp-h2" id="how-h">
+                From setup to sent in three steps.
+              </h2>
+            </div>
+            <ol className="lp-steps">
+              {STEPS.map((st, i) => (
+                <li key={st.t}>
+                  <span className="lp-n num">0{i + 1}</span>
+                  <div>
+                    <h3>{st.t}</h3>
+                    <p>{st.d}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
-          <ol className="lp-steps">
-            {STEPS.map((st, i) => (
-              <li key={st.t}>
-                <span className="lp-n num">0{i + 1}</span>
-                <div>
-                  <h3>{st.t}</h3>
-                  <p>{st.d}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <div className="lp-how-paper">
+            <PaperPreview doc={receipt.doc} profile={receipt.profile} className="lp-sheet" />
           </div>
-          <ReceiptDoc />
         </section>
 
         <section className="lp-sec lp-features" id="features" aria-labelledby="feat-h">
           <div className="lp-sec-head">
             <p className="lp-label">Features</p>
             <h2 className="lp-h2" id="feat-h">
-              Built for how you get paid.
+              Everything you need to get paid.
             </h2>
           </div>
           <dl className="lp-feats">
@@ -171,41 +183,43 @@ export default function Landing() {
             </p>
             <p className="lp-small">The templates are starting points, not legal advice. Have a lawyer read a contract before you rely on it.</p>
           </div>
-          <SignSheet />
+          <div className="lp-contract-paper">
+            <PaperPreview doc={contract.doc} profile={contract.profile} className="lp-sheet" />
+          </div>
         </section>
 
         <section className="lp-sec lp-who" id="who" aria-labelledby="who-h">
-          <div className="lp-sec-head">
-            <p className="lp-label">Who it is for</p>
-            <h2 className="lp-h2" id="who-h">
-              If you invoice people, this is for you.
-            </h2>
-            <p className="lp-body">Freelancers, shop owners and growing brands. Here is what a first invoice looks like in each trade.</p>
-          </div>
-          <ul className="lp-index">
-            {Object.entries(TRADES)
-              .filter(([k]) => k !== 'other')
-              .map(([k, name]) => (
-                <li key={k}>
-                  <span className="lp-trade">{name}</span>
-                  <span className="lp-leader" aria-hidden="true" />
-                  <span className="lp-eg">
-                    {TRADE_ITEMS[k][0]} <b className="num">{money(PRICES[k][0], '₦')}</b>
-                  </span>
+          <p className="lp-label">Who is it for</p>
+          <h2 className="lp-h2" id="who-h">
+            Made for <em>every business.</em>
+          </h2>
+          <ul className="lp-frames">
+            {WHO.map((w) => {
+              const style = STYLES[w.k]
+              return (
+                <li key={w.k} className={'lp-frame ' + w.k}>
+                  <span className="lp-ico">{w.icon}</span>
+                  <h3>{w.t}</h3>
+                  <p>{w.d}</p>
+                  <div className="lp-stack" aria-hidden="true">
+                    <MiniSheet sample={invoiceSample(style)} className="a" />
+                    <MiniSheet sample={contractSample(style)} className="b" />
+                    <MiniSheet sample={receiptSample(style)} className="c" />
+                  </div>
+                  {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
                 </li>
-              ))}
+              )
+            })}
           </ul>
         </section>
 
         <section className="lp-sec lp-try" id="try" aria-labelledby="try-h">
-          <div className="lp-sec-head">
-            <p className="lp-label">Try it now</p>
-            <h2 className="lp-h2" id="try-h">
-              Type your name. Watch the document change.
-            </h2>
-          </div>
           <div className="lp-try-grid">
             <div className="lp-try-fields">
+              <p className="lp-label">Try it now</p>
+              <h2 className="lp-h2" id="try-h">
+                Type your name. Watch the document change.
+              </h2>
               <div className="seg lp-seg" role="group" aria-label="Document type">
                 <button type="button" className={kind === 'invoice' ? 'on' : ''} onClick={() => setKind('invoice')}>
                   Invoice
@@ -214,24 +228,26 @@ export default function Landing() {
                   Receipt
                 </button>
               </div>
-              <label className="lp-field">
-                <span>Your business name</span>
-                <input value={biz} onChange={(e) => setBiz(e.target.value)} placeholder="Amaka Obi Studio" maxLength={40} autoComplete="off" />
-              </label>
-              <label className="lp-field">
-                <span>Your client</span>
-                <input value={client} onChange={(e) => setClient(e.target.value)} placeholder="Tunde Bello" maxLength={40} autoComplete="off" />
-              </label>
-              <label className="lp-field">
-                <span>What you do</span>
-                <select value={trade} onChange={(e) => setTrade(e.target.value)}>
-                  {Object.entries(TRADES).map(([k, v]) => (
-                    <option key={k} value={k}>
-                      {v}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div className="lp-fields">
+                <label className="lp-field">
+                  <span>Your business name</span>
+                  <input value={biz} onChange={(e) => setBiz(e.target.value)} placeholder="Amaka Obi Studio" maxLength={40} autoComplete="off" />
+                </label>
+                <label className="lp-field">
+                  <span>Your client</span>
+                  <input value={client} onChange={(e) => setClient(e.target.value)} placeholder="Tunde Bello" maxLength={40} autoComplete="off" />
+                </label>
+                <label className="lp-field wide">
+                  <span>What you do</span>
+                  <select value={trade} onChange={(e) => setTrade(e.target.value)}>
+                    {Object.entries(TRADES).map(([k, v]) => (
+                      <option key={k} value={k}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
               <div className="lp-looks">
                 <p className="lp-label">Change the look</p>
                 <LookControls style={look} onChange={(patch) => setLook((st) => ({ ...st, ...patch }))} />
@@ -244,19 +260,14 @@ export default function Landing() {
         </section>
 
         <section className="lp-end" id="pricing" aria-labelledby="end">
-          <div className="lp-letter">
+          <div className="lp-pad">
             <h2 className="lp-h2" id="end">
               Your next client is waiting on a document.
             </h2>
             <p className="lp-sub">Setup takes less than two minutes.</p>
-            <div className="lp-letter-row">
-              <button className="lp-btn brass" onClick={go}>
-                {cta}
-              </button>
-              <div className="lp-signline" aria-hidden="true">
-                <span>Your name</span>
-              </div>
-            </div>
+            <button className="lp-btn brass" onClick={go}>
+              {cta}
+            </button>
             <p className="lp-price">Pricing: Generate is free to use while we build it. Paid plans will be listed here when they are ready.</p>
           </div>
         </section>
