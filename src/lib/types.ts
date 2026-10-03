@@ -69,7 +69,11 @@ export interface Profile {
   logo: string
   signature: string
   bizType: string
+  /** Filled in when bizType is other. */
+  bizOther?: string
   trade: string
+  /** Filled in when trade is other. */
+  tradeOther?: string
   style: Style
 }
 

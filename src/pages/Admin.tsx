@@ -6,7 +6,11 @@ import { auth } from '../data/auth'
 import type { Account } from '../data/auth'
 import { useAuth } from '../data/session'
 
+const KNOWN_TYPES = BUSINESS_TYPES.filter(([k]) => k !== 'other').map(([k]) => k)
+const KNOWN_TRADES = Object.keys(TRADES).filter((k) => k !== 'other')
 const typeName = (k: string) => BUSINESS_TYPES.find(([x]) => x === k)?.[1] ?? k
+const isType = (k: string, want: string) => (want === 'other' ? !KNOWN_TYPES.includes(k) : k === want)
+const isTrade = (k: string, want: string) => (want === 'other' ? !KNOWN_TRADES.includes(k) : k === want)
 const tradeName = (k: string) => TRADES[k] ?? k
 const day = (t: number) => new Date(t).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 const WEEK = 7 * 24 * 3600 * 1000
@@ -34,8 +38,8 @@ export default function Admin() {
     const n = q.trim().toLowerCase()
     return (rows ?? []).filter(
       (r) =>
-        (!type || r.bizType === type) &&
-        (!trade || r.trade === trade) &&
+        (!type || isType(r.bizType, type)) &&
+        (!trade || isTrade(r.trade, trade)) &&
         (!n || [r.name, r.business, r.email].some((t) => t.toLowerCase().includes(n))),
     )
   }, [rows, q, type, trade])
@@ -43,7 +47,7 @@ export default function Admin() {
   const stats = useMemo(() => {
     const all = rows ?? []
     const now = Date.now()
-    const byType = Object.fromEntries(BUSINESS_TYPES.map(([k]) => [k, all.filter((r) => r.bizType === k).length]))
+    const byType = Object.fromEntries(BUSINESS_TYPES.map(([k]) => [k, all.filter((r) => isType(r.bizType, k)).length]))
     return { total: all.length, week: all.filter((r) => now - r.createdAt < WEEK).length, byType }
   }, [rows])
 

@@ -54,6 +54,7 @@ export const BUSINESS_TYPES: [string, string][] = [
   ['solo', 'Freelancer or solo'],
   ['small', 'Small business'],
   ['large', 'Bigger brand with a team'],
+  ['other', 'Something else'],
 ]
 
 export const TRADES: Record<string, string> = {

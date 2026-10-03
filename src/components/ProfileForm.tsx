@@ -11,10 +11,12 @@ import { useToast } from './Toast'
 interface Props {
   profile: Profile
   onChange: (patch: Partial<Profile>) => void
+  /** The default look lives on the profile page, so sign up leaves it out. */
+  showLook?: boolean
 }
 
 /** The business details form, shared by the first time setup and the profile page. */
-export function ProfileForm({ profile: p, onChange }: Props) {
+export function ProfileForm({ profile: p, onChange, showLook = true }: Props) {
   const toast = useToast()
   const [modal, setModal] = useState<'draw' | 'type' | null>(null)
 
@@ -43,7 +45,13 @@ export function ProfileForm({ profile: p, onChange }: Props) {
 
       <Section title="About you">
         <SelectField label="Which describes you best" value={p.bizType} onChange={(v) => onChange({ bizType: v })} options={BUSINESS_TYPES} />
+        {p.bizType === 'other' && (
+          <Field label="Tell us what describes you" value={p.bizOther ?? ''} onChange={(v) => onChange({ bizOther: v })} placeholder="For example, a church or a school" />
+        )}
         <SelectField label="What do you sell or do" value={p.trade} onChange={(v) => onChange({ trade: v })} options={Object.entries(TRADES)} />
+        {p.trade === 'other' && (
+          <Field label="Tell us what you sell or do" value={p.tradeOther ?? ''} onChange={(v) => onChange({ tradeOther: v })} placeholder="For example, event planning" />
+        )}
       </Section>
 
       <Section title="Logo">
@@ -107,9 +115,11 @@ export function ProfileForm({ profile: p, onChange }: Props) {
         </label>
       </Section>
 
-      <Section title="Default look">
-        <LookControls style={p.style} onChange={(patch) => onChange({ style: { ...p.style, ...patch } })} />
-      </Section>
+      {showLook && (
+        <Section title="Default look">
+          <LookControls style={p.style} onChange={(patch) => onChange({ style: { ...p.style, ...patch } })} />
+        </Section>
+      )}
 
       {modal === 'draw' && (
         <DrawSignatureModal

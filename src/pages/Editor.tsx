@@ -254,7 +254,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
                 <Section title={doc.type === 'receipt' ? 'What was paid for' : 'Items'}>
                   {quickItems && (
                     <div className="lk">
-                      <span className="mu small">Quick add for {TRADES[profile.trade]}</span>
+                      <span className="mu small">Quick add for {profile.trade === 'other' && profile.tradeOther ? profile.tradeOther : TRADES[profile.trade]}</span>
                       <div className="chips">
                         {quickItems.map((name) => (
                           <button key={name} type="button" className="chip" onClick={() => quickAdd(name)}>

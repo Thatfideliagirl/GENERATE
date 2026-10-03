@@ -1,15 +1,15 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { AuthShell, AuthField } from '../components/AuthShell'
-import { BUSINESS_TYPES, TRADES } from '../lib/constants'
+import { ProfileForm } from '../components/ProfileForm'
+import type { Profile } from '../lib/types'
 import { auth, AuthError, isEmail, isPhone } from '../data/auth'
 import { useAuth } from '../data/session'
 import { useStore } from '../data/store'
 import { repo } from '../data/repo'
 import { defaultProfile, emptyData } from '../lib/factory'
 
-type Errors = Record<string, string>
 
 function useAlreadyIn() {
   const { session } = useAuth()
@@ -21,128 +21,95 @@ export function SignUp() {
   const nav = useNavigate()
   const { signUp } = useAuth()
   const goto = useAlreadyIn()
-  const [v, setV] = useState({ name: '', business: '', email: '', whatsapp: '', bizType: 'solo', trade: 'other', password: '' })
-  const [errs, setErrs] = useState<Errors>({})
+  const [profile, setProfile] = useState<Profile>(defaultProfile())
+  const [password, setPassword] = useState('')
+  const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
   const [formErr, setFormErr] = useState('')
-  const [show, setShow] = useState(false)
+  const errRef = useRef<HTMLParagraphElement>(null)
   if (goto && !busy) return <Navigate to={goto} replace />
 
-  const set = (k: keyof typeof v) => (e: { target: { value: string } }) => {
-    setV((x) => ({ ...x, [k]: e.target.value }))
-    setErrs((x) => ({ ...x, [k]: '' }))
+  const change = (patch: Partial<Profile>) => {
+    setProfile((p) => ({ ...p, ...patch }))
     setFormErr('')
+  }
+
+  const fail = (msg: string) => {
+    setFormErr(msg)
+    setBusy(false)
+    setTimeout(() => errRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 30)
   }
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
-    const bad: Errors = {}
-    if (!v.name.trim()) bad.name = 'Enter your name.'
-    if (!v.business.trim()) bad.business = 'Enter your business name.'
-    if (!isEmail(v.email)) bad.email = 'Enter a valid email, like name@example.com.'
-    if (!isPhone(v.whatsapp)) bad.whatsapp = 'Enter your WhatsApp number, for example 0803 123 4567.'
-    if (v.password.length < 8) bad.password = 'Use at least 8 characters.'
-    setErrs(bad)
-    if (Object.keys(bad).length) return
+    const p = { ...profile, name: profile.name.trim(), owner: profile.owner.trim(), email: profile.email.trim(), phone: profile.phone.trim() }
+    if (!p.name) return fail('Enter your business name.')
+    if (!p.owner) return fail('Enter your name.')
+    if (!isEmail(p.email)) return fail('Enter a valid email, like name@example.com.')
+    if (!isPhone(p.phone)) return fail('Enter your phone or WhatsApp number, for example 0803 123 4567.')
+    if (p.bizType === 'other' && !(p.bizOther ?? '').trim()) return fail('Tell us what describes you, or pick one from the list.')
+    if (p.trade === 'other' && !(p.tradeOther ?? '').trim()) return fail('Tell us what you sell or do, or pick one from the list.')
+    if (password.length < 8) return fail('Choose a password of at least 8 characters.')
     setBusy(true)
     try {
-      // The details just given become the start of the business profile. Setup adds the logo and signature.
-      await signUp(v, (s) =>
-        repo.save(
-          {
-            ...emptyData(),
-            profile: {
-              ...defaultProfile(),
-              name: v.business.trim(),
-              owner: v.name.trim(),
-              email: v.email.trim(),
-              phone: v.whatsapp.trim(),
-              bizType: v.bizType,
-              trade: v.trade,
-            },
-          },
-          s.userId,
-        ),
+      await signUp(
+        {
+          name: p.owner,
+          business: p.name,
+          email: p.email,
+          whatsapp: p.phone,
+          bizType: p.bizType === 'other' ? (p.bizOther ?? '').trim() : p.bizType,
+          trade: p.trade === 'other' ? (p.tradeOther ?? '').trim() : p.trade,
+          password,
+        },
+        (s) => repo.save({ ...emptyData(), profile: p }, s.userId),
       )
-      nav('/setup', { replace: true })
+      nav('/app', { replace: true })
     } catch (err) {
-      setFormErr(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
-      setBusy(false)
+      fail(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
     }
   }
 
   return (
     <AuthShell
-      title="Create your account"
-      lead="It takes about two minutes. You can add your logo and signature on the next screen."
+      wide
+      title="Set up your business"
+      lead="Add your details once. Every document you make carries your name, your logo and your signature."
       foot={
         <>
           Already have an account? <Link to="/signin">Sign in</Link>
         </>
       }
     >
-      <form className="auth-form" onSubmit={submit} noValidate>
-        <div className="auth-row">
-          <AuthField id="su-name" label="Your name" value={v.name} onChange={set('name')} error={errs.name} autoComplete="name" placeholder="Amaka Obi" />
-          <AuthField id="su-biz" label="Business name" value={v.business} onChange={set('business')} error={errs.business} autoComplete="organization" placeholder="Amaka Obi Studio" />
-        </div>
-        <AuthField id="su-email" label="Email" type="email" value={v.email} onChange={set('email')} error={errs.email} autoComplete="email" inputMode="email" placeholder="you@example.com" />
-        <AuthField
-          id="su-wa"
-          label="WhatsApp number"
-          type="tel"
-          value={v.whatsapp}
-          onChange={set('whatsapp')}
-          error={errs.whatsapp}
-          autoComplete="tel"
-          inputMode="tel"
-          placeholder="0803 123 4567"
-          hint="This is the number the send on WhatsApp button uses."
-        />
-        <div className="auth-row">
-          <div className="auth-f">
-            <label htmlFor="su-type">Which describes you best</label>
-            <select id="su-type" value={v.bizType} onChange={set('bizType')}>
-              {BUSINESS_TYPES.map(([k, n]) => (
-                <option key={k} value={k}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="auth-f">
-            <label htmlFor="su-trade">What you sell or do</label>
-            <select id="su-trade" value={v.trade} onChange={set('trade')}>
-              {Object.entries(TRADES).map(([k, n]) => (
-                <option key={k} value={k}>
-                  {n}
-                </option>
-              ))}
-            </select>
+      <form className="auth-form auth-long" onSubmit={submit} noValidate>
+        <ProfileForm profile={profile} onChange={change} showLook={false} />
+
+        <div className="sec">
+          <h3 className="s">Choose a password</h3>
+          <div className="auth-f pw">
+            <label htmlFor="su-pw">Password</label>
+            <div className="auth-pw">
+              <input id="su-pw" type={show ? 'text' : 'password'} value={password} onChange={(e) => (setPassword(e.target.value), setFormErr(''))} autoComplete="new-password" aria-describedby="su-pw-h" />
+              <button type="button" onClick={() => setShow((x) => !x)} aria-pressed={show}>
+                {show ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            <span className="auth-h" id="su-pw-h">
+              At least 8 characters. You will use it with your email to sign in.
+            </span>
           </div>
         </div>
-        <div className="auth-f pw">
-          <label htmlFor="su-pw">Password</label>
-          <div className="auth-pw">
-            <input id="su-pw" type={show ? 'text' : 'password'} value={v.password} onChange={set('password')} autoComplete="new-password" aria-invalid={!!errs.password} aria-describedby="su-pw-e" />
-            <button type="button" onClick={() => setShow((s) => !s)} aria-pressed={show}>
-              {show ? 'Hide' : 'Show'}
-            </button>
-          </div>
-          <span className={errs.password ? 'auth-e' : 'auth-h'} id="su-pw-e" role={errs.password ? 'alert' : undefined}>
-            {errs.password || 'At least 8 characters.'}
-          </span>
-        </div>
+
         {formErr && (
-          <p className="auth-formerr" role="alert">
+          <p className="auth-formerr" role="alert" ref={errRef}>
             {formErr}
           </p>
         )}
         <button className="lp-btn brass auth-submit" type="submit" disabled={busy}>
-          {busy ? 'Creating your account' : 'Create account'}
+          {busy ? 'Creating your account' : 'Create my account'}
         </button>
         <p className="auth-fine">
-          By creating an account you agree to how we handle your details in the <Link to="/privacy">privacy page</Link>.
+          By creating an account you agree to how we handle your details in the <Link to="/privacy">privacy page</Link>. You can choose your default look later, from your profile.
         </p>
         {auth.demo && <p className="auth-demo">Demo mode: accounts are kept on this device until the online service is connected.</p>}
       </form>

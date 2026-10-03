@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { BRAND } from '../lib/constants'
 
 /** The frame around sign in, sign up and reset: a green wall on one side, paper on the other. */
-export function AuthShell({ title, lead, children, foot }: { title: string; lead: string; children: ReactNode; foot?: ReactNode }) {
+export function AuthShell({ title, lead, children, foot, wide }: { title: string; lead: string; children: ReactNode; foot?: ReactNode; wide?: boolean }) {
   return (
     <div className="auth">
       <aside className="auth-side">
@@ -21,10 +21,9 @@ export function AuthShell({ title, lead, children, foot }: { title: string; lead
             <li>Send on WhatsApp</li>
           </ul>
         </div>
-        <img className="auth-pencil" src="./images/pencil.webp" width={418} height={900} alt="" />
       </aside>
       <main className="auth-main">
-        <div className="auth-card">
+        <div className={'auth-card' + (wide ? ' wide' : '')}>
           <Link to="/" className="auth-back">
             Back to home
           </Link>

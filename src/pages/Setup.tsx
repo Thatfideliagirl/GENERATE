@@ -38,7 +38,7 @@ export default function Setup() {
         </div>
       </section>
       <main className="wrap" style={{ paddingTop: 26 }}>
-        <ProfileForm profile={profile} onChange={change} />
+        <ProfileForm profile={profile} onChange={change} showLook={false} />
         <p className="err" role="alert">
           {error}
         </p>
