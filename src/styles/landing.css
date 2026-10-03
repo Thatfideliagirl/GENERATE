@@ -293,3 +293,7 @@ html{scroll-behavior:smooth}
 }
 @media (max-width:899px){.lp-try-paper{order:-1}}
 @media (max-width:619px){.lp-fields{grid-template-columns:1fr}}
+
+/* cut out pictures stand in the picture space and rise a little above it */
+.lp-pic>img.lp-cut{position:absolute;left:50%;bottom:0;width:auto;height:112%;max-width:92%;object-fit:contain;transform:translateX(-50%);border-radius:0;filter:drop-shadow(0 10px 10px rgba(60,40,10,.28))}
+@media (max-width:899px){.lp-pic>img.lp-cut{height:106%}}
