@@ -35,9 +35,9 @@ const FEATURES = [
 ]
 
 const STEPS = [
-  { t: 'Start with your details', d: 'Add your logo, business information and signature once. We\u2019ll remember them for you.', say: 'Details first. Once is enough.' },
-  { t: 'Make the document', d: 'Choose an invoice, receipt or contract. Add your client and the details of the job.', say: 'Pick a document. The adding up is done.' },
-  { t: 'Send it your way', d: 'Download it as a PDF or send it straight to your client on WhatsApp.', say: 'Tap send. WhatsApp opens, message ready.' },
+  { t: 'Start with your details', d: 'Add your logo, business information and signature once. We\u2019ll remember them for you.' },
+  { t: 'Make the document', d: 'Choose an invoice, receipt or contract. Add your client and the details of the job.' },
+  { t: 'Send it your way', d: 'Download it as a PDF or send it straight to your client on WhatsApp.' },
 ]
 
 const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
