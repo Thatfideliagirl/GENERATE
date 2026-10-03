@@ -454,3 +454,31 @@ html{scroll-behavior:smooth}
 .lp-nav-end{gap:2px}
 @media (max-width:420px){.lp-btn.ghost{padding:10px 14px}.lp-pricing-m{padding:10px 8px}}
 @media (min-width:760px){.lp-drop-in{align-items:start}}
+
+/* v11: wider frames with clear edges, a hover that lifts them, and the pencil kept inside its own section */
+.lp-who{padding-bottom:clamp(96px,9vw,150px)}
+.lp-frames{max-width:1180px;gap:20px}
+.lp-frame{background:#FBF7EC;border:1.5px solid #D9CBA6;box-shadow:0 2px 0 rgba(255,255,255,.8) inset,0 18px 30px -20px rgba(70,50,15,.55),0 2px 4px rgba(70,50,15,.12);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lp-frame.rv.in{transition:opacity .8s ease var(--d,0s),transform .3s cubic-bezier(.2,.8,.3,1.2),box-shadow .3s ease,border-color .3s ease}
+.lp-frame.rv.in:hover,.lp-frame.rv.in:focus-within{transform:translateY(-10px) scale(1.025);border-color:var(--br);box-shadow:0 2px 0 rgba(255,255,255,.8) inset,0 34px 44px -22px rgba(70,50,15,.6),0 4px 8px rgba(70,50,15,.14)}
+.lp-frame.rv.in:active{transform:translateY(-3px) scale(.995);transition-duration:.08s}
+.lp-pic>img.lp-cut{transition:transform .45s cubic-bezier(.2,.8,.3,1.1)}
+.lp-frame:hover .lp-pic>img.lp-cut{transform:scale(1.07)}
+.lp-ico{transition:transform .35s cubic-bezier(.2,.8,.3,1.4),background .3s ease}
+.lp-frame:hover .lp-ico{transform:translateY(-2px) rotate(-6deg) scale(1.08);background:#fff}
+.lp-frame h3{transition:color .25s ease}
+.lp-frame:hover h3{color:#0A3A2C}
+@media (min-width:1320px){
+  .lp-frames{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lp-pencil{bottom:-6px;filter:drop-shadow(0 12px 10px rgba(0,0,0,.3))}
+}
+@media (min-width:620px) and (max-width:1319px){.lp-frames{max-width:860px}}
+@media (prefers-reduced-motion:reduce){.lp-frame.rv.in:hover,.lp-frame.rv.in:focus-within{transform:none}.lp-frame:hover .lp-pic>img.lp-cut,.lp-frame:hover .lp-ico{transform:none}}
+
+/* v12: frames sit exactly in the middle, the pencil stands in the free space to the right */
+.lp-frames{padding-right:0}
+@media (min-width:1400px){.lp-frames{max-width:1060px}}
+@media (min-width:1320px) and (max-width:1399px){
+  .lp-frames{max-width:1060px;margin-top:90px}
+  .lp-pencil{height:290px;top:-103px;right:18px;bottom:auto;clip-path:none;-webkit-mask-image:linear-gradient(#000 0,#000 40%,transparent 50%);mask-image:linear-gradient(#000 0,#000 40%,transparent 50%)}
+}
