@@ -5,7 +5,6 @@ import type { Style } from '../lib/types'
 import { LookControls } from '../components/LookControls'
 import { PaperPreview } from '../components/PaperPreview'
 import { HeroArt } from '../components/landing/HeroArt'
-import { MiniSheet } from '../components/landing/MiniSheet'
 import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
 import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
 import { useStore } from '../data/store'
@@ -38,18 +37,13 @@ const FEATURES = [
   { t: 'Made for your trade', d: 'Starter items for hair, food, design, photography, fashion and consulting.' },
 ]
 
-const STYLES: Record<string, Style> = {
-  free: { layout: 'minimal', font: 'editorial', accent: 'emerald', text: '#14251F', paper: 'white' },
-  shop: { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' },
-  growing: { layout: 'bold', font: 'elegant', accent: 'navy', text: '#1F3A5F', paper: 'ivory' },
-  anyone: { layout: 'modern', font: 'serif', accent: 'burgundy', text: '#2B2B2B', paper: 'white' },
-}
+const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
 
 const WHO = [
-  { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client.' },
-  { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place.' },
-  { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out.' },
-  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you send an invoice, receipt or contract, Generate is for you.' },
+  { k: 'free', n: 1, icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client.' },
+  { k: 'shop', n: 2, icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place.' },
+  { k: 'growing', n: 3, icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out.' },
+  { k: 'anyone', n: 4, icon: <PeopleIcon />, t: 'Anyone', d: 'If you send an invoice, receipt or contract, Generate is for you.' },
 ]
 
 export default function Landing() {
@@ -77,8 +71,8 @@ export default function Landing() {
     return s
   }, [look, biz, client, trade, kind])
 
-  const receipt = useMemo(() => receiptSample(STYLES.shop), [])
-  const contract = useMemo(() => contractSample(STYLES.shop), [])
+  const receipt = useMemo(() => receiptSample(SHOP), [])
+  const contract = useMemo(() => contractSample(SHOP), [])
 
   return (
     <div className="landing">
@@ -171,6 +165,24 @@ export default function Landing() {
           </dl>
         </section>
 
+        <section className="lp-sec lp-who" id="who" aria-labelledby="who-h">
+          <p className="lp-label">Who is it for</p>
+          <h2 className="lp-h2" id="who-h">
+            Made for <em>every business.</em>
+          </h2>
+          <ul className="lp-frames">
+            {WHO.map((w) => (
+              <li key={w.k} className={'lp-frame ' + w.k}>
+                <span className="lp-ico">{w.icon}</span>
+                <h3>{w.t}</h3>
+                <p>{w.d}</p>
+                <img className="lp-stack" src={`./images/who-${w.n}.webp`} width={w.n === 4 ? 340 : 356} height={186} alt="" loading="lazy" />
+                {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="lp-sec lp-contracts" aria-labelledby="sign">
           <div className="lp-sign-text">
             <p className="lp-label">Contracts and signatures</p>
@@ -186,31 +198,6 @@ export default function Landing() {
           <div className="lp-contract-paper">
             <PaperPreview doc={contract.doc} profile={contract.profile} className="lp-sheet" />
           </div>
-        </section>
-
-        <section className="lp-sec lp-who" id="who" aria-labelledby="who-h">
-          <p className="lp-label">Who is it for</p>
-          <h2 className="lp-h2" id="who-h">
-            Made for <em>every business.</em>
-          </h2>
-          <ul className="lp-frames">
-            {WHO.map((w) => {
-              const style = STYLES[w.k]
-              return (
-                <li key={w.k} className={'lp-frame ' + w.k}>
-                  <span className="lp-ico">{w.icon}</span>
-                  <h3>{w.t}</h3>
-                  <p>{w.d}</p>
-                  <div className="lp-stack" aria-hidden="true">
-                    <MiniSheet sample={invoiceSample(style)} className="a" />
-                    <MiniSheet sample={contractSample(style)} className="b" />
-                    <MiniSheet sample={receiptSample(style)} className="c" />
-                  </div>
-                  {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
-                </li>
-              )
-            })}
-          </ul>
         </section>
 
         <section className="lp-sec lp-try" id="try" aria-labelledby="try-h">

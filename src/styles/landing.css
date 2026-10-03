@@ -181,12 +181,7 @@ html{scroll-behavior:smooth}
 .lp-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#EADFC4;color:var(--brass-ink);margin-bottom:16px}
 .lp-frame h3{font-size:22px;line-height:1.1;font-variation-settings:'opsz' 14}
 .lp-frame p{margin:8px 0 0;font-size:15px;line-height:1.45;color:#3A453F;max-width:15em}
-.lp-stack{position:relative;margin-top:auto;height:176px}
-.lp-mini{position:absolute;width:114px;height:161px;overflow:hidden;background:#fff;box-shadow:0 8px 18px -8px rgba(20,37,31,.55);bottom:0}
-.lp-mini-in{width:760px;transform:scale(.15);transform-origin:top left;pointer-events:none}
-.lp-mini.a{left:0;transform:rotate(-5deg);transform-origin:bottom left}
-.lp-mini.b{left:23%;z-index:2;height:171px;bottom:4px}
-.lp-mini.c{left:49%;transform:rotate(4deg);transform-origin:bottom left;width:106px;height:152px}
+.lp-stack{display:block;margin-top:auto;width:100%;height:auto;-webkit-mask-image:radial-gradient(ellipse 74% 72% at 50% 52%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 74% 72% at 50% 52%,#000 60%,transparent 100%)}
 .lp-pencil{display:none;position:absolute;right:-136px;bottom:-6px;height:104%;width:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 14px 14px rgba(0,0,0,.3))}
 
 /* try it: compact, with the paper beside the controls */
@@ -231,3 +226,23 @@ html{scroll-behavior:smooth}
   .lp-fields{grid-template-columns:1fr}
   .lp-frame{min-height:0;padding-bottom:0}
 }
+
+/* v6: who is it for sits on cream like the inspiration, contracts take the green */
+.lp-who{background:var(--bg) var(--grain);color:var(--ink);border-top:0}
+.lp-who .lp-label{color:var(--brass-ink)}
+.lp-who .lp-h2{color:var(--em);font-weight:600;font-variation-settings:'opsz' 30;letter-spacing:-.015em}
+.lp-who .lp-h2 em{color:#9A7A44;font-weight:500}
+.lp-frames{gap:14px}
+.lp-frame{background:#F9F4E9;border-radius:28px;padding:24px 22px 8px;box-shadow:0 18px 34px -22px rgba(90,70,30,.45),inset 0 1px 0 rgba(255,255,255,.7);overflow:visible}
+.lp-frame h3{color:var(--em);font-weight:600;font-size:23px;line-height:1.1}
+.lp-frame p{color:#4B5148}
+.lp-ico{background:#F0E3C8;border-radius:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 12px -8px rgba(90,70,30,.5)}
+
+.lp-contracts{background:var(--speck),var(--plaster-dk),#0B3A2D;background-size:260px 260px,420px 420px,auto;color:var(--on);border-top:4px solid var(--br)}
+.lp-contracts .lp-label{color:var(--brass-lt)}
+.lp-contracts .lp-h2,.lp-contracts .lp-body{color:var(--on)}
+.lp-contracts .lp-body{color:#E3DCC9}
+.lp-contracts .lp-small{color:#CFC8B6;border-left-color:var(--brass-lt)}
+.lp-try{border-top:4px solid var(--br)}
+.lp-stack{width:calc(100% + 18px);margin-inline:-9px;max-width:none}
+@media (min-width:900px){.lp-frame{min-height:350px}}
