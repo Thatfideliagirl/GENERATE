@@ -46,7 +46,7 @@ const WHO: Who[] = [
   { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client. Send invoices and contracts with your own name and signature.' },
   { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place, and always know who has paid.' },
   { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out, from invoices to contracts.' },
-  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you send an invoice, receipt or contract, Generate is for you.' },
+  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you need an invoice, receipt or contract, Generate is for you.' },
 ]
 
 export default function Landing() {
