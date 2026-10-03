@@ -52,13 +52,13 @@ export function SceneChat({ message, play }: { message: string; play: boolean })
         )}
         {n >= 5 && (
           <div className="sc in">
-            Received, thank you! Sending the payment now.
+            Received, thank you for sending the invoice.
             <span className="sc-time">10:25 AM</span>
           </div>
         )}
         {n >= 6 && (
           <div className="sc in">
-            Done. Please check your account.
+            Okay, I will make the payment today.
             <span className="sc-time">10:26 AM</span>
           </div>
         )}

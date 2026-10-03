@@ -47,9 +47,9 @@ type Who = { k: string; icon: ReactNode; t: string; d: string; photo: { src: str
 /** Cut out pictures that stand in the picture space at the top of each frame. */
 const WHO: Who[] = [
   { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client. Send invoices and contracts with your own name and signature.', photo: { src: './images/freelancer.webp', w: 610, h: 520, alt: 'A freelancer in a headset smiling at her laptop.' } },
-  { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place, and always know who has paid.', photo: { src: './images/business.webp', w: 586, h: 520, alt: 'A shop owner in an apron writing in a notebook beside boxed orders.' } },
+  { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place, and always know who has paid.', photo: { src: './images/business.webp', w: 588, h: 520, alt: 'A shop owner in an apron writing in a notebook beside boxed orders.' } },
   { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out, from invoices to contracts.', photo: { src: './images/brand.webp', w: 617, h: 520, alt: 'A range of branded packaging, boxes, bottles and shopping bags.' } },
-  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you need an invoice, receipt or contract, Generate is for you.', photo: { src: './images/anyone.webp', w: 482, h: 520, alt: 'A smiling young man with a backpack, headphones and notebooks.' } },
+  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you need an invoice, receipt or contract, Generate is for you.', photo: { src: './images/anyone.webp', w: 484, h: 520, alt: 'A smiling young man with a backpack, headphones and notebooks.' } },
 ]
 
 export default function Landing() {
