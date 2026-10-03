@@ -4,6 +4,7 @@ import type { Profile } from '../lib/types'
 import { BUSINESS_TYPES, CURRENCIES, TRADES } from '../lib/constants'
 import { readImage } from '../lib/image'
 import { SOCIALS } from '../lib/social'
+import { Monogram } from './Monogram'
 import { Field, Grid2, Section, SelectField } from './Fields'
 import { LookControls } from './LookControls'
 import { DrawSignatureModal, TypeSignatureModal } from './SignatureModals'
@@ -74,7 +75,16 @@ export function ProfileForm({ profile: p, onChange, showLook = true }: Props) {
 
       <Section title="Logo">
         <div className="lgp">
-          {p.logo ? <img src={p.logo} alt="Your logo" /> : <span className="mu small">No logo yet. Your first letter is used until you add one.</span>}
+          {p.logo ? (
+            <img src={p.logo} alt="Your logo" />
+          ) : p.useInitials ? (
+            <span className="lgp-mg">
+              <Monogram name={p.name} size={64} />
+              <span className="mu small">This is how your initials will look on your documents.</span>
+            </span>
+          ) : (
+            <span className="mu small">No logo yet. Your business name is shown on its own.</span>
+          )}
         </div>
         <div className="chips">
           <label className="btn filebtn">
@@ -87,6 +97,14 @@ export function ProfileForm({ profile: p, onChange, showLook = true }: Props) {
             </button>
           )}
         </div>
+        {!p.logo && (
+          <label className="ck">
+            <input type="checkbox" checked={!!p.useInitials} onChange={(e) => onChange({ useInitials: e.target.checked })} /> I do not have a logo yet. Use my business initials
+          </label>
+        )}
+        <p className="mu small" style={{ margin: '4px 0 0' }}>
+          You can upload your logo any time from your profile. It replaces the initials on new and old documents.
+        </p>
       </Section>
 
       <Section title="Signature">

@@ -2,14 +2,15 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Profile } from '../lib/types'
 import { useAuth } from '../data/session'
+import { initialsOf } from '../lib/initials'
 
 export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
   if (profile.logo) {
     return <img src={profile.logo} alt="" style={{ height: size, maxWidth: size * 2.4, objectFit: 'contain' }} />
   }
-  const letter = (profile.name || 'V').trim()[0].toUpperCase()
+  const letter = profile.useInitials ? initialsOf(profile.name) : (profile.name || 'G').trim()[0].toUpperCase()
   return (
-    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * 0.5) }}>
+    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * (letter.length > 1 ? 0.4 : 0.5)) }}>
       {letter}
     </span>
   )

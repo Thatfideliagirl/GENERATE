@@ -6,6 +6,7 @@ import { fmtDate, money } from '../lib/format'
 import { accentOf, fontOf, layoutOf, paperOf, textOf } from '../lib/style'
 import { resolveText, toBlocks } from '../lib/text'
 import { socialLines } from '../lib/social'
+import { Monogram } from './Monogram'
 
 /**
  * The document itself: what gets previewed, downloaded as a PDF and sent.
@@ -30,7 +31,7 @@ export function DocumentPaper({ doc, profile }: { doc: Doc; profile: Profile }) 
     <div className={`paper l-${layoutOf(style)} f-${fontOf(style)}`} style={cssVars}>
       <div className="ph">
         <div className="who">
-          {profile.logo && <img className="lg" src={profile.logo} alt="" />}
+          {profile.logo ? <img className="lg" src={profile.logo} alt="" /> : profile.useInitials ? <Monogram name={profile.name} /> : null}
           <div>
             <div className="bn">{profile.name}</div>
             <div className="ct">

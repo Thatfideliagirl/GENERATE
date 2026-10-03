@@ -75,6 +75,8 @@ export interface Profile {
   vatRate: number
   bank: { bank: string; acct: string; name: string }
   logo: string
+  /** Show the business initials as the logo while there is no logo picture. */
+  useInitials?: boolean
   signature: string
   socials?: Socials
   bizType: string

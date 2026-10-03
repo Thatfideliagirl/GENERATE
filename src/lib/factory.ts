@@ -20,6 +20,7 @@ export const defaultProfile = (): Profile => ({
   vatRate: 7.5,
   bank: { bank: '', acct: '', name: '' },
   logo: '',
+  useInitials: true,
   signature: '',
   socials: { instagram: '', twitter: '', tiktok: '' },
   bizType: 'solo',
