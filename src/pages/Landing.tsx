@@ -6,6 +6,7 @@ import { LookControls } from '../components/LookControls'
 import { PaperPreview } from '../components/PaperPreview'
 import { HeroArt } from '../components/landing/HeroArt'
 import { HowSteps } from '../components/landing/HowSteps'
+import { PricingDrop } from '../components/landing/PricingDrop'
 import { Reveal } from '../components/landing/Reveal'
 import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
 import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
@@ -63,6 +64,7 @@ export default function Landing() {
   const [biz, setBiz] = useState('')
   const [client, setClient] = useState('')
   const [trade, setTrade] = useState('design')
+  const [pricing, setPricing] = useState(false)
   const [kind, setKind] = useState<'invoice' | 'receipt'>('invoice')
 
   const sample = useMemo(() => {
@@ -91,10 +93,17 @@ export default function Landing() {
           <ul className="lp-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#how">How it works</a></li>
-            <li><a href="#pricing">Pricing</a></li>
+            <li>
+              <button type="button" className="lp-navlink" data-pricing-toggle aria-expanded={pricing} aria-controls="pricing-panel" onClick={() => setPricing((v) => !v)}>
+                Pricing
+              </button>
+            </li>
             <li><a href="#who">Who it is for</a></li>
           </ul>
           <div className="lp-nav-end">
+            <button type="button" className="lp-link-btn lp-pricing-m" data-pricing-toggle aria-expanded={pricing} aria-controls="pricing-panel" onClick={() => setPricing((v) => !v)}>
+              Pricing
+            </button>
             <button className="lp-link-btn" onClick={go}>
               Sign in
             </button>
@@ -103,6 +112,7 @@ export default function Landing() {
             </button>
           </div>
         </nav>
+        <PricingDrop open={pricing} onClose={() => setPricing(false)} onStart={go} cta={cta} />
       </header>
 
       <main>
@@ -242,7 +252,7 @@ export default function Landing() {
           </Reveal>
         </section>
 
-        <section className="lp-end" id="pricing" aria-labelledby="end">
+        <section className="lp-end" id="start" aria-labelledby="end">
           <Reveal className="lp-pad">
             <h2 className="lp-h2" id="end">
               Your next client is waiting on a document.
@@ -251,7 +261,19 @@ export default function Landing() {
             <button className="lp-btn brass" onClick={go}>
               {cta}
             </button>
-            <p className="lp-price">Pricing: Generate is free to use while we build it. Paid plans will be listed here when they are ready.</p>
+            <p className="lp-price">
+              Generate is free to use.{' '}
+              <button
+                type="button"
+                className="lp-textbtn"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                  setPricing(true)
+                }}
+              >
+                See what is included
+              </button>
+            </p>
           </Reveal>
         </section>
       </main>

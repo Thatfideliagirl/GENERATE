@@ -418,3 +418,39 @@ html{scroll-behavior:smooth}
 
 /* the sleeve in the growing brands picture runs straight into the edge of its frame */
 .lp-frame.growing .lp-pic>img.lp-cut{padding-right:0;object-position:right bottom}
+
+/* pricing: a short panel that drops down under the top strip */
+.lp-navlink{font:500 15px var(--ui);background:none;border:0;color:var(--ink);cursor:pointer;padding:8px 0;border-bottom:1.5px solid transparent}
+.lp-navlink:hover,.lp-navlink[aria-expanded="true"]{border-bottom-color:var(--br)}
+.lp-navlink:focus-visible{outline:3px solid var(--em);outline-offset:4px}
+.lp-pricing-m{display:inline-block}
+@media (min-width:900px){.lp-pricing-m{display:none}}
+.lp-top{position:relative;z-index:20}
+.lp-drop{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.7,.2,1);visibility:hidden}
+.lp-drop.open{grid-template-rows:1fr;visibility:visible}
+.lp-drop-clip{overflow:hidden;min-height:0}
+.lp-drop-in{max-width:1280px;margin:0 auto;padding:6px 0 26px;display:grid;gap:14px;position:relative;opacity:0;transform:translateY(-12px);transition:opacity .35s ease .08s,transform .45s ease .05s}
+.lp-drop.open .lp-drop-in{opacity:1;transform:none}
+.lp-plan{border-radius:22px;padding:22px 22px 24px;position:relative}
+.lp-plan.free{background:#FBF8F1;box-shadow:0 14px 26px -18px rgba(90,70,30,.5),inset 0 0 0 1px var(--ln)}
+.lp-plan-price{font:500 40px/1 var(--hd);font-variation-settings:'opsz' 36;color:var(--em);margin:8px 0 14px}
+.lp-plan ul{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:9px;font-size:15px;line-height:1.4}
+.lp-plan li{padding-left:22px;position:relative}
+.lp-plan li::before{content:'';position:absolute;left:3px;top:.45em;width:6px;height:11px;border:solid var(--em);border-width:0 2px 2px 0;transform:rotate(40deg) scale(.9)}
+.lp-plan.more{background:#EFE6D2;box-shadow:inset 0 0 0 1px #D8CBA9;display:grid;gap:14px;align-content:start;color:#6B6A5C}
+.lp-plan.more i{display:block;height:9px;border-radius:5px;background:repeating-linear-gradient(90deg,#DACDAA 0 12px,#E4D9BB 12px 16px);filter:blur(1.4px)}
+.lp-plan.more i:nth-of-type(2){width:82%}.lp-plan.more i:nth-of-type(3){width:64%}
+.lp-lock{display:flex;align-items:center;gap:10px;font:500 24px var(--hd);font-variation-settings:'opsz' 14;color:var(--brass-ink);margin-top:4px}
+.lp-lock svg{flex:none}
+.lp-drop-x{justify-self:end;background:none;border:0;font:600 13px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--mu);cursor:pointer;padding:6px 2px}
+.lp-drop-x:hover{color:var(--ink)}
+.lp-drop-x:focus-visible{outline:3px solid var(--em);outline-offset:2px}
+.lp-top>.lp-drop{margin:0 calc(var(--gx) * -1);padding:0 var(--gx);background:var(--bg) var(--grain);border-top:1px solid var(--ln)}
+.lp-textbtn{background:none;border:0;padding:0;font:inherit;color:var(--em);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lp-textbtn:focus-visible{outline:3px solid var(--em);outline-offset:3px}
+@media (min-width:760px){.lp-drop-in{grid-template-columns:1.2fr 1fr;align-items:stretch}.lp-drop-x{position:absolute;right:0;top:-2px;z-index:2}.lp-drop-in{padding-top:18px}}
+@media (prefers-reduced-motion:reduce){.lp-drop,.lp-drop-in{transition:none}}
+.lp-btn{white-space:nowrap}
+.lp-nav-end{gap:2px}
+@media (max-width:420px){.lp-btn.ghost{padding:10px 14px}.lp-pricing-m{padding:10px 8px}}
+@media (min-width:760px){.lp-drop-in{align-items:start}}
