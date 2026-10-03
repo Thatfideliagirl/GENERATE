@@ -206,12 +206,15 @@ export default function Landing() {
         </section>
 
         <section className="lp-sec lp-try" id="try" aria-labelledby="try-h">
+          <div className="lp-try-head">
+            <p className="lp-label">Try it now</p>
+            <h2 className="lp-h2" id="try-h">
+              Type your name. Watch the document change.
+            </h2>
+          </div>
+          <div className="lp-try-card">
           <div className="lp-try-grid">
             <div className="lp-try-fields">
-              <p className="lp-label">Try it now</p>
-              <h2 className="lp-h2" id="try-h">
-                Type your name. Watch the document change.
-              </h2>
               <div className="seg lp-seg" role="group" aria-label="Document type">
                 <button type="button" className={kind === 'invoice' ? 'on' : ''} onClick={() => setKind('invoice')}>
                   Invoice
@@ -248,6 +251,7 @@ export default function Landing() {
             <div className="lp-try-paper">
               <PaperPreview doc={sample.doc} profile={sample.profile} className="lp-sheet" />
             </div>
+          </div>
           </div>
         </section>
 

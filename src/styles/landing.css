@@ -266,3 +266,30 @@ html{scroll-behavior:smooth}
 @media (min-width:900px){
   .lp-frames{margin-top:150px}
 }
+
+/* v7: try it now is one compact card, like the frames above it */
+.lp-try{padding-block:clamp(40px,5vw,64px)}
+.lp-try-head{max-width:1100px;margin:0 auto 22px}
+.lp-try .lp-h2{font-size:clamp(26px,3vw,38px);max-width:none;margin-top:8px}
+.lp-try-card{max-width:1100px;margin:0 auto;background:#F9F4E9;border-radius:28px;padding:clamp(16px,2.4vw,26px);box-shadow:0 18px 34px -22px rgba(90,70,30,.45),inset 0 1px 0 rgba(255,255,255,.7)}
+.lp-try-grid{max-width:none;margin:0;gap:20px}
+.lp-seg{margin:0 0 14px;max-width:240px}
+.lp-seg button{min-height:38px;font-size:14px}
+.lp-fields{grid-template-columns:1fr 1fr;gap:0 18px}
+.lp-field{margin-bottom:10px}
+.lp-field input,.lp-field select{font-size:19px;padding:5px 0}
+.lp-looks{margin-top:8px;padding-top:12px}
+.lp-looks .lp-label{margin-bottom:6px}
+.lp-looks .lk{margin-bottom:6px}
+.lp-looks .chips{gap:6px;margin-bottom:6px}
+.lp-looks .chip{min-height:30px;padding:4px 10px;font-size:13px}
+.lp-looks .sw{width:26px;height:26px}
+.lp-looks .small{font-size:12px}
+.lp-try-paper{position:static;max-width:none;width:100%;background:linear-gradient(160deg,#EFE3C8,#E2D3AE);border-radius:18px;padding:14px;box-shadow:inset 0 0 0 1px rgba(122,92,40,.12);align-self:start}
+.lp-try-paper .lp-sheet{box-shadow:0 10px 20px -10px rgba(20,37,31,.5)}
+@media (min-width:900px){
+  .lp-try-grid{grid-template-columns:minmax(0,1fr) 340px;gap:26px;align-items:start}
+  .lp-try-paper{position:static;margin:0}
+}
+@media (max-width:899px){.lp-try-paper{order:-1}}
+@media (max-width:619px){.lp-fields{grid-template-columns:1fr}}
