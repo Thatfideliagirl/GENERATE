@@ -5,8 +5,12 @@ import type { Style } from '../lib/types'
 import { LookControls } from '../components/LookControls'
 import { PaperPreview } from '../components/PaperPreview'
 import { HeroArt } from '../components/landing/HeroArt'
+import { FeatureStage } from '../components/landing/FeatureStage'
+import { PhoneChat } from '../components/landing/PhoneChat'
+import { Reveal } from '../components/landing/Reveal'
 import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
 import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
+import { sendMessage } from '../lib/whatsapp'
 import { useStore } from '../data/store'
 
 /** Sample prices for the live demo, matched to the first two starter items of each trade. */
@@ -21,20 +25,9 @@ const PRICES: Record<string, [number, number]> = {
 }
 
 const STEPS = [
-  { t: 'Set up once', d: 'Add your logo, your business details and your signature. You never type them again.' },
-  { t: 'Fill in the job', d: 'Pick an invoice, receipt or contract. Add your client and what you did. The adding up is done for you.' },
-  { t: 'Send it', d: 'Download the PDF, or open WhatsApp to your client with the message already written.' },
-]
-
-const FEATURES = [
-  { t: 'Invoices, receipts and contracts', d: 'Three kinds of document in one place. Start a contract from a template and change any line.' },
-  { t: 'Your name on everything', d: 'Your logo, details and signature, set up once. Six layouts, six fonts and any colour you like.' },
-  { t: 'Part payments', d: 'Take a deposit now and the balance later. The balance on the invoice updates by itself.' },
-  { t: 'A dashboard that keeps count', d: 'See what is waiting to be paid, what is part paid, what came in and what is overdue.' },
-  { t: 'Send on WhatsApp', d: 'One tap opens WhatsApp to your client with the message ready. Friendly, firm and final reminders too.' },
-  { t: 'Any currency', d: 'Naira, dollar, pound or euro on every document.' },
-  { t: 'A clean PDF', d: 'One tidy page you can save, print or send anywhere.' },
-  { t: 'Made for your trade', d: 'Starter items for hair, food, design, photography, fashion and consulting.' },
+  { t: 'Start with your details', d: 'Add your logo, business information and signature once. We\u2019ll remember them for you.' },
+  { t: 'Make the document', d: 'Choose an invoice, receipt or contract. Add your client and the details of the job.' },
+  { t: 'Send it your way', d: 'Download it as a PDF or send it straight to your client on WhatsApp.' },
 ]
 
 const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
@@ -74,7 +67,10 @@ export default function Landing() {
     return s
   }, [look, biz, client, trade, kind])
 
-  const receipt = useMemo(() => receiptSample(SHOP), [])
+  const chat = useMemo(() => {
+    const inv = invoiceSample(SHOP)
+    return sendMessage(inv.doc, inv.profile)
+  }, [])
   const contract = useMemo(() => contractSample(SHOP), [])
 
   return (
@@ -128,54 +124,49 @@ export default function Landing() {
 
         <section className="lp-sec lp-how" id="how" aria-labelledby="how-h">
           <div className="lp-how-text">
-            <div className="lp-sec-head">
+            <Reveal className="lp-sec-head">
               <p className="lp-label">How it works</p>
               <h2 className="lp-h2" id="how-h">
                 From setup to sent in three steps.
               </h2>
-            </div>
+            </Reveal>
             <ol className="lp-steps">
               {STEPS.map((st, i) => (
-                <li key={st.t}>
+                <Reveal as="li" key={st.t} delay={0.1 + i * 0.14}>
                   <span className="lp-n num">0{i + 1}</span>
                   <div>
                     <h3>{st.t}</h3>
                     <p>{st.d}</p>
                   </div>
-                </li>
+                </Reveal>
               ))}
             </ol>
           </div>
-          <div className="lp-how-paper">
-            <PaperPreview doc={receipt.doc} profile={receipt.profile} className="lp-sheet" />
-          </div>
+          <Reveal delay={0.2} className="lp-how-paper">
+            <PhoneChat message={chat} client="Tunde Bello" file="Invoice-0042.pdf" />
+          </Reveal>
         </section>
 
         <section className="lp-sec lp-features" id="features" aria-labelledby="feat-h">
-          <div className="lp-sec-head">
+          <Reveal className="lp-sec-head">
             <p className="lp-label">Features</p>
             <h2 className="lp-h2" id="feat-h">
               Everything you need to get paid.
             </h2>
-          </div>
-          <dl className="lp-feats">
-            {FEATURES.map((f) => (
-              <div key={f.t}>
-                <dt>{f.t}</dt>
-                <dd>{f.d}</dd>
-              </div>
-            ))}
-          </dl>
+          </Reveal>
+          <FeatureStage />
         </section>
 
         <section className="lp-sec lp-who" id="who" aria-labelledby="who-h">
+          <Reveal className="lp-who-head">
           <p className="lp-label">Who is it for</p>
           <h2 className="lp-h2" id="who-h">
-            Made for <em>every business.</em>
+            Made for <em>your business.</em>
           </h2>
+          </Reveal>
           <ul className="lp-frames">
-            {WHO.map((w) => (
-              <li key={w.k} className={'lp-frame ' + w.k}>
+            {WHO.map((w, i) => (
+              <Reveal as="li" key={w.k} delay={0.08 + i * 0.12} className={'lp-frame ' + w.k}>
                 <div className="lp-pic">
                   <img className="lp-cut" src={w.photo.src} width={w.photo.w} height={w.photo.h} alt={w.photo.alt} loading="lazy" />
                   <span className="lp-ico">{w.icon}</span>
@@ -183,7 +174,7 @@ export default function Landing() {
                 <h3>{w.t}</h3>
                 <p>{w.d}</p>
                 {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
-              </li>
+              </Reveal>
             ))}
           </ul>
         </section>
@@ -206,13 +197,13 @@ export default function Landing() {
         </section>
 
         <section className="lp-sec lp-try" id="try" aria-labelledby="try-h">
-          <div className="lp-try-head">
+          <Reveal className="lp-try-head">
             <p className="lp-label">Try it now</p>
             <h2 className="lp-h2" id="try-h">
               Type your name. Watch the document change.
             </h2>
-          </div>
-          <div className="lp-try-card">
+          </Reveal>
+          <Reveal delay={0.1} className="lp-try-card">
           <div className="lp-try-grid">
             <div className="lp-try-fields">
               <div className="seg lp-seg" role="group" aria-label="Document type">
@@ -252,11 +243,11 @@ export default function Landing() {
               <PaperPreview doc={sample.doc} profile={sample.profile} className="lp-sheet" />
             </div>
           </div>
-          </div>
+          </Reveal>
         </section>
 
         <section className="lp-end" id="pricing" aria-labelledby="end">
-          <div className="lp-pad">
+          <Reveal className="lp-pad">
             <h2 className="lp-h2" id="end">
               Your next client is waiting on a document.
             </h2>
@@ -265,7 +256,7 @@ export default function Landing() {
               {cta}
             </button>
             <p className="lp-price">Pricing: Generate is free to use while we build it. Paid plans will be listed here when they are ready.</p>
-          </div>
+          </Reveal>
         </section>
       </main>
 
