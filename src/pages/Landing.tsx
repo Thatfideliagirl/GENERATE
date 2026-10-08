@@ -1,0 +1,289 @@
+import { useMemo, useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { BRAND, TRADES, TRADE_ITEMS } from '../lib/constants'
+import type { Style } from '../lib/types'
+import { LookControls } from '../components/LookControls'
+import { PaperPreview } from '../components/PaperPreview'
+import { HeroArt } from '../components/landing/HeroArt'
+import { HowSteps } from '../components/landing/HowSteps'
+import { PricingDrop } from '../components/landing/PricingDrop'
+import { Reveal } from '../components/landing/Reveal'
+import { BarsIcon, PeopleIcon, PersonIcon, ShopIcon } from '../components/landing/Icons'
+import { contractSample, invoiceSample, receiptSample } from '../components/landing/samples'
+import { sendMessage } from '../lib/whatsapp'
+import { useAuth } from '../data/session'
+
+/** Sample prices for the live demo, matched to the first two starter items of each trade. */
+const PRICES: Record<string, [number, number]> = {
+  hair: [60000, 25000],
+  food: [45000, 30000],
+  design: [80000, 45000],
+  photo: [70000, 35000],
+  fashion: [55000, 20000],
+  consult: [50000, 30000],
+  other: [80000, 45000],
+}
+
+const FEATURES = [
+  { t: 'Invoices, receipts and contracts', d: 'Three kinds of document in one place. Start a contract from a template and change any line.' },
+  { t: 'Your name on everything', d: 'Your logo, details and signature, set up once. Six layouts, six fonts and any colour you like.' },
+  { t: 'Part payments', d: 'Take a deposit now and the balance later. The balance on the invoice updates by itself.' },
+  { t: 'A dashboard that keeps count', d: 'See what is waiting to be paid, what is part paid, what came in and what is overdue.' },
+  { t: 'Send on WhatsApp', d: 'One tap opens WhatsApp to your client with the message ready. Friendly, firm and final reminders too.' },
+  { t: 'Any currency', d: 'Naira, dollar, pound or euro on every document.' },
+  { t: 'A clean PDF', d: 'One tidy page you can save, print or send anywhere.' },
+  { t: 'Made for your trade', d: 'Starter items for hair, food, design, photography, fashion and consulting.' },
+]
+
+const STEPS = [
+  { t: 'Start with your details', d: 'Add your logo, business information and signature once. We\u2019ll remember them for you.' },
+  { t: 'Make the document', d: 'Choose an invoice, receipt or contract. Add your client and the details of the job.' },
+  { t: 'Send it your way', d: 'Download it as a PDF or send it straight to your client on WhatsApp.' },
+]
+
+const SHOP: Style = { layout: 'classic', font: 'sans', accent: 'emerald', text: '#14251F', paper: 'white' }
+
+type Who = { k: string; icon: ReactNode; t: string; d: string; photo: { src: string; w: number; h: number; alt: string } }
+
+/** Cut out pictures that stand in the picture space at the top of each frame. */
+const WHO: Who[] = [
+  { k: 'free', icon: <PersonIcon />, t: 'Freelancers', d: 'Look professional from your very first client. Send invoices and contracts with your own name and signature.', photo: { src: './images/freelancer.webp', w: 610, h: 520, alt: 'A freelancer in a headset smiling at her laptop.' } },
+  { k: 'shop', icon: <ShopIcon />, t: 'Small businesses and shop owners', d: 'Keep every invoice, receipt and agreement in one place, and always know who has paid.', photo: { src: './images/business.webp', w: 820, h: 520, alt: 'A shop owner in an apron writing in a notebook beside boxed orders.' } },
+  { k: 'growing', icon: <BarsIcon />, t: 'Growing brands', d: 'Keep one consistent look on everything you send out, from invoices to contracts.', photo: { src: './images/brand.webp', w: 640, h: 520, alt: 'A range of branded packaging, boxes, bottles and shopping bags.' } },
+  { k: 'anyone', icon: <PeopleIcon />, t: 'Anyone', d: 'If you need an invoice, receipt or contract, Generate is for you.', photo: { src: './images/anyone.webp', w: 729, h: 520, alt: 'A young man and a young woman chatting, both carrying bags and notebooks.' } },
+]
+
+export default function Landing() {
+  const nav = useNavigate()
+  const { session } = useAuth()
+  const go = () => nav(session ? '/app' : '/signup')
+  const signIn = () => nav(session ? '/app' : '/signin')
+  const cta = session ? 'Open my dashboard' : 'Start free'
+
+  const [look, setLook] = useState<Style>({ layout: 'classic', font: 'editorial', accent: 'emerald', text: '#14251F', paper: 'white' })
+  const [biz, setBiz] = useState('')
+  const [client, setClient] = useState('')
+  const [trade, setTrade] = useState('design')
+  const [pricing, setPricing] = useState(false)
+  const [kind, setKind] = useState<'invoice' | 'receipt'>('invoice')
+
+  const sample = useMemo(() => {
+    const make = kind === 'receipt' ? receiptSample : invoiceSample
+    const s = make(look, biz.trim() || 'Your brand', client.trim() || 'Your client')
+    const names = TRADE_ITEMS[trade] ?? ['Logo design', 'Brand guide']
+    const [x, y] = PRICES[trade] ?? PRICES.other
+    s.doc.items = [
+      { d: names[0], q: '1', p: String(x) },
+      { d: names[1], q: '1', p: String(y) },
+    ]
+    return s
+  }, [look, biz, client, trade, kind])
+
+  const chat = useMemo(() => {
+    const inv = invoiceSample(SHOP)
+    return sendMessage(inv.doc, inv.profile)
+  }, [])
+  const contract = useMemo(() => contractSample(SHOP), [])
+
+  return (
+    <div className="landing">
+      <header className="lp-top">
+        <nav className="lp-nav" aria-label="Main">
+          <img className="lp-logo" src="./logo.png" alt={BRAND} width={180} height={40} />
+          <ul className="lp-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li>
+              <button type="button" className="lp-navlink" data-pricing-toggle aria-expanded={pricing} aria-controls="pricing-panel" onClick={() => setPricing((v) => !v)}>
+                Pricing
+              </button>
+            </li>
+            <li><a href="#who">Who it is for</a></li>
+          </ul>
+          <div className="lp-nav-end">
+            <button type="button" className="lp-link-btn lp-pricing-m" data-pricing-toggle aria-expanded={pricing} aria-controls="pricing-panel" onClick={() => setPricing((v) => !v)}>
+              Pricing
+            </button>
+            {!session && (
+              <button className="lp-link-btn" onClick={signIn}>
+                Sign in
+              </button>
+            )}
+            <button className="lp-btn ghost" onClick={go}>
+              {cta}
+            </button>
+          </div>
+        </nav>
+        <PricingDrop open={pricing} onClose={() => setPricing(false)} onStart={go} cta={cta} />
+      </header>
+
+      <main>
+        <section className="lp-hero">
+          <div className="lp-hero-text">
+            <p className="lp-label lp-kicker">Invoices, receipts and contracts</p>
+            <h1 className="lp-h1">
+              Documents that carry <em>your name.</em>
+            </h1>
+            <p className="lp-lede">
+              Your logo, your details and your signature on every one. Make it in a minute, then send it on WhatsApp before your client forgets.
+            </p>
+            <div className="lp-cta-row">
+              <button className="lp-btn brass" onClick={go}>
+                {cta}
+              </button>
+              <a className="lp-btn line" href="#how">
+                See how it works
+              </a>
+            </div>
+            <ul className="lp-ticks">
+              <li>Free to use</li>
+              <li>Works on your phone</li>
+              <li>No design skills needed</li>
+            </ul>
+          </div>
+          <HeroArt />
+        </section>
+
+        <section className="lp-sec lp-how" id="how" aria-labelledby="how-h">
+          <HowSteps steps={STEPS} message={chat} />
+        </section>
+
+        <section className="lp-sec lp-features" id="features" aria-labelledby="feat-h">
+          <Reveal className="lp-sec-head">
+            <p className="lp-label">Features</p>
+            <h2 className="lp-h2" id="feat-h">
+              Everything you need to get paid.
+            </h2>
+          </Reveal>
+          <dl className="lp-feats">
+            {FEATURES.map((f, i) => (
+              <Reveal key={f.t} delay={0.06 * (i % 4)}>
+                <dt>{f.t}</dt>
+                <dd>{f.d}</dd>
+              </Reveal>
+            ))}
+          </dl>
+        </section>
+
+        <section className="lp-sec lp-who" id="who" aria-labelledby="who-h">
+          <Reveal className="lp-who-head">
+          <p className="lp-label">Who is it for</p>
+          <h2 className="lp-h2" id="who-h">
+            Made for <em>your business.</em>
+          </h2>
+          </Reveal>
+          <ul className="lp-frames">
+            {WHO.map((w, i) => (
+              <Reveal as="li" key={w.k} delay={0.08 + i * 0.12} className={'lp-frame ' + w.k}>
+                <div className="lp-pic">
+                  <img className="lp-cut" src={w.photo.src} width={w.photo.w} height={w.photo.h} alt={w.photo.alt} loading="lazy" />
+                  <span className="lp-ico">{w.icon}</span>
+                </div>
+                <h3>{w.t}</h3>
+                <p>{w.d}</p>
+                {w.k === 'anyone' && <img className="lp-pencil" src="./images/pencil.webp" width={418} height={900} alt="" loading="lazy" />}
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+
+        <section className="lp-sec lp-contracts" aria-labelledby="sign">
+          <div className="lp-sign-text">
+            <p className="lp-label">Contracts and signatures</p>
+            <h2 className="lp-h2" id="sign">
+              Put it in writing. Sign it as you.
+            </h2>
+            <p className="lp-body">
+              Start from a template and change any line. Draw your signature with a finger, upload it, or type it in a style you like. It
+              sits on the page next to your client's name.
+            </p>
+            <p className="lp-small">The templates are starting points, not legal advice. Have a lawyer read a contract before you rely on it.</p>
+          </div>
+          <div className="lp-contract-paper">
+            <PaperPreview doc={contract.doc} profile={contract.profile} className="lp-sheet" />
+          </div>
+        </section>
+
+        <section className="lp-sec lp-try" id="try" aria-labelledby="try-h">
+          <Reveal className="lp-try-head">
+            <p className="lp-label">Try it now</p>
+            <h2 className="lp-h2" id="try-h">
+              Type your name. Watch the document change.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1} className="lp-try-card">
+          <div className="lp-try-grid">
+            <div className="lp-try-fields">
+              <div className="seg lp-seg" role="group" aria-label="Document type">
+                <button type="button" className={kind === 'invoice' ? 'on' : ''} onClick={() => setKind('invoice')}>
+                  Invoice
+                </button>
+                <button type="button" className={kind === 'receipt' ? 'on' : ''} onClick={() => setKind('receipt')}>
+                  Receipt
+                </button>
+              </div>
+              <div className="lp-fields">
+                <label className="lp-field">
+                  <span>Your business name</span>
+                  <input value={biz} onChange={(e) => setBiz(e.target.value)} placeholder="Amaka Obi Studio" maxLength={40} autoComplete="off" />
+                </label>
+                <label className="lp-field">
+                  <span>Your client</span>
+                  <input value={client} onChange={(e) => setClient(e.target.value)} placeholder="Tunde Bello" maxLength={40} autoComplete="off" />
+                </label>
+                <label className="lp-field wide">
+                  <span>What you do</span>
+                  <select value={trade} onChange={(e) => setTrade(e.target.value)}>
+                    {Object.entries(TRADES).map(([k, v]) => (
+                      <option key={k} value={k}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="lp-looks">
+                <p className="lp-label">Change the look</p>
+                <LookControls style={look} onChange={(patch) => setLook((st) => ({ ...st, ...patch }))} />
+              </div>
+            </div>
+            <div className="lp-try-paper">
+              <PaperPreview doc={sample.doc} profile={sample.profile} className="lp-sheet" />
+            </div>
+          </div>
+          </Reveal>
+        </section>
+
+        <section className="lp-end" id="start" aria-labelledby="end">
+          <Reveal className="lp-pad">
+            <h2 className="lp-h2" id="end">
+              Your next client is waiting on a document.
+            </h2>
+            <p className="lp-sub">Setup takes less than two minutes.</p>
+            <button className="lp-btn brass" onClick={go}>
+              {cta}
+            </button>
+            <p className="lp-price">
+              Generate is free to use.{' '}
+              <button
+                type="button"
+                className="lp-textbtn"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                  setPricing(true)
+                }}
+              >
+                See what is included
+              </button>
+            </p>
+          </Reveal>
+        </section>
+      </main>
+
+      <footer className="lp-foot">
+        <img src="./logo.png" alt={BRAND} width={150} height={33} loading="lazy" />
+        <p>For now your profile and documents are stored on your own device. Download a backup from your profile whenever you like.</p>
+      </footer>
+    </div>
+  )
+}
