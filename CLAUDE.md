@@ -46,8 +46,10 @@ Sign up collects the WhatsApp number on purpose: it is the number the send on Wh
 5. Email change and the real password reset screen after the emailed link (the request screen exists).
 6. Small polish: contract template cards currently show raw {{placeholders}} in their preview text, resolve them.
 
+## Sign a document (built)
+Route /app/sign, src/pages/SignDocument.tsx and src/lib/signpdf.ts. The person opens a PDF or picture (png, jpg, webp), pages are drawn with pdfjs-dist (legacy build, loaded only on this page), they add their saved or a newly drawn signature, initials, date or text, drag and resize on any page, and download a signed PDF written with pdf-lib. Everything is a picture placed by fraction of the page, so it works on rotated pages and cropped pages. All on the device, nothing uploaded. Not built: sending a document to someone else to sign (needs Supabase), several people signing, locking or certifying the file. Needs a decision on free or Generate more.
+
 ## Ideas Coco wants to come back to (not built)
-Sign a document: upload a PDF or picture that needs signing, draw or place a saved signature on it, move and resize it on the right page, and download the signed file. Coco's words: get your document signed without stress. Plan: render PDF pages to canvas, let the person drop one or more signature, initials and date boxes on a page, then write them into the PDF with pdf-lib (or flatten the page images into jsPDF). Works on the device with no server. Needs a decision on whether it is free or part of Generate more.
 Template gallery: 30 templates to start, different layouts, built into Generate more with one free try of an uploaded template. Uploaded designs (image or PDF) become a background with placed boxes for name, items, totals and signature.
 Features section of the landing page: waiting for Coco's idea, plain list for now.
 

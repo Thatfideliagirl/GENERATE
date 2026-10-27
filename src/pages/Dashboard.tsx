@@ -88,6 +88,9 @@ export default function Dashboard({ profile }: { profile: Profile }) {
           <button className="btn" onClick={() => nav('/app/contract')}>
             New contract
           </button>
+          <button className="btn" onClick={() => nav('/app/sign')}>
+            Sign a document
+          </button>
         </section>
 
         <h2>Your documents</h2>

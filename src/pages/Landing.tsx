@@ -30,6 +30,7 @@ const FEATURES = [
   { t: 'Part payments', d: 'Take a deposit now and the balance later. The balance on the invoice updates by itself.' },
   { t: 'A dashboard that keeps count', d: 'See what is waiting to be paid, what is part paid, what came in and what is overdue.' },
   { t: 'Send on WhatsApp', d: 'One tap opens WhatsApp to your client with the message ready. Friendly, firm and final reminders too.' },
+  { t: 'Sign any document', d: 'Open a PDF or a picture, drop your signature where it belongs and save the signed copy.' },
   { t: 'Any currency', d: 'Naira, dollar, pound or euro on every document.' },
   { t: 'A clean PDF', d: 'One tidy page you can save, print or send anywhere.' },
   { t: 'Made for your trade', d: 'Starter items for hair, food, design, photography, fashion and consulting.' },

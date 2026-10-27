@@ -11,6 +11,7 @@ import ProfilePage from './pages/Profile'
 import { NewDoc, OpenDoc } from './pages/Editor'
 import { Forgot, SignIn, SignUp } from './pages/Auth'
 import Admin from './pages/Admin'
+import SignDocument from './pages/SignDocument'
 import Privacy from './pages/Privacy'
 
 /** Pages inside the app need an account and a profile. Without an account people go to sign in, without a profile to setup. */
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />
         <Route path="/app" element={<Private>{(p) => <Dashboard profile={p} />}</Private>} />
+        <Route path="/app/sign" element={<Private>{(p) => <SignDocument profile={p} />}</Private>} />
         <Route path="/app/contract" element={<Private>{() => <ContractTemplates />}</Private>} />
         <Route path="/app/new/:type" element={<Private>{(p) => <NewDoc profile={p} />}</Private>} />
         <Route path="/app/doc/:id" element={<Private>{(p) => <OpenDoc profile={p} />}</Private>} />
