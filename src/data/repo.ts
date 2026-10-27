@@ -5,9 +5,7 @@ import { emptyData } from '../lib/factory'
  * Where the app keeps its data.
  *
  * Today everything is saved in the browser on the person's own device (localRepo).
- * When you are ready for real accounts, write a second repo that talks to Supabase
- * with the same two functions, then change the one line at the bottom of this file.
- * Nothing else in the app needs to change.
+ * With Supabase keys set, supabaseRepo.ts is used instead. repoService.ts picks which one.
  */
 export interface Repo {
   load(userId: string | null): Promise<AppData>
@@ -55,8 +53,5 @@ export const localRepo: Repo = {
     localStorage.setItem(USER_KEY + userId, JSON.stringify(data))
   },
 }
-
-// To switch to Supabase later, import your new repo here and export it instead.
-export const repo: Repo = localRepo
 
 export { normalise }

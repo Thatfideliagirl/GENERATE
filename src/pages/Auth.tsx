@@ -1,13 +1,15 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { AuthShell, AuthField } from '../components/AuthShell'
 import { ProfileForm } from '../components/ProfileForm'
 import type { Profile } from '../lib/types'
-import { auth, AuthError, isEmail, isPhone } from '../data/auth'
+import { AuthError, isEmail, isPhone } from '../data/auth'
+import { auth } from '../data/authService'
 import { useAuth } from '../data/session'
 import { useStore } from '../data/store'
-import { repo } from '../data/repo'
+import { repo } from '../data/repoService'
+import { savePending } from '../data/supabaseRepo'
 import { defaultProfile, emptyData } from '../lib/factory'
 
 
@@ -26,6 +28,7 @@ export function SignUp() {
   const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
   const [formErr, setFormErr] = useState('')
+  const [confirm, setConfirm] = useState('')
   const errRef = useRef<HTMLParagraphElement>(null)
   if (goto && !busy) return <Navigate to={goto} replace />
 
@@ -50,7 +53,7 @@ export function SignUp() {
     if (password.length < 8) return fail('Choose a password of at least 8 characters.')
     setBusy(true)
     try {
-      await signUp(
+      const made = await signUp(
         {
           name: p.owner,
           business: p.name,
@@ -62,10 +65,30 @@ export function SignUp() {
         },
         (s) => repo.save({ ...emptyData(), profile: p }, s.userId),
       )
+      if (!made) {
+        // The account opens after the emailed link is used. Keep the details for the first sign in.
+        savePending(p.email, { ...emptyData(), profile: p })
+        setConfirm(p.email)
+        setBusy(false)
+        return
+      }
       nav('/app', { replace: true })
     } catch (err) {
       fail(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
     }
+  }
+
+  if (confirm) {
+    return (
+      <AuthShell title="Check your email" lead="One last step before your account opens." foot={<>Already confirmed? <Link to="/signin">Sign in</Link></>}>
+        <div className="auth-sent" role="status">
+          <p>
+            We sent a link to <b>{confirm}</b>. Open it to confirm your account, then sign in. Check your spam folder if you do not see it.
+          </p>
+          <p className="auth-fine">Your business details are saved on this device and will be ready when you sign in.</p>
+        </div>
+      </AuthShell>
+    )
   }
 
   return (
@@ -217,6 +240,75 @@ export function Forgot() {
           </button>
         </form>
       )}
+    </AuthShell>
+  )
+}
+
+export function Reset() {
+  const nav = useNavigate()
+  const [pw, setPw] = useState('')
+  const [again, setAgain] = useState('')
+  const [show, setShow] = useState(false)
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [linkOk, setLinkOk] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    // The emailed link signs the person in for a moment. If there is no session, the link was not used or has expired.
+    let live = true
+    const check = () => auth.getSession().then((s) => live && setLinkOk(!!s))
+    check()
+    const t = setTimeout(check, 1200)
+    return () => {
+      live = false
+      clearTimeout(t)
+    }
+  }, [])
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (pw.length < 8) return setErr('Choose a password of at least 8 characters.')
+    if (pw !== again) return setErr('The two passwords are not the same.')
+    setBusy(true)
+    try {
+      await auth.updatePassword(pw)
+      nav('/app', { replace: true })
+    } catch (e2) {
+      setErr(e2 instanceof AuthError ? e2.message : 'Something went wrong. Please try again.')
+      setBusy(false)
+    }
+  }
+
+  if (linkOk === false) {
+    return (
+      <AuthShell title="This link has expired" lead="Reset links work once and only for a short time." foot={<Link to="/forgot">Ask for a new link</Link>}>
+        <p className="auth-lead">Request a new link and open it on this same device.</p>
+      </AuthShell>
+    )
+  }
+
+  return (
+    <AuthShell title="Choose a new password" lead="Pick something you will remember. At least 8 characters.">
+      <form className="auth-form" onSubmit={submit} noValidate>
+        <div className="auth-f pw">
+          <label htmlFor="rs-pw">New password</label>
+          <div className="auth-pw">
+            <input id="rs-pw" type={show ? 'text' : 'password'} value={pw} onChange={(e) => (setPw(e.target.value), setErr(''))} autoComplete="new-password" />
+            <button type="button" onClick={() => setShow((x) => !x)} aria-pressed={show}>
+              {show ? 'Hide' : 'Show'}
+            </button>
+          </div>
+        </div>
+        <AuthField id="rs-again" label="Type it again" type={show ? 'text' : 'password'} value={again} onChange={(e) => (setAgain(e.target.value), setErr(''))} autoComplete="new-password" />
+        {err && (
+          <p className="auth-formerr" role="alert">
+            {err}
+          </p>
+        )}
+        <button className="lp-btn brass auth-submit" type="submit" disabled={busy || linkOk === null}>
+          {busy ? 'Saving' : 'Save new password'}
+        </button>
+      </form>
     </AuthShell>
   )
 }

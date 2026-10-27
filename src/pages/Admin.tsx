@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { BRAND, BUSINESS_TYPES, TRADES } from '../lib/constants'
 import { saveFile } from '../lib/pdf'
-import { auth } from '../data/auth'
+import { auth } from '../data/authService'
 import type { Account } from '../data/auth'
 import { useAuth } from '../data/session'
 

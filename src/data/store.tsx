@@ -3,12 +3,16 @@ import type { ReactNode } from 'react'
 import type { AppData, Doc, DocType, Profile } from '../lib/types'
 import { emptyData, nextNumber } from '../lib/factory'
 import { clone } from '../lib/format'
-import { normalise, repo } from './repo'
+import { normalise } from './repo'
+import { repo } from './repoService'
 import { useToast } from '../components/Toast'
 import { useAuth } from './session'
 
 interface Store {
   ready: boolean
+  /** True when saved data could not be loaded. The app shows a retry screen and never saves over it. */
+  loadError: boolean
+  retry: () => void
   data: AppData
   saveProfile: (p: Profile) => void
   saveDoc: (d: Doc) => void
@@ -26,29 +30,44 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const { ready: authReady, session } = useAuth()
   const userId = session?.userId ?? null
   const uid = useRef<string | null>(null)
+  const loadFailed = useRef(false)
   const [data, setData] = useState<AppData>(emptyData())
   const [ready, setReady] = useState(false)
+  const [loadError, setLoadError] = useState(false)
+  const [attempt, setAttempt] = useState(0)
   const ref = useRef(data)
 
   useEffect(() => {
     if (!authReady) return
     let live = true
     uid.current = userId
-    repo.load(userId).then((d) => {
-      if (!live) return
-      ref.current = d
-      setData(d)
-      setReady(true)
-    })
+    setLoadError(false)
+    loadFailed.current = false
+    repo.load(userId).then(
+      (d) => {
+        if (!live) return
+        ref.current = d
+        setData(d)
+        setReady(true)
+      },
+      () => {
+        if (!live) return
+        ref.current = emptyData()
+        loadFailed.current = true
+        setLoadError(true)
+        setReady(true)
+      },
+    )
     return () => {
       live = false
     }
-  }, [authReady, userId])
+  }, [authReady, userId, attempt])
 
   const commit = useCallback(
     (next: AppData) => {
       ref.current = next
       setData(next)
+      if (loadFailed.current) return
       repo.save(next, uid.current).catch(() => toast('Could not save on this device. Download a backup from Profile.'))
     },
     [toast],
@@ -97,8 +116,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const nextNo = useCallback((type: DocType) => nextNumber(ref.current, type), [])
 
   const value = useMemo(
-    () => ({ ready, data, saveProfile, saveDoc, deleteDoc, addTemplate, restore, nextNo }),
-    [ready, data, saveProfile, saveDoc, deleteDoc, addTemplate, restore, nextNo],
+    () => ({ ready, loadError, retry: () => setAttempt((n) => n + 1), data, saveProfile, saveDoc, deleteDoc, addTemplate, restore, nextNo }),
+    [ready, loadError, data, saveProfile, saveDoc, deleteDoc, addTemplate, restore, nextNo],
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

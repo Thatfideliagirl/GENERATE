@@ -9,7 +9,7 @@ import Dashboard from './pages/Dashboard'
 import ContractTemplates from './pages/ContractTemplates'
 import ProfilePage from './pages/Profile'
 import { NewDoc, OpenDoc } from './pages/Editor'
-import { Forgot, SignIn, SignUp } from './pages/Auth'
+import { Forgot, Reset, SignIn, SignUp } from './pages/Auth'
 import Admin from './pages/Admin'
 import SignDocument from './pages/SignDocument'
 import Privacy from './pages/Privacy'
@@ -32,8 +32,19 @@ function NeedsAccount({ children }: { children: ReactElement }) {
 }
 
 export default function App() {
-  const { ready } = useStore()
+  const { ready, loadError, retry } = useStore()
   if (!ready) return null
+  if (loadError) {
+    return (
+      <main className="wrap" style={{ paddingTop: 60 }}>
+        <h1>We could not load your documents.</h1>
+        <p className="mu">Check your connection and try again. Nothing has been changed or lost.</p>
+        <button className="btn p" onClick={retry}>
+          Try again
+        </button>
+      </main>
+    )
+  }
   return (
     <HashRouter>
       <Routes>
@@ -41,6 +52,7 @@ export default function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/forgot" element={<Forgot />} />
+        <Route path="/reset" element={<Reset />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />

@@ -1,13 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { auth } from './auth'
+import { auth } from './authService'
 import type { Session, SignUpInput } from './auth'
 
 interface AuthCtx {
   ready: boolean
   session: Session | null
   /** beforeSession runs once the account exists and before the app switches to it, so first data is saved in time. */
-  signUp: (input: SignUpInput, beforeSession?: (s: Session) => Promise<void>) => Promise<Session>
+  signUp: (input: SignUpInput, beforeSession?: (s: Session) => Promise<void>) => Promise<Session | null>
   signIn: (email: string, password: string) => Promise<Session>
   signOut: () => Promise<void>
 }
@@ -25,8 +25,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  useEffect(() => {
+    return auth.subscribe?.((s) => setSession((cur) => (cur?.userId === s?.userId && cur?.role === s?.role ? cur : s)))
+  }, [])
+
   const signUp = useCallback(async (input: SignUpInput, beforeSession?: (s: Session) => Promise<void>) => {
     const s = await auth.signUp(input)
+    // null means the person must open the link we emailed before the account is active.
+    if (!s) return null
     if (beforeSession) await beforeSession(s)
     setSession(s)
     return s

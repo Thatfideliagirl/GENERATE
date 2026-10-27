@@ -4,7 +4,7 @@ import { ADMIN_EMAILS } from '../lib/constants'
  * Accounts and sign in.
  *
  * Today this is a demo that keeps accounts on the person's own device (localAuth), so every screen can be built and tried.
- * When Supabase is ready, write supabaseAuth with the same functions, then change the single line at the bottom of this file.
+ * With Supabase keys set, supabaseAuth.ts is used instead. authService.ts picks which one.
  *
  * Privacy rule for the owner page: listSignups() returns who signed up. It must never return documents.
  */
@@ -39,11 +39,16 @@ export interface AuthService {
   /** True when accounts live only on this device. The owner page tells the truth about it. */
   demo: boolean
   getSession(): Promise<Session | null>
+  /** Tells the app when the person signs in or out somewhere else, for example by opening a reset link. Gives back a function that stops listening. */
+  subscribe?(onChange: (s: Session | null) => void): () => void
   getAccount(userId: string): Promise<Account | null>
-  signUp(input: SignUpInput): Promise<Session>
+  /** Gives back null when the person must confirm their email before the account opens. */
+  signUp(input: SignUpInput): Promise<Session | null>
   signIn(email: string, password: string): Promise<Session>
   signOut(): Promise<void>
   sendReset(email: string): Promise<void>
+  /** Sets a new password for the person signed in, for example after they opened the reset link. */
+  updatePassword(password: string): Promise<void>
   /** Owner only. Names, business, type, trade, date and email. No documents. */
   listSignups(): Promise<Account[]>
 }
@@ -130,6 +135,14 @@ export const localAuth: AuthService = {
   async signOut() {
     localStorage.removeItem(SESSION)
   },
+  async updatePassword(password) {
+    const id = localStorage.getItem(SESSION)
+    const list = read()
+    const a = list.find((x) => x.id === id)
+    if (!a) throw new AuthError('Sign in first.')
+    a.hash = await hash(password)
+    write(list)
+  },
   async sendReset(email) {
     // Nothing can be emailed from a demo. The real service sends the link.
     await new Promise((r) => setTimeout(r, 400))
@@ -144,5 +157,3 @@ export const localAuth: AuthService = {
   },
 }
 
-// To switch to Supabase later, import your new service here and export it instead.
-export const auth: AuthService = localAuth
