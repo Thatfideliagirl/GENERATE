@@ -9,7 +9,7 @@ import { Modal } from '../components/Modal'
 import { useToast } from '../components/Toast'
 import { initialsOf } from '../lib/initials'
 import { fmtDate, today, uid } from '../lib/format'
-import { exportSigned, fileToPdfBytes, loadPdfjs, textToImage } from '../lib/signpdf'
+import { exportSigned, fileToPdfBytes, lineImage, loadPdfjs, textToImage } from '../lib/signpdf'
 import type { Placed } from '../lib/signpdf'
 import { saveFile } from '../lib/pdf'
 
@@ -212,6 +212,15 @@ export default function SignDocument({ profile }: { profile: Profile }) {
               </button>
               <button className="btn" onClick={() => (setEditId(null), setModal('text'))}>
                 Text
+              </button>
+              <button
+                className="btn"
+                onClick={() => {
+                  const l = lineImage()
+                  add(l.src, l.aspect, 0.3)
+                }}
+              >
+                Line
               </button>
             </div>
             <p className="mu small sg-hint">Scroll to the page, tap what to add, then drag it into place. Drag the corner to make it bigger or smaller.</p>

@@ -96,19 +96,17 @@ export function TypeSignatureModal({ onClose, onUse, initial }: Props & { initia
   const [text, setText] = useState(initial)
   const [family, setFamily] = useState(SIGNATURE_FONTS[0][0])
 
+  const ready = useRef(false)
+
   useEffect(() => {
     let cancelled = false
-    const draw = async () => {
-      try {
-        await document.fonts.load(`64px "${family}"`)
-      } catch {
-        /* carry on with a fallback font */
-      }
+    const paint = () => {
       if (cancelled) return
       const c = canvas.current!
       const ctx = c.getContext('2d')!
       ctx.clearRect(0, 0, c.width, c.height)
       const t = text.trim()
+      ready.current = true
       if (!t) return
       let size = 96
       ctx.font = `${size}px "${family}"`
@@ -121,6 +119,14 @@ export function TypeSignatureModal({ onClose, onUse, initial }: Props & { initia
       ctx.textBaseline = 'middle'
       ctx.fillText(t, c.width / 2, c.height / 2)
     }
+    const draw = async () => {
+      ready.current = false
+      const load = document.fonts.load(`64px "${family}"`).catch(() => [])
+      // Wait a moment for the font. On a slow connection draw with a plain font first, then redraw when the font arrives.
+      await Promise.race([load, new Promise((ok) => setTimeout(ok, 600))])
+      paint()
+      load.then(paint)
+    }
     draw()
     return () => {
       cancelled = true
@@ -129,6 +135,7 @@ export function TypeSignatureModal({ onClose, onUse, initial }: Props & { initia
 
   const use = () => {
     if (!text.trim()) return toast('Type your name first')
+    if (!ready.current) return toast('One moment, the signature is still drawing')
     onUse(canvas.current!.toDataURL('image/png'))
   }
 

@@ -38,6 +38,9 @@ The owner page is src/pages/Admin.tsx. It only lists signups (name, business, ty
 Sign up is the full business setup (details, typed Something else options, logo, signature, payment, tax, social links, password). The default look is edited later on the Profile page. Social handles live in profile.socials (Instagram, Twitter, TikTok) and each document has a showSocials tick box that prints them at the bottom of the paper.
 Sign up collects the WhatsApp number on purpose: it is the number the send on WhatsApp button uses (stored as profile.phone).
 
+## Database (Supabase)
+supabase/schema.sql builds everything: profiles (who signed up, owner can read), business_settings (private profile json and number counters), documents (id, user_id, type, number, status, data jsonb), saved_templates, app_admins (owner accounts, closed to the app), with row level security. A trigger fills profiles from the sign up metadata, so supabaseAuth.signUp must pass options.data with full_name, business_name, business_type, trade. supabaseRepo maps AppData.profile to business_settings.data, AppData.seq to business_settings.seq, AppData.docs to documents.data and AppData.templates to saved_templates. The schema was tested on a local Postgres with stand ins for Supabase: owner sees profiles only, users see only their own rows, signed out sees nothing, deleting a user removes their rows.
+
 ## What is not built yet (in this order)
 1. Supabase: connect supabaseAuth (see above), a supabaseRepo, row level security so each user sees only their own documents, a profiles table and a documents table (store each document as jsonb plus id, user_id, type, status, updated_at).
 2. Owner admin page: built as a demo, needs Supabase so it lists every signup.

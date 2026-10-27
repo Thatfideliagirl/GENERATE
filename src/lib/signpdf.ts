@@ -103,6 +103,22 @@ export async function textToImage(value: string, script: boolean): Promise<{ src
   return { src: c.toDataURL('image/png'), aspect: w / h }
 }
 
+/** A straight line, for example to sign above or underline a word. It is a picture with space around it so it is easy to grab. */
+export function lineImage(): { src: string; aspect: number } {
+  const c = document.createElement('canvas')
+  c.width = 1200
+  c.height = 60
+  const k = c.getContext('2d')!
+  k.strokeStyle = '#14251F'
+  k.lineWidth = 5
+  k.lineCap = 'round'
+  k.beginPath()
+  k.moveTo(8, 30)
+  k.lineTo(1192, 30)
+  k.stroke()
+  return { src: c.toDataURL('image/png'), aspect: 20 }
+}
+
 /** Turns any picture data URL into PNG or JPEG bytes that pdf-lib can place. */
 async function embedable(src: string): Promise<{ bytes: Uint8Array; jpg: boolean }> {
   if (/^data:image\/png/.test(src)) return { bytes: dataUrlBytes(src), jpg: false }
