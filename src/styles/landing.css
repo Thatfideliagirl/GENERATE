@@ -1,0 +1,496 @@
+/* Landing page. Light only on purpose: it is a paper page, and the app itself follows the device theme. */
+.landing{
+  --bg:#F6F1E7;--sf:#FBF8F1;--ink:#14251F;--mu:#6B6A5C;--ln:#DDD3BC;--em:#0F4D3C;--on:#F6F1E7;--br:#B08D57;
+  --brass-ink:#7A5C28;--brass-lt:#D9BB82;--stamp:#1F6B4A;
+  --hd:'Bodoni Moda','Didot','Bodoni 72',Georgia,serif;
+  --ui:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --gx:clamp(20px,5vw,72px);
+  --gap:clamp(44px,6vw,84px);
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  background:var(--bg) var(--grain);
+  color:var(--ink);
+  font-family:var(--ui);
+  overflow-x:clip;
+  font-optical-sizing:auto;
+}
+.landing *{box-sizing:border-box}
+.landing h1,.landing h2,.landing h3{font-family:var(--hd);font-weight:400;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.landing .num{font-variant-numeric:tabular-nums lining-nums}
+:where(.landing) img{max-width:100%;height:auto}
+html{scroll-behavior:smooth}
+
+.lp-label{font:600 12px/1.2 var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--brass-ink);margin:0}
+.lp-h2{font-size:clamp(30px,4.4vw,54px);line-height:1.06;margin-top:12px}
+.lp-body{font-size:18px;line-height:1.6;margin:18px 0 0;max-width:32em}
+.lp-small{font-size:14px;line-height:1.5;color:var(--mu);margin:16px 0 0;padding-left:14px;border-left:2px solid var(--br);max-width:32em}
+.lp-sec{padding:var(--gap) max(var(--gx),calc((100% - 1280px)/2))}
+
+/* buttons that press down */
+.lp-btn{font:600 16px/1 var(--ui);padding:15px 24px;min-height:48px;border-radius:2px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:transform .08s ease,box-shadow .08s ease;-webkit-tap-highlight-color:transparent}
+.lp-btn.ghost{padding:11px 18px;min-height:44px;box-shadow:0 3px 0 var(--ln);background:var(--em);color:var(--on);border-color:var(--em)}
+.lp-btn.ghost:hover{background:#0B3A2D}
+.lp-btn.brass{background:var(--br);border-color:#7D6238;color:var(--ink);box-shadow:0 5px 0 #7D6238}
+.lp-btn.brass:hover{background:#BE9A62}
+.lp-btn.line{display:inline-flex;align-items:center;text-decoration:none;color:var(--on);border-color:rgba(246,241,231,.6);box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.lp-btn.line:hover{border-color:var(--brass-lt);color:var(--brass-lt)}
+.lp-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #7D6238}
+.lp-btn.ghost:active{box-shadow:0 0 0 var(--ln);transform:translateY(3px)}
+.lp-btn:focus-visible{outline:3px solid var(--em);outline-offset:3px}
+.lp-hero .lp-btn:focus-visible,.lp-end .lp-btn:focus-visible{outline-color:var(--brass-lt)}
+.lp-link-btn{font:600 15px var(--ui);background:none;border:0;color:var(--ink);cursor:pointer;padding:10px 6px;min-height:44px;border-bottom:1.5px solid transparent}
+.lp-link-btn:hover{color:var(--em)}
+.lp-link-btn:focus-visible{outline:3px solid var(--em);outline-offset:2px}
+
+/* top strip */
+.lp-top{padding:0 var(--gx);border-bottom:1px solid var(--ln)}
+.lp-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1280px;margin:0 auto;padding:12px 0}
+.lp-logo{height:40px;width:auto;display:block}
+.lp-links{display:none;list-style:none;margin:0;padding:0;gap:26px}
+.lp-links a{color:var(--ink);text-decoration:none;font:500 15px var(--ui);padding:8px 0;border-bottom:1.5px solid transparent}
+.lp-links a:hover{border-bottom-color:var(--br)}
+.lp-links a:focus-visible{outline:3px solid var(--em);outline-offset:4px}
+.lp-nav-end{display:flex;align-items:center;gap:6px}
+
+/* hero */
+.lp-hero{background:var(--em);color:var(--on);border-bottom:4px solid var(--br);padding:clamp(28px,4vw,56px) var(--gx) clamp(44px,6vw,72px);display:grid;grid-template-columns:minmax(0,1fr);gap:40px;overflow:hidden}
+.lp-hero>*{width:100%;max-width:1280px;margin-inline:auto}
+.lp-hero .lp-label{color:var(--brass-lt)}
+.lp-kicker{margin-bottom:16px}
+.lp-h1{font-size:clamp(44px,11.6vw,112px);line-height:.98;letter-spacing:-.02em;max-width:8.6em;color:var(--on)}
+.lp-h1 em{font-style:italic;color:var(--brass-lt);font-weight:400}
+.lp-lede{font-size:clamp(18px,1.6vw,21px);line-height:1.55;max-width:26em;margin:24px 0 26px;color:#E7E0CF}
+.lp-cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px}
+.lp-ticks{list-style:none;display:flex;flex-wrap:wrap;gap:8px 24px;margin:26px 0 0;padding:0;font-size:14px;color:#CFC8B6}
+.lp-ticks li::before{content:'';display:inline-block;width:7px;height:7px;background:var(--br);margin-right:9px;transform:rotate(45deg) translateY(-1px)}
+
+.lp-type{font-weight:500;font-size:17px}
+
+/* section heads sit left, content sits beside them on wide screens */
+.lp-sec-head{max-width:30em}
+.lp-how,.lp-features,.lp-who{display:grid;gap:28px}
+
+/* how it works */
+.lp-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.lp-steps li{display:block;padding:0;border-bottom:1px solid var(--ln);position:relative}
+.lp-n{font:400 clamp(32px,3.6vw,46px)/1 var(--hd);color:var(--brass-ink)}
+.lp-step-t{display:block;font:500 clamp(22px,2.2vw,28px)/1.1 var(--hd);font-variation-settings:'opsz' 14;margin:0 0 6px}
+.lp-step-d{display:block;font-size:17px;line-height:1.5;max-width:30em;color:#3A453F}
+
+/* features */
+.lp-feats{margin:0;padding:0;display:grid;border-top:1px solid var(--ink)}
+.lp-feats>div{padding:16px 0;border-bottom:1px solid var(--ln)}
+.lp-feats dt{font:500 clamp(20px,2vw,26px)/1.15 var(--hd)}
+.lp-feats dd{margin:6px 0 0;font-size:16px;line-height:1.5;color:#3A453F;max-width:30em}
+
+/* contracts */
+
+/* who it is for: an index of trades with a first invoice line each */
+
+/* try it */
+.lp-seg{margin:0 0 22px;border-radius:2px;border-color:var(--ink)}
+.lp-seg button{min-height:42px;font-family:var(--ui)}
+.lp-field{display:block;margin-bottom:18px}
+.lp-field span{display:block;font:600 12px var(--ui);letter-spacing:.16em;text-transform:uppercase;color:var(--brass-ink);margin-bottom:2px}
+.lp-field input,.lp-field select{border:0;border-bottom:1.5px solid var(--ink);border-radius:0;background:transparent;font:400 22px var(--hd);padding:7px 0;color:var(--ink)}
+.lp-field input::placeholder{color:#8E8A78;opacity:1}
+.lp-field input:focus-visible,.lp-field select:focus-visible{outline:none;border-bottom-color:var(--em);box-shadow:0 2px 0 var(--em)}
+.lp-looks{margin-top:24px;padding-top:16px;border-top:1px solid var(--ln)}
+.lp-looks .lp-label{margin-bottom:10px}
+.lp-looks .chip{border-radius:2px;background:var(--sf);font-family:var(--ui)}
+.lp-looks .chip.on{background:var(--em)}
+.lp-sheet{margin:0;border:0;background:transparent;box-shadow:0 1px 0 rgba(20,37,31,.15),0 24px 50px -28px rgba(20,37,31,.55)}
+.lp-sheet .paper{min-height:600px}
+
+.lp-sub{margin:12px 0 26px;font-size:18px;color:#3A453F}
+.lp-price{margin:34px 0 0;font-size:14px;line-height:1.5;color:var(--mu);border-top:1px solid var(--ln);padding-top:14px}
+
+.lp-foot{padding:30px var(--gx) 44px;max-width:1280px;margin:0 auto;display:grid;gap:12px}
+.lp-foot img{height:30px;width:auto}
+.lp-foot p{margin:0;font-size:14px;color:var(--mu);max-width:44em}
+
+@media (min-width:900px){
+  .lp-h1{font-size:clamp(54px,5.4vw,82px)}
+  .lp-links{display:flex}
+  .lp-hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;column-gap:3vw;padding-inline:max(var(--gx),calc((100% - 1280px)/2))}
+  .lp-hero>*{max-width:none;margin:0}
+  .lp-feats{grid-template-columns:1fr 1fr;column-gap:40px;border-top:0}
+  .lp-feats>div{border-top:1px solid var(--ink)}
+  .lp-feats>div:nth-child(even){transform:translateY(34px)}
+}
+@media (max-width:420px){
+  .lp-link-btn{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .lp-btn{transition:none}
+}
+
+/* Bodoni gets very thin at display sizes, so small headings use its sturdier optical size */
+.landing h3,.lp-n,.lp-feats dt,.lp-field input,.lp-field select{font-variation-settings:'opsz' 14;font-weight:500}
+.landing .lp-h2{font-variation-settings:'opsz' 36}
+
+/* v4: bands with their own surfaces, plaster texture on the green ones */
+.landing,.auth{
+  --plaster-em:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22420%22 height=%22420%22%3E%3Cfilter id=%22p%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.03%22 numOctaves=%225%22 seed=%229%22 stitchTiles=%22stitch%22 result=%22n%22/%3E%3CfeDiffuseLighting in=%22n%22 surfaceScale=%222.6%22 diffuseConstant=%221.1%22 lighting-color=%22%230F4F3E%22%3E%3CfeDistantLight azimuth=%22235%22 elevation=%2250%22/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23p)%22/%3E%3C/svg%3E");
+  --plaster-dk:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22420%22 height=%22420%22%3E%3Cfilter id=%22p%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.03%22 numOctaves=%225%22 seed=%229%22 stitchTiles=%22stitch%22 result=%22n%22/%3E%3CfeDiffuseLighting in=%22n%22 surfaceScale=%222.6%22 diffuseConstant=%221.1%22 lighting-color=%22%230E4535%22%3E%3CfeDistantLight azimuth=%22235%22 elevation=%2250%22/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23p)%22/%3E%3C/svg%3E");
+  --speck:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22260%22%3E%3Cfilter id=%22g%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.1%22 numOctaves=%223%22 seed=%223%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 .96  0 0 0 0 .92  0 0 0 0 .8  0 0 0 1.6 -.72%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23g)%22 opacity=%22.5%22/%3E%3C/svg%3E");
+  --speck-dk:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22260%22%3E%3Cfilter id=%22g%22 x=%220%22 y=%220%22 width=%22100%25%22 height=%22100%25%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.0%22 numOctaves=%223%22 seed=%225%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix values=%220 0 0 0 0  0 0 0 0 .08  0 0 0 0 .05  0 0 0 1.6 -.7%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23g)%22 opacity=%22.45%22/%3E%3C/svg%3E");
+}
+
+/* hero: green plaster wall, a feelable grain, and the pencil picture */
+.lp-hero{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto;gap:24px}
+.lp-hero-img{position:relative;container-type:inline-size;justify-self:center;width:100%;max-width:760px}
+.lp-hero-img img{display:block;width:100%;height:auto;filter:drop-shadow(0 26px 30px rgba(0,0,0,.35))}
+.lp-count{position:absolute;left:47%;top:67.8%;width:7.6cqw;height:3.3cqw;transform:translate(-50%,-50%) rotate(-7deg);background:#F7F1E8;display:flex;align-items:center;justify-content:center;font:600 1.62cqw/1 'Fraunces',Georgia,serif;font-variation-settings:'opsz' 36;color:#0F4D3C;letter-spacing:-.01em;white-space:nowrap}
+
+/* the receipt beside the steps */
+
+/* bands: every section sits on its own surface */
+.lp-how{background:var(--bg) var(--grain)}
+.lp-features .lp-label{color:var(--brass-lt)}
+.lp-features .lp-h2{color:var(--on)}
+.lp-features .lp-feats{border-top-color:rgba(217,187,130,.5)}
+.lp-features .lp-feats>div{border-color:rgba(217,187,130,.5)}
+.lp-features .lp-feats dt{color:var(--on)}
+.lp-features .lp-feats dd{color:#D5CEBB}
+.lp-end{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto}
+
+/* v5: green and ivory take turns, so every section edge is easy to see */
+.lp-sheet .paper{min-height:0}
+.lp-how,.lp-contracts,.lp-try{background:var(--bg) var(--grain)}
+.lp-contracts{display:grid;gap:36px}
+.lp-how-text{min-width:0}
+.lp-how-text .lp-steps{margin-top:26px}
+.lp-how-paper,.lp-contract-paper{min-width:0;width:100%;max-width:480px;justify-self:center}
+
+.lp-features,.lp-who{background:var(--speck),var(--plaster-dk),#0B3A2D;background-size:260px 260px,420px 420px,auto;color:var(--on);border-top:4px solid var(--br)}
+.lp-who{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto;display:block}
+.lp-features .lp-label,.lp-who .lp-label{color:var(--brass-lt)}
+.lp-features .lp-h2,.lp-who .lp-h2{color:var(--on)}
+.lp-who .lp-h2 em{font-style:italic;color:var(--brass-lt);font-weight:400}
+.lp-features .lp-feats{border-top-color:rgba(217,187,130,.5)}
+.lp-features .lp-feats>div{border-color:rgba(217,187,130,.45)}
+.lp-features .lp-feats dt{color:var(--on)}
+.lp-features .lp-feats dd{color:#D5CEBB}
+.lp-feats>div:nth-child(even){transform:none}
+
+/* who is it for: four frames with a stack of real documents in each */
+.lp-frames{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.lp-frame{position:relative;background:#F6F1E7 var(--grain);color:var(--ink);border-radius:22px;padding:22px 22px 0;box-shadow:0 24px 40px -24px rgba(0,0,0,.65);display:flex;flex-direction:column;min-height:420px;overflow:visible}
+.lp-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#EADFC4;color:var(--brass-ink);margin-bottom:16px}
+.lp-frame h3{font-size:22px;line-height:1.1;font-variation-settings:'opsz' 14}
+.lp-frame p{margin:8px 0 0;font-size:15px;line-height:1.45;color:#3A453F;max-width:15em}
+.lp-pencil{display:none;position:absolute;right:-136px;bottom:-6px;height:104%;width:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 14px 14px rgba(0,0,0,.3))}
+
+/* try it: compact, with the paper beside the controls */
+.lp-try-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;max-width:1100px;margin:0 auto}
+.lp-try-fields,.lp-try-paper{min-width:0}
+.lp-try .lp-h2{font-size:clamp(28px,3.6vw,44px);max-width:14em}
+.lp-seg{margin:20px 0 18px;max-width:300px}
+.lp-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+.lp-field.wide{grid-column:1/-1}
+.lp-field{margin-bottom:14px}
+.lp-looks{margin-top:14px}
+.lp-looks>div{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+@media (max-width:619px){.lp-looks>div{grid-template-columns:1fr}}
+.lp-try-paper{max-width:420px;width:100%;justify-self:center}
+
+/* closing: a notepad with spiral binding */
+.lp-end{background:var(--speck),var(--plaster-em),#0F4D3C;background-size:260px 260px,420px 420px,auto;border-top:4px solid var(--br);padding:clamp(56px,7vw,96px) var(--gx) clamp(40px,6vw,72px)}
+.lp-pad{position:relative;max-width:720px;margin:0 auto;padding:clamp(44px,5vw,64px) clamp(24px,4vw,52px) clamp(26px,4vw,40px);background:#FBF8F1 var(--grain);background-image:repeating-linear-gradient(to bottom,transparent 0 35px,rgba(176,141,87,.28) 35px 36px),var(--grain);background-position:0 10px,0 0;box-shadow:0 30px 50px -24px rgba(0,0,0,.65);transform:rotate(-.6deg);border-radius:4px 4px 8px 8px}
+.lp-pad::before{content:'';position:absolute;left:18px;right:18px;top:12px;height:20px;background:radial-gradient(circle 6px at 14px 10px,#0B3A2D 0 5.5px,transparent 6px) 0 0/28px 20px repeat-x}
+.lp-pad::after{content:'';position:absolute;left:18px;right:18px;top:-14px;height:46px;background:linear-gradient(90deg,transparent 9px,#C9C2AE 9px,#8E8873 13px,#D8D2BF 17px,transparent 17px) 0 0/28px 46px repeat-x;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));-webkit-mask:linear-gradient(#000 0 0);pointer-events:none}
+.lp-pad .lp-h2{margin-top:0}
+.lp-sub{margin:12px 0 24px;font-size:18px;color:#3A453F}
+.lp-price{margin:30px 0 0;font-size:14px;line-height:1.5;color:var(--mu);border-top:1px solid var(--ln);padding-top:14px}
+
+@media (min-width:620px){
+  .lp-frames{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (min-width:900px){
+  .lp-how,.lp-contracts{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);column-gap:6vw;align-items:center}
+  .lp-contracts{grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}
+  .lp-features{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);column-gap:5vw;align-items:start}
+  .lp-feats{grid-template-columns:1fr 1fr;column-gap:36px;border-top:0}
+  .lp-feats>div{border-top:1px solid rgba(217,187,130,.5);border-bottom:0}
+  .lp-frames{gap:16px;margin-top:40px}
+  .lp-frame{min-height:400px}
+  .lp-frames{padding-right:150px;grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lp-pencil{display:block}
+  .lp-try-grid{grid-template-columns:minmax(0,1fr) 400px;gap:56px;align-items:start}
+  .lp-try-paper{position:sticky;top:20px;margin:0}
+}
+@media (max-width:619px){
+  .lp-fields{grid-template-columns:1fr}
+  .lp-frame{min-height:0;padding-bottom:0}
+}
+
+/* v6: who is it for sits on cream like the inspiration, contracts take the green */
+.lp-who{background:var(--bg) var(--grain);color:var(--ink);border-top:0}
+.lp-who .lp-label{color:var(--brass-ink)}
+.lp-who .lp-h2{color:var(--em);font-weight:600;font-variation-settings:'opsz' 30;letter-spacing:-.015em}
+.lp-who .lp-h2 em{color:#9A7A44;font-weight:500}
+.lp-frames{gap:14px}
+.lp-frame{background:#F9F4E9;border-radius:28px;padding:24px 22px 8px;box-shadow:0 18px 34px -22px rgba(90,70,30,.45),inset 0 1px 0 rgba(255,255,255,.7);overflow:visible}
+.lp-frame h3{color:var(--em);font-weight:600;font-size:23px;line-height:1.1}
+.lp-frame p{color:#4B5148}
+.lp-ico{background:#F0E3C8;border-radius:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 6px 12px -8px rgba(90,70,30,.5)}
+
+.lp-contracts{background:var(--speck),var(--plaster-dk),#0B3A2D;background-size:260px 260px,420px 420px,auto;color:var(--on);border-top:4px solid var(--br)}
+.lp-contracts .lp-label{color:var(--brass-lt)}
+.lp-contracts .lp-h2,.lp-contracts .lp-body{color:var(--on)}
+.lp-contracts .lp-body{color:#E3DCC9}
+.lp-contracts .lp-small{color:#CFC8B6;border-left-color:var(--brass-lt)}
+.lp-try{border-top:4px solid var(--br)}
+@media (min-width:900px){.lp-frame{min-height:350px}}
+
+/* frames hold write-ups only. The pencil is taller than the last frame and leans its hand on the top edge */
+.lp-frame{min-height:0;padding:24px 22px 26px}
+.lp-frame p{max-width:none}
+@media (min-width:900px){
+  .lp-frame{min-height:0}
+  .lp-frames{align-items:stretch;margin-top:90px}
+  .lp-pencil{height:161%;right:-134px;bottom:-22px}
+}
+
+/* each frame: a picture space on top, the write-up underneath, all the same height */
+.lp-frame{padding:14px 14px 24px;transition:transform .25s ease,box-shadow .25s ease}
+.lp-frame:hover{transform:translateY(-4px);box-shadow:0 26px 40px -22px rgba(90,70,30,.55),inset 0 1px 0 rgba(255,255,255,.7)}
+.lp-pic{position:relative;aspect-ratio:16/10;border-radius:18px;background:linear-gradient(160deg,#EFE3C8,#E2D3AE);box-shadow:inset 0 0 0 1px rgba(122,92,40,.12);margin-bottom:34px}
+.lp-pic>img{display:block;width:100%;height:100%;object-fit:cover;border-radius:18px}
+.lp-ico{position:absolute;left:14px;bottom:-24px;width:48px;height:48px;border-radius:14px;background:#F9F4E9;box-shadow:0 8px 14px -8px rgba(90,70,30,.6),inset 0 0 0 1px rgba(122,92,40,.14);margin:0}
+.lp-frame h3,.lp-frame p{padding-inline:8px}
+.lp-frame h3{margin-top:0}
+@media (prefers-reduced-motion:reduce){.lp-frame{transition:none}.lp-frame:hover{transform:none}}
+@media (min-width:900px){
+  .lp-frames{margin-top:150px}
+}
+
+/* v7: try it now is one compact card, like the frames above it */
+.lp-try{padding-block:clamp(40px,5vw,64px)}
+.lp-try-head{max-width:1100px;margin:0 auto 22px}
+.lp-try .lp-h2{font-size:clamp(26px,3vw,38px);max-width:none;margin-top:8px}
+.lp-try-card{max-width:1100px;margin:0 auto;background:#F9F4E9;border-radius:28px;padding:clamp(16px,2.4vw,26px);box-shadow:0 18px 34px -22px rgba(90,70,30,.45),inset 0 1px 0 rgba(255,255,255,.7)}
+.lp-try-grid{max-width:none;margin:0;gap:20px}
+.lp-seg{margin:0 0 14px;max-width:240px}
+.lp-seg button{min-height:38px;font-size:14px}
+.lp-fields{grid-template-columns:1fr 1fr;gap:0 18px}
+.lp-field{margin-bottom:10px}
+.lp-field input,.lp-field select{font-size:19px;padding:5px 0}
+.lp-looks{margin-top:8px;padding-top:12px}
+.lp-looks .lp-label{margin-bottom:6px}
+.lp-looks .lk{margin-bottom:6px}
+.lp-looks .chips{gap:6px;margin-bottom:6px}
+.lp-looks .chip{min-height:30px;padding:4px 10px;font-size:13px}
+.lp-looks .sw{width:26px;height:26px}
+.lp-looks .small{font-size:12px}
+.lp-try-paper{position:static;max-width:none;width:100%;background:linear-gradient(160deg,#EFE3C8,#E2D3AE);border-radius:18px;padding:14px;box-shadow:inset 0 0 0 1px rgba(122,92,40,.12);align-self:start}
+.lp-try-paper .lp-sheet{box-shadow:0 10px 20px -10px rgba(20,37,31,.5)}
+@media (min-width:900px){
+  .lp-try-grid{grid-template-columns:minmax(0,1fr) 340px;gap:26px;align-items:start}
+  .lp-try-paper{position:static;margin:0}
+}
+@media (max-width:899px){.lp-try-paper{order:-1}}
+@media (max-width:619px){.lp-fields{grid-template-columns:1fr}}
+
+/* cut out pictures stand in the picture space and rise a little above it */
+.lp-pic>img.lp-cut{position:absolute;left:50%;bottom:0;width:auto;height:112%;max-width:92%;object-fit:contain;transform:translateX(-50%);border-radius:0;filter:drop-shadow(0 10px 10px rgba(60,40,10,.28))}
+@media (max-width:899px){.lp-pic>img.lp-cut{height:106%}}
+
+/* ===== v8: motion, phone, feature stage, centred frames ===== */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s ease var(--d,0s),transform .95s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+.lp-frame.rv.in{transition:opacity .8s ease var(--d,0s),transform .25s ease,box-shadow .25s ease}
+
+/* page load: the hero builds itself in order */
+@keyframes lp-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes lp-slide2{from{opacity:0;transform:translateX(48px) scale(.96)}to{opacity:1;transform:none}}
+.lp-nav{animation:lp-rise .7s ease both}
+.lp-hero-text>*{animation:lp-rise .85s cubic-bezier(.2,.7,.2,1) both}
+.lp-hero-text>:nth-child(1){animation-delay:.1s}
+.lp-hero-text>:nth-child(2){animation-delay:.2s}
+.lp-hero-text>:nth-child(3){animation-delay:.35s}
+.lp-hero-text>:nth-child(4){animation-delay:.48s}
+.lp-hero-text>:nth-child(5){animation-delay:.6s}
+.lp-hero-img{animation:lp-slide2 1.1s cubic-bezier(.2,.7,.2,1) .25s both}
+
+/* how it works: the steps and a phone */
+.lp-how{display:grid;gap:36px}
+.lp-how-paper{display:grid;justify-items:center;max-width:none}
+
+@keyframes lp-fade2{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+
+/* who is it for: centred, pictures sit inside the cream frames, the pencil rests on the last one */
+.lp-who{text-align:center}
+.lp-who-head{text-align:center}
+.lp-who .lp-h2{margin-inline:auto}
+.lp-frames{max-width:1000px;margin:44px auto 0;text-align:left}
+.lp-frame{padding:12px 12px 22px}
+.lp-pic{aspect-ratio:5/4;margin-bottom:16px;overflow:hidden;display:block;border-radius:18px}
+.lp-pic>img.lp-cut{position:static;display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center bottom;transform:none;padding:8px 6px 0;filter:drop-shadow(0 6px 6px rgba(60,40,10,.25))}
+.lp-ico{left:10px;top:10px;bottom:auto;width:40px;height:40px;border-radius:12px}
+.lp-ico svg{width:22px;height:22px}
+.lp-frame h3,.lp-frame p{padding-inline:8px}
+.lp-pencil{display:block;position:absolute;z-index:3;pointer-events:none;height:250px;width:auto;right:16px;top:-88px;clip-path:inset(0 0 54% 0);filter:drop-shadow(0 8px 8px rgba(0,0,0,.25))}
+.lp-frame.anyone{margin-top:64px}
+@media (min-width:620px) and (max-width:1319px){.lp-frame.anyone{margin-top:0}.lp-frames{margin-top:84px}}
+@media (min-width:1320px){
+  .lp-frames{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:70px}
+  .lp-frame.anyone{margin-top:0}
+  .lp-pencil{height:calc((100% + 12px) / .624);max-height:none;right:-62%;top:auto;bottom:-22px;clip-path:none;filter:drop-shadow(0 14px 14px rgba(0,0,0,.3))}
+}
+
+/* try it and closing: gentle drop in */
+.lp-pad.rv{transform:translateY(40px) rotate(-2deg)}
+.lp-pad.rv.in{transform:rotate(-.6deg)}
+
+@media (prefers-reduced-motion:reduce){
+  .rv,.rv.in,.lp-pad.rv{opacity:1;transform:none;transition:none}
+  .lp-pad.rv.in{transform:rotate(-.6deg)}
+  .lp-nav,.lp-hero-text>*,.lp-hero-img,.lp-plane,.sc,.sc-in{animation:none!important}
+  .fv-sheet.s0{transform:rotate(-9deg)}.fv-sheet.s2{transform:rotate(9deg)}
+}
+
+@media (max-width:520px){
+  .lp-pic{aspect-ratio:4/3}
+}
+@media (max-width:1319px){
+  .lp-pencil{height:290px;top:-103px;right:18px;clip-path:inset(0 0 52% 0);-webkit-mask-image:linear-gradient(#000 78%,transparent 100%);mask-image:linear-gradient(#000 78%,transparent 100%)}
+}
+@media (min-width:620px) and (max-width:899px){.lp-frames{row-gap:96px}}
+@media (max-width:1319px){
+  .lp-pencil{clip-path:none;-webkit-mask-image:linear-gradient(#000 0,#000 40%,transparent 50%);mask-image:linear-gradient(#000 0,#000 40%,transparent 50%)}
+}
+
+/* v9: how it works with the pencil beside the phone, features back to the plain list */
+.lp-how-in{display:grid;gap:36px}
+.lp-how-in>*{min-width:0}
+.lp-step-btn{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;width:100%;text-align:left;background:none;border:0;padding:18px 0 18px 14px;font:inherit;color:inherit;cursor:pointer;opacity:.5;transition:opacity .4s ease}
+.lp-steps li.cur .lp-step-btn,.lp-step-btn:hover{opacity:1}
+.lp-step-btn:focus-visible{outline:3px solid var(--em);outline-offset:-3px}
+.lp-steps li::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;background:var(--br);transform:scaleY(0);transform-origin:top;transition:transform .45s ease}
+.lp-steps li.cur::before{transform:scaleY(1)}
+.lp-steps li.cur .lp-n{color:var(--em)}
+@keyframes lp-hop{0%{transform:translateY(0)}35%{transform:translateY(-16px) rotate(-1.2deg)}70%{transform:translateY(2px)}100%{transform:none}}
+@keyframes lp-sway{0%,100%{transform:rotate(-.5deg)}50%{transform:rotate(.6deg)}}
+@media (min-width:900px){
+  .lp-how-in{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);column-gap:5vw;align-items:center}
+}
+@keyframes lp-fade2{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* who is it for: no pencil on phones */
+@media (max-width:619px){.lp-pencil{display:none}.lp-frame.anyone{margin-top:0}}
+.lp-how{display:block}
+
+/* v10: the pencil and phone picture with a live conversation on the screen */
+.lp-how-stage{min-width:0}
+.lp-scene-clip{overflow:hidden;width:100%}
+.lp-scene{position:relative;container-type:inline-size;width:100%}
+.lp-scene>img{display:block;width:100%;height:auto}
+.lp-sc{position:absolute;left:55.2%;top:28.6%;width:34.35%;height:47%;background:#EEE7D3;transform:rotate(-.9deg);transform-origin:0 0;overflow:hidden;font-family:var(--ui)}
+.lp-sc-in{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:2.1cqw;padding:2cqw 1.6cqw 1.8cqw;background-image:radial-gradient(rgba(122,92,40,.1) .5px,transparent 1px);background-size:1.2cqw 1.2cqw}
+.sc{max-width:90%;font-size:2.35cqw;line-height:1.38;padding:1.5cqw 1.9cqw .9cqw;border-radius:2cqw;color:#14251F;box-shadow:0 .2cqw .3cqw rgba(0,0,0,.12);animation:sc-pop .5s cubic-bezier(.2,.9,.3,1.2) both;flex:none}
+.sc.out{align-self:flex-end;background:#DCEBCF;border-top-right-radius:.6cqw}
+.sc.in{align-self:flex-start;background:#FBF8F1;border-top-left-radius:.6cqw}
+.sc.file{display:flex;align-items:center;gap:1.8cqw;background:#FBF8F1;padding:1.4cqw 1.9cqw}
+.sc.file b{display:block;font-size:2.3cqw;font-weight:600}
+.sc.file i{font-style:normal;font-size:1.9cqw;color:#6B6A5C}
+.sc-doc{width:3.4cqw;height:4.4cqw;border:.3cqw solid #B08D57;border-radius:.5cqw;background:#F7EFDD;flex:none}
+.sc-time{display:block;text-align:right;font-size:1.7cqw;color:#7C8478;margin-top:.5cqw}
+.sc-time.seen{color:#2F7FD0;transition:color .4s ease}
+.sc.typing{display:flex;gap:.9cqw;padding:1.7cqw 2.1cqw}
+.sc.typing i{width:1.2cqw;height:1.2cqw;border-radius:50%;background:#8E8A78;animation:sc-dot 1s ease-in-out infinite}
+.sc.typing i:nth-child(2){animation-delay:.15s}.sc.typing i:nth-child(3){animation-delay:.3s}
+@keyframes sc-pop{from{opacity:0;transform:translateY(2cqw) scale(.94)}to{opacity:1;transform:none}}
+@keyframes sc-dot{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-.9cqw);opacity:1}}
+.lp-plane{position:absolute;left:78%;top:66%;width:5.2cqw;height:5.2cqw;fill:#B08D57;stroke:#7D6238;stroke-width:1.6;stroke-linejoin:round;opacity:0;animation:plane-fly 11.6s ease-out 1.5s infinite;pointer-events:none}
+@keyframes plane-fly{0%{opacity:0;transform:translate(0,0) rotate(-18deg) scale(.6)}2%{opacity:1}12%{opacity:1;transform:translate(10cqw,-24cqw) rotate(-24deg) scale(1.1)}18%,100%{opacity:0;transform:translate(15cqw,-34cqw) rotate(-26deg) scale(1.2)}}
+@media (min-width:900px){
+  .lp-scene{width:100%;margin-left:0}
+}
+@media (max-width:899px){
+  .sc{font-size:2.3cqw}
+  .sc.file b{font-size:2.4cqw}
+  .sc-time{font-size:1.8cqw}
+}
+
+/* the sleeve in the growing brands picture runs straight into the edge of its frame */
+.lp-frame.growing .lp-pic>img.lp-cut{padding-right:0;object-position:right bottom}
+
+/* pricing: a short panel that drops down under the top strip */
+.lp-navlink{font:500 15px var(--ui);background:none;border:0;color:var(--ink);cursor:pointer;padding:8px 0;border-bottom:1.5px solid transparent}
+.lp-navlink:hover,.lp-navlink[aria-expanded="true"]{border-bottom-color:var(--br)}
+.lp-navlink:focus-visible{outline:3px solid var(--em);outline-offset:4px}
+.lp-pricing-m{display:inline-block}
+@media (min-width:900px){.lp-pricing-m{display:none}}
+.lp-top{position:relative;z-index:20}
+.lp-drop{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.7,.2,1);visibility:hidden}
+.lp-drop.open{grid-template-rows:1fr;visibility:visible}
+.lp-drop-clip{overflow:hidden;min-height:0}
+.lp-drop-in{max-width:1280px;margin:0 auto;padding:6px 0 26px;display:grid;gap:14px;position:relative;opacity:0;transform:translateY(-12px);transition:opacity .35s ease .08s,transform .45s ease .05s}
+.lp-drop.open .lp-drop-in{opacity:1;transform:none}
+.lp-plan{border-radius:22px;padding:22px 22px 24px;position:relative}
+.lp-plan.free{background:#FBF8F1;box-shadow:0 14px 26px -18px rgba(90,70,30,.5),inset 0 0 0 1px var(--ln)}
+.lp-plan-price{font:500 40px/1 var(--hd);font-variation-settings:'opsz' 36;color:var(--em);margin:8px 0 14px}
+.lp-plan ul{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:9px;font-size:15px;line-height:1.4}
+.lp-plan li{padding-left:22px;position:relative}
+.lp-plan li::before{content:'';position:absolute;left:3px;top:.45em;width:6px;height:11px;border:solid var(--em);border-width:0 2px 2px 0;transform:rotate(40deg) scale(.9)}
+.lp-plan.more{background:#EFE6D2;box-shadow:inset 0 0 0 1px #D8CBA9;display:grid;gap:14px;align-content:start;color:#6B6A5C}
+.lp-plan.more i{display:block;height:9px;border-radius:5px;background:repeating-linear-gradient(90deg,#DACDAA 0 12px,#E4D9BB 12px 16px);filter:blur(1.4px)}
+.lp-plan.more i:nth-of-type(2){width:82%}.lp-plan.more i:nth-of-type(3){width:64%}
+.lp-lock{display:flex;align-items:center;gap:10px;font:500 24px var(--hd);font-variation-settings:'opsz' 14;color:var(--brass-ink);margin-top:4px}
+.lp-lock svg{flex:none}
+.lp-drop-x{justify-self:end;background:none;border:0;font:600 13px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--mu);cursor:pointer;padding:6px 2px}
+.lp-drop-x:hover{color:var(--ink)}
+.lp-drop-x:focus-visible{outline:3px solid var(--em);outline-offset:2px}
+.lp-top>.lp-drop{margin:0 calc(var(--gx) * -1);padding:0 var(--gx);background:var(--bg) var(--grain);border-top:1px solid var(--ln)}
+.lp-textbtn{background:none;border:0;padding:0;font:inherit;color:var(--em);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lp-textbtn:focus-visible{outline:3px solid var(--em);outline-offset:3px}
+@media (min-width:760px){.lp-drop-in{grid-template-columns:1.2fr 1fr;align-items:stretch}.lp-drop-x{position:absolute;right:0;top:-2px;z-index:2}.lp-drop-in{padding-top:18px}}
+@media (prefers-reduced-motion:reduce){.lp-drop,.lp-drop-in{transition:none}}
+.lp-btn{white-space:nowrap}
+.lp-nav-end{gap:2px}
+@media (max-width:420px){.lp-btn.ghost{padding:10px 14px}.lp-pricing-m{padding:10px 8px}}
+@media (min-width:760px){.lp-drop-in{align-items:start}}
+
+/* v11: wider frames with clear edges, a hover that lifts them, and the pencil kept inside its own section */
+.lp-who{padding-bottom:clamp(96px,9vw,150px)}
+.lp-frames{max-width:1180px;gap:20px}
+.lp-frame{background:#FBF7EC;border:1.5px solid #D9CBA6;box-shadow:0 2px 0 rgba(255,255,255,.8) inset,0 18px 30px -20px rgba(70,50,15,.55),0 2px 4px rgba(70,50,15,.12);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lp-frame.rv.in{transition:opacity .8s ease var(--d,0s),transform .3s cubic-bezier(.2,.8,.3,1.2),box-shadow .3s ease,border-color .3s ease}
+.lp-frame.rv.in:hover,.lp-frame.rv.in:focus-within{transform:translateY(-10px) scale(1.025);border-color:var(--br);box-shadow:0 2px 0 rgba(255,255,255,.8) inset,0 34px 44px -22px rgba(70,50,15,.6),0 4px 8px rgba(70,50,15,.14)}
+.lp-frame.rv.in:active{transform:translateY(-3px) scale(.995);transition-duration:.08s}
+.lp-pic>img.lp-cut{transition:transform .45s cubic-bezier(.2,.8,.3,1.1)}
+.lp-frame:hover .lp-pic>img.lp-cut{transform:scale(1.07)}
+.lp-ico{transition:transform .35s cubic-bezier(.2,.8,.3,1.4),background .3s ease}
+.lp-frame:hover .lp-ico{transform:translateY(-2px) rotate(-6deg) scale(1.08);background:#fff}
+.lp-frame h3{transition:color .25s ease}
+.lp-frame:hover h3{color:#0A3A2C}
+@media (min-width:1320px){
+  .lp-frames{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lp-pencil{bottom:-6px;filter:drop-shadow(0 12px 10px rgba(0,0,0,.3))}
+}
+@media (min-width:620px) and (max-width:1319px){.lp-frames{max-width:860px}}
+@media (prefers-reduced-motion:reduce){.lp-frame.rv.in:hover,.lp-frame.rv.in:focus-within{transform:none}.lp-frame:hover .lp-pic>img.lp-cut,.lp-frame:hover .lp-ico{transform:none}}
+
+/* v12: frames sit exactly in the middle, the pencil stands in the free space to the right */
+.lp-frames{padding-right:0}
+@media (min-width:1400px){.lp-frames{max-width:1060px}}
+@media (min-width:1320px) and (max-width:1399px){
+  .lp-frames{max-width:1060px;margin-top:90px}
+  .lp-pencil{height:290px;top:-103px;right:18px;bottom:auto;clip-path:none;-webkit-mask-image:linear-gradient(#000 0,#000 40%,transparent 50%);mask-image:linear-gradient(#000 0,#000 40%,transparent 50%)}
+}
+
+/* v13: nav links on one line, pricing closes smoothly, no pencil below desktop */
+.lp-links{align-items:center}
+.lp-links>li{display:flex;align-items:center}
+.lp-links a,.lp-navlink{line-height:1.2;padding:8px 0;margin:0;font:500 15px/1.2 var(--ui);border-bottom:1.5px solid transparent;display:inline-block}
+.lp-drop{visibility:hidden;transition:grid-template-rows .55s cubic-bezier(.4,0,.2,1),visibility 0s linear .55s}
+.lp-drop.open{visibility:visible;transition:grid-template-rows .55s cubic-bezier(.4,0,.2,1),visibility 0s}
+.lp-drop-in{transition:opacity .4s ease,transform .55s cubic-bezier(.4,0,.2,1)}
+.lp-drop.open .lp-drop-in{transition:opacity .4s ease .1s,transform .55s cubic-bezier(.2,.7,.2,1) .05s}
+@media (max-width:1319px){.lp-pencil{display:none}.lp-frame.anyone{margin-top:0}.lp-frames{margin-top:44px}}
+@media (min-width:1320px){.lp-who{padding-top:clamp(120px,10vw,160px)}}
+@media (prefers-reduced-motion:reduce){.lp-drop,.lp-drop.open{transition:none}}
