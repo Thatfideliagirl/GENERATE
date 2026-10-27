@@ -46,5 +46,10 @@ Sign up collects the WhatsApp number on purpose: it is the number the send on Wh
 5. Email change and the real password reset screen after the emailed link (the request screen exists).
 6. Small polish: contract template cards currently show raw {{placeholders}} in their preview text, resolve them.
 
+## Ideas Coco wants to come back to (not built)
+Sign a document: upload a PDF or picture that needs signing, draw or place a saved signature on it, move and resize it on the right page, and download the signed file. Coco's words: get your document signed without stress. Plan: render PDF pages to canvas, let the person drop one or more signature, initials and date boxes on a page, then write them into the PDF with pdf-lib (or flatten the page images into jsPDF). Works on the device with no server. Needs a decision on whether it is free or part of Generate more.
+Template gallery: 30 templates to start, different layouts, built into Generate more with one free try of an uploaded template. Uploaded designs (image or PDF) become a background with placed boxes for name, items, totals and signature.
+Features section of the landing page: waiting for Coco's idea, plain list for now.
+
 ## Testing
 Playwright in Python works. Block fonts.googleapis.com requests in tests and use wait_until domcontentloaded. Flow that was verified: landing, setup, typed signature, invoice with part payment, preview, PDF download (one page), contract templates, dashboard totals.
