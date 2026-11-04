@@ -1,0 +1,459 @@
+<title>Generate Phone Story</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* Layout concept: one phone carries the whole story. It sits under the centred headline, then stays pinned while the page scrolls past it, and its screen changes with each step: chat, setup, make, send, dashboard, sign. Powder blue, navy ink, one clay accent. Light only, on purpose. */
+:root{
+  --sky:#E6EDF3;--sky2:#D8E3EC;--paper:#FCFBF8;--ink:#13203A;--mu:#5A6780;--ln:#CBD6E1;--hair:#ECEEF2;
+  --clay:#B4603F;--claytint:#F2E4DA;--wa:#DCF3D0;--wagreen:#0C5B4A;--paid:#1E7A4F;--paidbg:#DDF1E5;--part:#9A5B00;--partbg:#FCEBCB;--late:#A23A2C;--latebg:#F9DEDA;
+  --ui:'Geist',system-ui,-apple-system,sans-serif;--acc:'Instrument Serif',Georgia,serif;--mono:'Geist Mono',ui-monospace,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+a{color:inherit}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--sky);color:var(--ink);font:400 17px/1.55 var(--ui);-webkit-font-smoothing:antialiased}
+.in{max-width:1200px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.035em;text-wrap:balance}
+em.s{font-family:var(--acc);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--clay)}
+.num{font-variant-numeric:tabular-nums}
+.lbl{font:500 13px var(--mono);letter-spacing:.04em;color:var(--clay);margin:0 0 14px;text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:99px;font:600 16px var(--ui);text-decoration:none;border:1px solid var(--ink);color:var(--ink);background:transparent;cursor:pointer;transition:transform .15s ease,background .2s ease}
+.btn.p{background:var(--ink);color:var(--paper)}.btn.p:hover{background:#22325A}
+.btn:hover{transform:translateY(-1px)}
+:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+
+/* top */
+.top{display:flex;align-items:center;gap:28px;padding-block:18px}
+.logo{height:28px;width:auto;display:block}
+.top nav{display:none;gap:28px;font-size:15px;color:var(--mu)}
+.top nav a{text-decoration:none}.top nav a:hover{color:var(--ink)}
+.top .sp{flex:1}
+.top .si{font-size:15px;text-decoration:none;font-weight:500}
+.top .btn{min-height:42px;padding:0 18px;font-size:14.5px}
+@media(min-width:960px){.top nav{display:flex}}
+@media(max-width:420px){.top .si{display:none}.top{gap:12px}}
+
+/* hero */
+.hero{text-align:center;display:grid;justify-items:center;padding-block:clamp(24px,5vw,56px) 34px}
+.search{display:flex;align-items:center;gap:12px;width:min(100%,520px);background:var(--paper);border:1px solid var(--ln);border-radius:99px;padding:8px 8px 8px 20px;box-shadow:0 12px 30px -22px rgba(19,32,58,.5);text-decoration:none;color:var(--ink);text-align:left}
+.search svg{flex:none;color:var(--mu)}
+.search .q{flex:1;min-width:0;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search .q::after{content:'';display:inline-block;width:1.5px;height:1.05em;background:var(--clay);vertical-align:-2px;margin-left:2px;animation:blink 1s step-end infinite}
+.search b{flex:none;background:var(--ink);color:var(--paper);font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:99px}
+@keyframes blink{50%{opacity:0}}
+.hero h1{font-size:clamp(44px,7.2vw,96px);line-height:.98;margin:30px 0 0;max-width:12em}
+.hero h1 em.s{font-size:1.08em}
+.hero .lede{font-size:clamp(17px,1.5vw,20px);color:var(--mu);max-width:31em;margin:22px 0 30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+/* story: the pinned phone */
+.story{position:relative;display:grid;grid-template-columns:minmax(0,1fr);padding-bottom:10vh}
+.pin{grid-row:1/-1;grid-column:1;position:sticky;top:max(70px,calc(env(safe-area-inset-top,0px) + 70px));height:min(640px,calc(100vh - 90px));display:grid;justify-items:center;align-items:start;z-index:1;pointer-events:none}
+.phone{width:300px;height:620px;background:#0D1526;border-radius:46px;padding:11px;box-shadow:0 0 0 1px #2A3550,0 40px 80px -40px rgba(19,32,58,.7),0 20px 40px -30px rgba(19,32,58,.5);transform-origin:top center;pointer-events:auto;position:relative}
+.phone::before{content:'';position:absolute;left:50%;top:20px;transform:translateX(-50%);width:84px;height:24px;border-radius:20px;background:#0D1526;z-index:5}
+.scr{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:var(--paper)}
+.sc{position:absolute;inset:0;padding:52px 16px 18px;display:flex;flex-direction:column;gap:10px;font-size:13px;opacity:0;transform:translateY(16px) scale(.98);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.sc.on{opacity:1;transform:none;pointer-events:auto}
+.dots{position:absolute;right:-26px;top:50%;transform:translateY(-50%);display:grid;gap:8px}
+.dots i{width:6px;height:6px;border-radius:50%;background:#B7C4D3;transition:all .3s ease}
+.dots i.on{height:20px;border-radius:4px;background:var(--clay)}
+@media(max-width:959px){.phone{transform:scale(.8)}.pin{height:calc(620px * .8 + 10px)}.dots{display:none}}
+@media(max-width:400px){.phone{transform:scale(.72)}.pin{height:calc(620px * .72 + 10px)}}
+
+/* screen parts */
+.ah{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:15px;letter-spacing:-.02em}
+.ah small{font:500 11px var(--mono);color:var(--mu);letter-spacing:0}
+.prog{height:4px;border-radius:4px;background:var(--hair);overflow:hidden}.prog i{display:block;height:100%;background:var(--clay);border-radius:4px}
+.fld{border:1px solid var(--ln);border-radius:12px;padding:8px 11px;background:#fff}
+.fld span{display:block;font-size:10.5px;color:var(--mu);margin-bottom:1px}
+.fld b{font-weight:500}
+.row2{display:flex;gap:8px;align-items:center}
+.mg{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--clay);display:grid;place-items:center;font:400 18px var(--acc);color:var(--ink);flex:none}
+.ghost{border:1px dashed var(--ln);border-radius:10px;padding:9px 11px;color:var(--mu);font-size:12px;flex:1}
+.sigbox{border:1px dashed var(--clay);border-radius:12px;height:62px;display:grid;place-items:center;background:#fff}
+.sigbox svg{width:150px;height:44px}
+.sigbox path,.sg path{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.sc.on .sigbox path,.sc.on .sg path{animation:draw 1.8s ease-in-out .4s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pbtn{margin-top:auto;background:var(--ink);color:var(--paper);border-radius:14px;text-align:center;padding:13px;font-weight:600}
+.tabs{display:flex;background:var(--sky);border-radius:12px;padding:3px}
+.tabs span{flex:1;text-align:center;padding:7px 0;border-radius:9px;font-weight:500;color:var(--mu)}
+.tabs span.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(19,32,58,.12)}
+.it{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--hair)}
+.it small{display:block;color:var(--mu);font-size:11px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--ln);border-radius:99px;padding:4px 10px;font-size:11.5px;background:#fff}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1.5px solid var(--ink);padding-top:9px}
+.tot b{font-size:20px;letter-spacing:-.03em}
+.sw{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.sw i{width:34px;height:20px;border-radius:20px;background:var(--clay);position:relative}.sw i::after{content:'';position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.paper{background:#fff;border-radius:10px;box-shadow:0 10px 24px -14px rgba(19,32,58,.45);overflow:hidden;font-size:10.5px}
+.paper .ph{background:var(--ink);color:var(--paper);padding:12px;display:flex;justify-content:space-between;align-items:center}
+.paper .ph .mg{width:30px;height:30px;font-size:12px;color:var(--paper);border-color:#E9B79C}
+.paper .ph em{font:italic 400 18px var(--acc);color:#E9B79C}
+.paper .pb{padding:10px 12px}
+.paper .it{padding:6px 0}
+.sg svg{width:96px;height:30px;display:block;margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
+.two span{border-radius:12px;padding:11px 0;text-align:center;font-weight:600;font-size:12.5px;border:1px solid var(--ink)}
+.two span.w{background:#25A366;border-color:#25A366;color:#fff}
+.sc[data-s="0"]{gap:0}
+.wah{background:var(--wagreen);color:#fff;margin:-52px -16px 0;padding:50px 16px 12px;display:flex;align-items:center;gap:10px;font-weight:600}
+.wah i{width:30px;height:30px;border-radius:50%;background:#D9BB82}
+.wah small{display:block;font-weight:400;font-size:10.5px;opacity:.8}
+.wab{background:#EFE6D6;margin:0 -16px -18px;flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
+.bu{max-width:82%;padding:8px 10px;border-radius:12px;font-size:12.5px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.bu.in{background:#fff;border-top-left-radius:3px;align-self:flex-start}
+.bu.out{background:var(--wa);align-self:flex-end;border-top-right-radius:3px}
+.bu small{display:block;text-align:right;font:500 9.5px var(--mono);color:#3B82D6;margin-top:3px}
+.file{display:flex;gap:8px;align-items:center;background:#fff;border-radius:8px;padding:7px;margin-bottom:5px}
+.file u{width:24px;height:30px;border-radius:3px;border:1.5px solid var(--clay);text-decoration:none;font:700 7px/30px var(--ui);text-align:center;color:var(--clay)}
+.file b{display:block;font-size:11.5px}.file span{font-size:10px;color:var(--mu)}
+.day{align-self:center;background:#fff;border-radius:8px;padding:3px 10px;font-size:10.5px;color:var(--mu);box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.sc.on .bu{animation:pop .5s cubic-bezier(.2,.9,.3,1.2) both}.sc.on .bu:nth-child(3){animation-delay:.4s}.sc.on .bu:nth-child(4){animation-delay:.8s}.sc.on .bu:nth-child(5){animation-delay:1.4s}.sc.on .bu:nth-child(6){animation-delay:2.2s}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.hi{font-size:19px;font-weight:600;letter-spacing:-.03em}.hi em{font:italic 400 1.1em var(--acc);color:var(--clay)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tiles div{background:var(--sky);border-radius:14px;padding:10px 12px;font-size:11px;color:var(--mu)}
+.tiles div b{display:block;color:var(--ink);font-size:18px;letter-spacing:-.03em}
+.tiles div.dk{background:var(--ink);color:#B9C3D6}.tiles div.dk b{color:var(--paper)}
+.lst .it{align-items:center}
+.pill{border-radius:99px;padding:3px 9px;font-size:10.5px;font-weight:500}
+.paid{background:var(--paidbg);color:var(--paid)}.part{background:var(--partbg);color:var(--part)}.late{background:var(--latebg);color:var(--late)}
+.nav{display:flex;justify-content:space-around;margin:auto -16px -18px;padding:10px 0 14px;border-top:1px solid var(--hair);font-size:10.5px;color:var(--mu);background:#fff}
+.nav span.on{color:var(--clay);font-weight:600}
+.pdf{background:#F1F3F6;margin:0 -16px;flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:7px}
+.pdf i{display:block;height:6px;border-radius:3px;background:#E1E5EB}.pdf i.s{width:70%}.pdf i.t{width:46%;height:9px;background:#D0D6DF;margin-bottom:4px}
+.pg{background:#fff;border-radius:6px;padding:16px 14px;display:grid;gap:7px;box-shadow:0 8px 18px -12px rgba(19,32,58,.4)}
+.place{position:relative;border:1.5px dashed var(--clay);border-radius:6px;margin-top:10px;width:70%;padding:2px 6px}
+.place svg{width:100%;height:34px;display:block}
+.place::after{content:'';position:absolute;right:-7px;bottom:-7px;width:12px;height:12px;border-radius:50%;background:var(--clay);border:2px solid #fff}
+.tools{display:flex;gap:5px;overflow:hidden}
+.tools span{flex:none;border:1px solid var(--ln);border-radius:99px;padding:5px 9px;font-size:10.5px;background:#fff}
+.tools span.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* step text */
+.step{grid-column:1;min-height:92vh;display:grid;align-content:end;padding-bottom:6vh;position:relative;z-index:2;pointer-events:none}
+.step.first{min-height:58vh}
+.step .tx{pointer-events:auto;background:rgba(252,251,248,.72);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid var(--ln);border-radius:24px;padding:22px 24px;max-width:440px;justify-self:center;box-shadow:0 24px 40px -30px rgba(19,32,58,.45)}
+.step .no{font:500 12px var(--mono);color:var(--clay);display:block;margin-bottom:8px}
+.step h2{font-size:clamp(28px,3.6vw,44px);line-height:1.04}
+.step p{margin:12px 0 0;color:var(--mu);font-size:16.5px}
+.step ul{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.step li{border:1px solid var(--ln);border-radius:99px;padding:5px 12px;font-size:13.5px;background:var(--paper)}
+@media(min-width:960px){
+  .story{grid-template-columns:1fr 340px 1fr;column-gap:40px}
+  .pin{grid-column:2}
+  .step{align-content:center;padding-bottom:0}
+  .step .tx{background:transparent;border:0;box-shadow:none;backdrop-filter:none;padding:0;justify-self:start}
+  .step.l{grid-column:1}.step.r{grid-column:3}
+  .step.l .tx{justify-self:end;text-align:right}.step.l ul{justify-content:flex-end}
+  .step.first{min-height:40vh}
+}
+
+
+.step .tx{transition:opacity .4s ease}
+
+
+/* hero above, then the phone takes over */
+.hero{text-align:center;display:grid;justify-items:center;padding-block:clamp(24px,5vw,56px) 28px}
+.hero h1{font-size:clamp(44px,7.2vw,96px);line-height:.98;margin:30px 0 0;max-width:12em}
+.hero h1 em.s{font-size:1.08em}
+.hero .lede{font-size:clamp(17px,1.5vw,20px);color:var(--mu);max-width:31em;margin:22px 0 30px}
+.pin{grid-row:1/7}
+.chatsp{grid-row:1}
+.step[data-s="1"]{grid-row:2}.step[data-s="2"]{grid-row:3}.step[data-s="3"]{grid-row:4}.step[data-s="4"]{grid-row:5}.step[data-s="5"]{grid-row:6}
+.step .tx{transition:opacity .35s ease,transform .45s ease}
+.step:not(.cur) .tx{opacity:.3}
+.go{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:600;font-size:15px;text-decoration:none;color:var(--paper);background:var(--clay);padding:11px 18px;border-radius:99px}
+.go span{display:inline-block;animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(3px)}}
+@media(min-width:960px){
+  .pin{top:max(84px,calc(50vh - 300px))}
+  .step{min-height:100vh}
+  .chatsp{min-height:96vh}
+  .step:not(.cur) .tx{opacity:.18;transform:translateY(10px)}
+}
+
+/* moving line: one quiet row */
+.marq{border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);background:var(--paper);overflow:hidden;padding-block:16px;white-space:nowrap}
+.marq .r1{display:flex;width:max-content;animation:mq 60s linear infinite}
+.marq:hover .r1{animation-play-state:paused}
+.marq .r1 span{display:inline-flex;align-items:center;gap:26px;padding-right:26px;font:500 clamp(17px,1.8vw,22px)/1 var(--ui);letter-spacing:-.02em;color:var(--ink)}
+.marq .r1 em{font:italic 400 1.12em var(--acc);color:var(--clay);letter-spacing:0}
+.marq .r1 i{width:5px;height:5px;border-radius:50%;background:var(--clay);flex:none}
+
+/* who it is for: make the change obvious */
+.roles button{position:relative}
+.roles button::before{content:'';position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--clay)}
+.roles button[aria-selected="true"]::before{animation:fill 4.2s linear forwards}
+@keyframes fill{from{width:0}to{width:100%}}
+.roles.held button[aria-selected="true"]::before{animation:none;width:100%}
+.stage .tag{position:absolute;left:16px;top:16px;background:var(--ink);color:var(--paper);font:500 12px var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:7px 12px;border-radius:99px;z-index:2}
+@media(max-width:959px){.stage{max-width:420px}}
+
+@keyframes mq{to{transform:translateX(-33.333%)}}
+
+/* who it is for: a switcher */
+.sec{padding-block:clamp(64px,9vw,120px)}
+.who .wrap{display:grid;gap:36px;align-items:center}
+.roles{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--ln)}
+.roles button{all:unset;position:relative;box-sizing:border-box;cursor:pointer;width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid var(--ln);font:600 clamp(24px,3.4vw,44px)/1.05 var(--ui);letter-spacing:-.035em;color:#9AA7BA;transition:color .25s ease}
+.roles button small{font:500 12px var(--mono);letter-spacing:.03em;color:var(--mu)}
+.roles button[aria-selected="true"]{color:var(--ink)}
+.roles button[aria-selected="true"] span::after{content:'.';color:var(--clay)}
+.roles button:focus-visible{outline:2px solid var(--clay);outline-offset:4px}
+.stage{position:relative;background:var(--paper);border-radius:28px;overflow:hidden;aspect-ratio:4/5;max-width:460px;width:100%;justify-self:center;box-shadow:0 30px 60px -40px rgba(19,32,58,.5)}
+.stage img{position:absolute;inset:0;width:100%;height:78%;object-fit:contain;object-position:center bottom;padding:24px 20px 0;opacity:0;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1);transform:translateY(10px)}
+.stage img.on{opacity:1;transform:none}
+.stage .cap{position:absolute;left:16px;right:16px;bottom:16px;background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 14px 30px -20px rgba(19,32,58,.5);font-size:14px}
+.stage .cap b{display:block;font-size:15px}.stage .cap p{margin:4px 0 0;color:var(--mu)}
+.stage .cap .it{font-size:13px;padding:7px 0 0;margin-top:8px}
+@media(min-width:960px){.who .wrap{grid-template-columns:1.1fr .9fr;gap:6vw}}
+
+/* faq */
+.faqw{display:grid;gap:36px}
+.faqw h2,.end h2{font-size:clamp(34px,4.6vw,58px);line-height:1.02}
+.ask{margin-top:22px;background:var(--paper);border:1px solid var(--ln);border-radius:20px;padding:20px;display:grid;gap:6px;max-width:360px}
+.ask b{font-size:16px}.ask span{color:var(--mu);font-size:15px}
+.qa{border-top:1px solid var(--ln)}
+.qa details{border-bottom:1px solid var(--ln);transition:background .2s ease}
+.qa summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:44px 1fr 28px;align-items:center;gap:10px;padding:22px 0;font-size:clamp(17px,1.8vw,21px);font-weight:500;letter-spacing:-.015em}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary i{font:500 12px var(--mono);color:var(--clay);font-style:normal}
+.qa summary::after{content:'';width:22px;height:22px;border-radius:50%;border:1px solid var(--ln);background:linear-gradient(var(--ink),var(--ink)) center/10px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 10px no-repeat;transition:transform .3s ease,background-color .3s ease}
+.qa details[open] summary::after{transform:rotate(45deg);background-color:var(--claytint)}
+.qa details p{margin:0;padding:0 28px 22px 54px;color:var(--mu);max-width:44em}
+@media(max-width:620px){.qa details p{padding:0 0 22px 54px}.qa summary{grid-template-columns:34px 1fr 26px}.qa details p{padding-left:44px}}
+@media(min-width:960px){.faqw{grid-template-columns:.8fr 1.2fr;gap:6vw}}
+
+/* end */
+.endbox{background:var(--ink);color:var(--paper);border-radius:32px;padding:clamp(40px,6vw,84px);display:grid;gap:24px;justify-items:center;text-align:center}
+.endbox h2{max-width:12em}.endbox em.s{color:#E9B79C}
+.endbox p{margin:0;color:#B9C3D6}
+.endbox .search{background:#1C2A48;border-color:#2E3D5E;color:var(--paper)}
+.endbox .search svg{color:#9AA6BC}.endbox .search b{background:var(--paper);color:var(--ink)}
+footer{padding-block:48px 40px}
+footer .in{display:grid;gap:28px}
+.fgrid{display:grid;gap:24px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.fgrid div{display:grid;gap:6px;align-content:start;font-size:15px}
+.fgrid h4{margin:0 0 4px;font:500 12px var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--mu)}
+.fgrid a{text-decoration:none}.fgrid a:hover{color:var(--clay)}
+.todo{color:var(--clay);font-size:13.5px}
+.fbase{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--ln);padding-top:20px;color:var(--mu);font-size:14px}
+@media(min-width:900px){.fgrid{grid-template-columns:1.4fr 1fr 1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.sigbox path,.sg path{stroke-dashoffset:0}}
+</style>
+
+<header class="in top">
+  <img class="logo" src="logo.png" alt="Generate" width="143" height="32">
+  <nav aria-label="Main"><a href="#how">How it works</a><a href="#who">Who it is for</a><a href="#faq">FAQ</a><a href="#">Pricing</a></nav>
+  <span class="sp"></span>
+  <a class="si" href="#">Sign in</a>
+  <a class="btn p" href="#">Start free</a>
+</header>
+
+
+
+<section class="in hero" aria-labelledby="h">
+  <a class="search" href="#sign" aria-label="Try: sign a PDF in a minute">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span class="q" id="q">Sign a PDF in a minute</span><b>Try it</b>
+    </a>
+  <h1 id="h">Send it today. Know when it’s <em class="s">paid.</em></h1>
+  <p class="lede">Invoices, receipts and contracts with your logo and signature. Send them on WhatsApp, and see who has paid, who paid part and who is late.</p>
+  <div class="cta"><a class="btn p" href="#">Start free →</a><a class="btn" href="#how">See how it works</a></div>
+</section>
+<section class="in story" aria-label="How Generate works, shown on a phone">
+  <div class="pin" aria-hidden="true">
+    <div class="phone"><div class="scr" id="scr">
+
+      <div class="sc on" data-s="0">
+        <div class="wah"><i></i><span>Tunde Bello<small>online</small></span></div>
+        <div class="wab">
+          <span class="day">Today</span><div class="bu in">Good morning. Is the logo ready?</div><div class="bu out">Yes, all done. Sending your invoice now.<small>10:22 ✓✓</small></div><div class="bu in">Great, please send it.</div>
+          <div class="bu out"><div class="file"><u>PDF</u><span><b>Invoice-0042.pdf</b>1 page · 84 KB</span></div>Here you go. ₦125,000, due Friday. Thank you.<small>10:24 ✓✓</small></div>
+          <div class="bu in">Received, thank you. I will pay today.</div>
+        </div>
+      </div>
+
+      <div class="sc" data-s="1">
+        <div class="ah">Set up your business<small>1 of 3</small></div>
+        <div class="prog"><i style="width:34%"></i></div>
+        <div class="fld"><span>Business name</span><b>Amaka Obi Studio</b></div>
+        <div class="fld"><span>WhatsApp number</span><b>0803 123 4567</b></div>
+        <div class="row2"><span class="mg">AO</span><span class="ghost">Upload your logo, or keep your initials</span></div>
+        <div class="fld" style="padding-bottom:4px"><span>Your signature</span></div>
+        <div class="sigbox"><svg viewBox="0 0 200 60"><path pathLength="1" d="M6 40 C14 8 28 8 26 30 C25 46 14 50 22 38 C30 24 42 24 40 38 C39 46 48 44 54 32 C62 22 70 24 68 36 C74 28 84 26 90 34 C98 44 112 20 124 26 C134 32 140 40 166 28"/></svg></div>
+        <div class="chips"><span class="chip on">Draw</span><span class="chip">Type</span><span class="chip">Upload</span></div>
+        <div class="pbtn">Continue</div>
+      </div>
+
+      <div class="sc" data-s="2">
+        <div class="ah">New document<small>Draft</small></div>
+        <div class="tabs"><span class="on">Invoice</span><span>Receipt</span><span>Contract</span></div>
+        <div class="fld"><span>Client</span><b>Tunde Bello</b></div>
+        <div>
+          <div class="it"><span>Logo design<small>1 × ₦80,000</small></span><b class="num">₦80,000</b></div>
+          <div class="it"><span>Brand guide<small>1 × ₦45,000</small></span><b class="num">₦45,000</b></div>
+          <div class="it" style="color:var(--clay)"><span>+ Add item</span></div>
+        </div>
+        <div class="chips"><span class="chip on">₦ Naira</span><span class="chip">$</span><span class="chip">£</span><span class="chip">€</span></div>
+        <div class="sw">Take a deposit first<i></i></div>
+        <div class="tot"><span>Total</span><b class="num">₦125,000</b></div>
+        <div class="pbtn">Preview</div>
+      </div>
+
+      <div class="sc" data-s="3">
+        <div class="ah">Invoice 0042<small>Ready</small></div>
+        <div class="paper">
+          <div class="ph"><span class="row2"><span class="mg">AO</span>Amaka Obi Studio</span><em>Invoice</em></div>
+          <div class="pb">
+            <div style="color:var(--mu)">Billed to</div><b>Tunde Bello</b>
+            <div class="it" style="margin-top:8px"><span>Logo design</span><span class="num">₦80,000</span></div>
+            <div class="it"><span>Brand guide</span><span class="num">₦45,000</span></div>
+            <div class="tot" style="margin-top:4px"><span>Total due</span><b class="num" style="font-size:15px">₦125,000</b></div>
+            <div class="sg"><svg viewBox="0 0 200 60"><path pathLength="1" d="M6 40 C14 8 28 8 26 30 C25 46 14 50 22 38 C30 24 42 24 40 38 C39 46 48 44 54 32 C62 22 70 24 68 36 C74 28 84 26 90 34 C98 44 112 20 124 26 C134 32 140 40 166 28"/></svg></div>
+          </div>
+        </div>
+        <div class="two"><span>Download PDF</span><span class="w">Send on WhatsApp</span></div>
+      </div>
+
+      <div class="sc" data-s="4">
+        <div class="hi">Good morning, <em>Amaka.</em></div>
+        <div class="tiles"><div class="dk"><b class="num">₦480k</b>Received</div><div><b class="num">₦75k</b>Waiting</div><div><b>1</b>Part paid</div><div><b>2</b>Overdue</div></div>
+        <div class="lst">
+          <div class="it"><span>Tunde Bello<small>Invoice 0042</small></span><span class="pill part">Part paid</span></div>
+          <div class="it"><span>Chioma Eze<small>Receipt 0041</small></span><span class="pill paid">Paid</span></div>
+          <div class="it"><span>Ola Peters<small>Invoice 0039</small></span><span class="pill late">Overdue</span></div>
+          <div class="it"><span>Ada Kalu<small>Contract 0007</small></span><span class="pill paid">Signed</span></div>
+        </div>
+        <div class="nav"><span class="on">Home</span><span>Documents</span><span>New</span><span>Sign</span><span>Profile</span></div>
+      </div>
+
+      <div class="sc" data-s="5">
+        <div class="ah">Sign a document<small>Lease.pdf</small></div>
+        <div class="pdf"><div class="pg"><i class="t"></i><i></i><i></i><i class="s"></i><i></i><i class="s"></i><i></i>
+          <div class="place sg"><svg viewBox="0 0 200 60"><path pathLength="1" d="M6 40 C14 8 28 8 26 30 C25 46 14 50 22 38 C30 24 42 24 40 38 C39 46 48 44 54 32 C62 22 70 24 68 36 C74 28 84 26 90 34 C98 44 112 20 124 26 C134 32 140 40 166 28"/></svg></div>
+        </div></div>
+        <div class="tools"><span class="on">Signature</span><span>Initials</span><span>Date</span><span>Text</span><span>Line</span></div>
+        <div class="pbtn">Save signed PDF</div>
+      </div>
+
+    </div></div>
+    <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+
+<div class="step r chatsp" data-s="0"><div class="tx"><span class="no">Where you’re going</span><h2>Your client gets it on <em class="s">WhatsApp.</em></h2><p>An invoice with your name on it, delivered and read. Here is how you get there.</p><a class="go" href="#how">How to get started <span aria-hidden="true">↓</span></a></div></div>
+  <div class="step l" id="how" data-s="1"><div class="tx"><span class="no">01</span><h2>Start with your <em class="s">details.</em></h2><p>Add your logo, business information and signature once. We’ll remember them for you.</p></div></div>
+  <div class="step r" data-s="2"><div class="tx"><span class="no">02</span><h2>Make the <em class="s">document.</em></h2><p>Choose an invoice, receipt or contract. Add your client and the details of the job.</p><ul><li>Part payments</li><li>Any currency</li><li>Six layouts</li></ul></div></div>
+  <div class="step l" data-s="3"><div class="tx"><span class="no">03</span><h2>Send it your <em class="s">way.</em></h2><p>Download it as a PDF or send it straight to your client on WhatsApp.</p></div></div>
+  <div class="step r" data-s="4"><div class="tx"><span class="no">Your dashboard</span><h2>See where every <em class="s">naira</em> is.</h2><p>Each invoice shows its status by itself. Add a part payment and the balance updates. Send a friendly, firm or final reminder in one tap.</p></div></div>
+  <div class="step l" id="sign" data-s="5"><div class="tx"><span class="no">Sign any document</span><h2>Got a PDF to sign? <em class="s">Done.</em></h2><p>Open any PDF or photo of a document, drop your signature, initials or the date where they belong, and save the signed copy.</p></div></div>
+</section>
+
+<div class="marq" aria-hidden="true"><div class="r1"><span>Documents that carry <em>your name.</em><i></i></span><span>Send it before they <em>forget.</em><i></i></span><span>Every naira, <em>accounted for.</em><i></i></span><span>Signed, sent, <em>sorted.</em><i></i></span><span>Made for <em>your business.</em><i></i></span><span>Documents that carry <em>your name.</em><i></i></span><span>Send it before they <em>forget.</em><i></i></span><span>Every naira, <em>accounted for.</em><i></i></span><span>Signed, sent, <em>sorted.</em><i></i></span><span>Made for <em>your business.</em><i></i></span><span>Documents that carry <em>your name.</em><i></i></span><span>Send it before they <em>forget.</em><i></i></span><span>Every naira, <em>accounted for.</em><i></i></span><span>Signed, sent, <em>sorted.</em><i></i></span><span>Made for <em>your business.</em><i></i></span></div></div>
+
+<section class="sec who" id="who" aria-labelledby="wh">
+  <div class="in wrap">
+    <div>
+      <p class="lbl">Who it is for</p>
+      <h2 id="wh" style="font-size:clamp(34px,4.6vw,58px);line-height:1.02">Made for <em class="s">your</em> business.</h2>
+      <ul class="roles" role="tablist" aria-label="Who it is for">
+        <li><button role="tab" aria-selected="true" data-r="0"><span>Freelancers</span><small>Design · Photo · Writing</small></button></li>
+        <li><button role="tab" aria-selected="false" data-r="1"><span>Shop owners</span><small>Food · Hair · Fashion</small></button></li>
+        <li><button role="tab" aria-selected="false" data-r="2"><span>Growing brands</span><small>Teams · Agencies</small></button></li>
+        <li><button role="tab" aria-selected="false" data-r="3"><span>Anyone</span><small>One invoice or a hundred</small></button></li>
+      </ul>
+    </div>
+    <div class="stage" role="tabpanel" aria-live="polite"><span class="tag" id="tag">Freelancers</span>
+      <img class="on" src="images/freelancer.webp" alt="A freelancer smiling at her laptop." width="610" height="520">
+      <img src="images/business.webp" alt="A shop owner writing beside her cakes and boxes." width="820" height="520" loading="lazy">
+      <img src="images/brand.webp" alt="A hand holding two branded shopping bags." width="640" height="520" loading="lazy">
+      <img src="images/anyone.webp" alt="Two young people chatting." width="729" height="520" loading="lazy">
+      <div class="cap" id="cap"><b>Look professional from your first client.</b><p>Send invoices and contracts with your own name and signature.</p><div class="it"><span>Logo design</span><span class="num">₦80,000</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq" aria-labelledby="fq" style="background:var(--paper);border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)">
+  <div class="in faqw">
+    <div>
+      <p class="lbl">Questions</p>
+      <h2 id="fq">Good to <em class="s">know.</em></h2>
+      <div class="ask"><b>Still have a question?</b><span>Send us a message on WhatsApp and a real person will answer.</span></div>
+    </div>
+    <div class="qa">
+      <details open><summary><i>01</i>Is Generate really free?</summary><p>Yes. Invoices, receipts, contracts, WhatsApp sending and signing are free. A paid plan called Generate more will add extra templates later. What is free today stays free.</p></details>
+      <details><summary><i>02</i>Does my client need Generate?</summary><p>No. Your client gets a normal PDF, or a WhatsApp message with the document. They do not need an account.</p></details>
+      <details><summary><i>03</i>Can I use my own logo and signature?</summary><p>Yes. Upload your logo, or use your business initials until you have one. Type, draw or upload your signature once and it goes on every document.</p></details>
+      <details><summary><i>04</i>Can I take part payments?</summary><p>Yes. Add each payment as it comes in. The invoice shows what has been paid and what is left, and you can make a receipt for each payment.</p></details>
+      <details><summary><i>05</i>Who can see my documents?</summary><p>Only you, and the people you send them to. The Generate team can see who signed up, but cannot open your invoices, receipts or contracts.</p></details>
+      <details><summary><i>06</i>Do I need a laptop?</summary><p>No. Generate is made for your phone first, and works on a laptop too.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="in sec end" aria-labelledby="en">
+  <div class="endbox">
+    <h2 id="en">Your next client is waiting on a <em class="s">document.</em></h2>
+    <p>Free to use. Setup takes less than two minutes.</p>
+    <a class="search" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="q" id="q2">Make an invoice for Tunde</span><b>Start free</b></a>
+  </div>
+</section>
+
+<footer>
+  <div class="in">
+    <div class="fgrid">
+      <div><img class="logo" src="logo.png" alt="Generate" width="143" height="32"><span style="color:var(--mu);margin-top:8px">Documents that carry your name. Made in Lagos.</span></div>
+      <div><h4>Product</h4><a href="#how">How it works</a><a href="#sign">Sign a PDF</a><a href="#">Pricing</a><a href="#faq">FAQ</a></div>
+      <div><h4>Talk to us</h4><span>WhatsApp <span class="todo">your number</span></span><span>Email <span class="todo">your email</span></span><span>Lagos, Nigeria</span></div>
+      <div><h4>Follow</h4><span>Instagram <span class="todo">your handle</span></span><span>TikTok <span class="todo">your handle</span></span><span>X <span class="todo">your handle</span></span></div>
+    </div>
+    <div class="fbase"><span>Privacy</span><span>Terms</span><span>Your documents stay on your account.</span></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // phone screens follow the step in the middle of the screen
+  var screens=[].slice.call(document.querySelectorAll('.sc')),dots=[].slice.call(document.querySelectorAll('#dots i'));
+  function show(n){[].forEach.call(document.querySelectorAll('.step'),function(s){s.classList.toggle('cur',+s.dataset.s===n)});screens.forEach(function(s){s.classList.toggle('on',+s.dataset.s===n)});dots.forEach(function(d,i){d.classList.toggle('on',i===n)})}
+  var steps=[].slice.call(document.querySelectorAll('.step')),last=-1,ticking=false;
+  function pickStep(){
+    ticking=false;var mid=innerHeight/2,best=0,bd=1e9;
+    steps.forEach(function(st){if(!st.offsetParent)return;var r=st.getBoundingClientRect();if(r.height<2)return;var d=r.top<=mid&&r.bottom>=mid?0:Math.min(Math.abs(r.top-mid),Math.abs(r.bottom-mid));if(d<bd){bd=d;best=+st.dataset.s}});
+    if(best!==last){last=best;show(best)}
+  }
+  addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(pickStep)}},{passive:true});
+  addEventListener('resize',pickStep);pickStep();
+  // the search bar types what you can do
+  function typer(el,list){
+    if(!el||reduce)return;var i=0,c=list[0].length,del=true;
+    setInterval(function(){
+      var w=list[i];
+      if(del){c--;if(c<=0){del=false;i=(i+1)%list.length}}else{c++;if(c>=list[i].length){del=true;c=list[i].length+12}}
+      el.textContent=list[i].slice(0,Math.max(0,Math.min(c,list[i].length)))||' ';
+    },70);
+  }
+  typer(document.getElementById('q'),['Sign a PDF in a minute','Make an invoice for Tunde','Send a receipt on WhatsApp','See who has paid this month']);
+  typer(document.getElementById('q2'),['Make an invoice for Tunde','Sign a contract today','Remind Ola about invoice 0039']);
+  // who it is for
+  var caps=[
+    ['Look professional from your first client.','Send invoices and contracts with your own name and signature.','Logo design','₦80,000'],
+    ['Know who has paid, and who has not.','Every invoice, receipt and agreement in one place.','Small chops platter','₦45,000'],
+    ['One look on everything you send.','Your logo, colours and signature on every document.','Event setup','₦350,000'],
+    ['If you need an invoice, Generate is for you.','One document or a hundred. Free to start.','Consulting session','₦50,000']
+  ];
+  var tabs=[].slice.call(document.querySelectorAll('.roles button')),imgs=[].slice.call(document.querySelectorAll('.stage img')),cap=document.getElementById('cap');
+  var names=['Freelancers','Shop owners','Growing brands','Anyone'];
+  function pick(n){document.getElementById('tag').textContent=names[n];tabs.forEach(function(t,i){t.setAttribute('aria-selected',i===n)});imgs.forEach(function(m,i){m.classList.toggle('on',i===n)});var c=caps[n];cap.innerHTML='<b>'+c[0]+'</b><p>'+c[1]+'</p><div class="it"><span>'+c[2]+'</span><span class="num">'+c[3]+'</span></div>'}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(i);stop()});t.addEventListener('mouseenter',function(){pick(i);stop()})});
+  var at=0,timer=0,roles=document.querySelector('.roles');
+  function stop(){if(timer){clearInterval(timer);timer=0}roles.classList.add('held')}
+  if(!reduce&&'IntersectionObserver' in window){new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!timer&&!roles.classList.contains('held')){pick(at);timer=setInterval(function(){at=(at+1)%4;pick(at)},4200)}})},{threshold:.4}).observe(document.getElementById('who'))}
+})();
+</script>
