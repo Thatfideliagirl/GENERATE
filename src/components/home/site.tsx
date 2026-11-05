@@ -1,7 +1,7 @@
 import { useEffect, useState, type MouseEvent, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../data/session'
-import { CONTACT } from '../../lib/constants'
+import { CONTACT, SOCIALS } from '../../lib/constants'
 
 /** The signature stroke used across the site. It is the brand mark, drawn in when it comes into view. */
 export const SIGNATURE =
@@ -125,13 +125,8 @@ function waLink(n: string) {
 
 export function SiteFooter() {
   const talk = [
-    CONTACT.whatsapp && { k: 'WhatsApp', v: CONTACT.whatsapp, href: waLink(CONTACT.whatsapp) },
-    CONTACT.email && { k: 'Email', v: CONTACT.email, href: 'mailto:' + CONTACT.email },
-  ].filter(Boolean) as { k: string; v: string; href: string }[]
-  const follow = [
-    CONTACT.instagram && { k: 'Instagram', href: 'https://instagram.com/' + CONTACT.instagram.replace('@', '') },
-    CONTACT.tiktok && { k: 'TikTok', href: 'https://tiktok.com/@' + CONTACT.tiktok.replace('@', '') },
-    CONTACT.x && { k: 'X', href: 'https://x.com/' + CONTACT.x.replace('@', '') },
+    CONTACT.whatsapp && { k: 'Chat on WhatsApp', href: waLink(CONTACT.whatsapp) },
+    CONTACT.email && { k: 'Send us an email', href: 'mailto:' + CONTACT.email },
   ].filter(Boolean) as { k: string; href: string }[]
   return (
     <footer>
@@ -153,17 +148,18 @@ export function SiteFooter() {
               <h4>Talk to us</h4>
               {talk.map((t) => (
                 <a key={t.k} href={t.href} target="_blank" rel="noreferrer">
-                  {t.k} <span className="h-fv">{t.v}</span>
+                  {t.k}
                 </a>
               ))}
             </div>
           )}
-          {follow.length > 0 && (
+          {SOCIALS.length > 0 && (
             <div>
               <h4>Follow</h4>
-              {follow.map((f) => (
-                <a key={f.k} href={f.href} target="_blank" rel="noreferrer">
-                  {f.k}
+              {SOCIALS.map((f) => (
+                // Pages are not live yet, so these stay put when clicked.
+                <a key={f} href="#/" onClick={(e) => e.preventDefault()}>
+                  {f}
                 </a>
               ))}
             </div>

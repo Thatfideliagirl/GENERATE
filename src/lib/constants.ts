@@ -106,13 +106,12 @@ export const SIGNATURE_FONTS: [string, string][] = [
 export const ADMIN_EMAILS: string[] = ['adewoyeemmanuel77@gmail.com']
 
 /**
- * Contact details shown in the site footer and FAQ. Anything left empty is simply not shown.
- * WhatsApp can be written as 0803... or 234803...; social handles with or without the @.
+ * Contact details used by the site footer and FAQ. They are links only: the number and address are never printed on the page.
+ * WhatsApp can be written as 0803... or 234803.... SOCIALS are shown by name; they do not link anywhere yet.
  */
 export const CONTACT = {
-  whatsapp: '',
-  email: '',
-  instagram: '',
-  tiktok: '',
-  x: '',
+  whatsapp: '08135793935',
+  email: 'fideliajoseph111@gmail.com',
 }
+
+export const SOCIALS = ['Instagram', 'LinkedIn']

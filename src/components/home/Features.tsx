@@ -112,15 +112,18 @@ const DOCS = [
   { k: 'inv', sheet: <InvoiceSheet />, t: 'Invoices', d: 'Bill a client in a minute. Take a deposit now and the balance updates by itself.' },
   { k: 'rec', sheet: <ReceiptSheet />, t: 'Receipts', d: 'When the money comes in, send a receipt with your name and signature on it.' },
   { k: 'con', sheet: <ContractSheet />, t: 'Contracts', d: 'Start from a ready agreement, change any line, and sign it with your own signature.' },
-  { k: 'sig', sheet: <SignSheet />, t: 'Sign a PDF', d: 'Got a document from someone else? Open it, sign where it says, and save the signed copy.' },
+  { k: 'sig', sheet: <SignSheet />, t: 'Sign a PDF', d: 'Anyone can upload a PDF or a photo of a document, add their signature, initials or the date, and save the signed copy.' },
 ]
 
 const EXTRAS = [
+  ['Create your signature', 'Draw it with your finger, type your name in a handwriting style, or upload a photo of it. We clear the background for you.'],
   ['Send on WhatsApp', 'One tap opens the chat with your client, the message already written.'],
   ['Reminders', 'Friendly, firm or final. Pick a tone and send it.'],
   ['Part payments', 'Every payment is counted, and each one can get its own receipt.'],
   ['Any currency', 'Naira, dollar, pound or euro, chosen on each document.'],
   ['Your look', 'Six layouts, six fonts and any colour, so it feels like your brand.'],
+  ['Your logo or initials', 'Upload your logo, or use your initials until you have one.'],
+  ['Made for your trade', 'Starter items for hair, food, design, photography, fashion and more.'],
   ['A dashboard that keeps count', 'See what came in, what is waiting and who is late.'],
 ]
 

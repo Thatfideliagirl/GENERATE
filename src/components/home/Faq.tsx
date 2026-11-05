@@ -4,6 +4,7 @@ const QA = [
   ['Is Generate really free?', 'Yes. Invoices, receipts, contracts, WhatsApp sending and signing are free. A paid plan called Generate more will add extra templates later. What is free today stays free.'],
   ['Does my client need Generate?', 'No. Your client gets a normal PDF, or a WhatsApp message with the document. They do not need an account.'],
   ['Can I use my own logo and signature?', 'Yes. Upload your logo, or use your business initials until you have one. Type, draw or upload your signature once and it goes on every document.'],
+  ['Can I sign a document someone sent me?', 'Yes. Upload the PDF or a photo of it, place your signature, initials or the date where they belong, and download the signed copy. It all happens on your phone.'],
   ['Can I take part payments?', 'Yes. Add each payment as it comes in. The invoice shows what has been paid and what is left, and you can make a receipt for each payment.'],
   ['Who can see my documents?', 'Only you, and the people you send them to. The Generate team can see who signed up, but cannot open your invoices, receipts or contracts.'],
   ['Do I need a laptop?', 'No. Generate is made for your phone first, and works on a laptop too.'],
