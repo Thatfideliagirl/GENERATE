@@ -116,23 +116,38 @@ export function TypingSearch({ phrases, label = 'Start free' }: { phrases: strin
 }
 
 export function SiteHeader() {
-  const { session } = useAuth()
+  const { session, signOut } = useAuth()
+  const [open, setOpen] = useState(false)
+  const close = () => setOpen(false)
+  const out = async () => {
+    await signOut()
+    setOpen(false)
+  }
+  const links = (
+    <>
+      <SectionLink to="how">How it works</SectionLink>
+      <SectionLink to="who">Who it is for</SectionLink>
+      <SectionLink to="features">Features</SectionLink>
+      <Link to="/sign">Sign a PDF free</Link>
+      <SectionLink to="faq">FAQ</SectionLink>
+    </>
+  )
   return (
     <header className="h-in h-top">
       <Link to="/" aria-label="Generate, home">
         <img className="h-logo" src="./logo.png" alt="Generate" width="143" height="32" />
       </Link>
-      <nav aria-label="Main">
-        <SectionLink to="how">How it works</SectionLink>
-        <SectionLink to="who">Who it is for</SectionLink>
-        <SectionLink to="features">Features</SectionLink>
-        <SectionLink to="faq">FAQ</SectionLink>
-      </nav>
+      <nav aria-label="Main">{links}</nav>
       <span className="h-sp" />
       {session ? (
-        <Link className="h-btn h-p" to="/app">
-          Open Generate
-        </Link>
+        <>
+          <button className="h-si h-linkbtn" onClick={out}>
+            Sign out
+          </button>
+          <Link className="h-btn h-p" to="/app">
+            Open Generate
+          </Link>
+        </>
       ) : (
         <>
           <Link className="h-si" to="/signin">
@@ -142,6 +157,37 @@ export function SiteHeader() {
             Start free
           </Link>
         </>
+      )}
+      <button className="h-menu" aria-expanded={open} aria-controls="h-mnav" aria-label={open ? 'Close the menu' : 'Open the menu'} onClick={() => setOpen((o) => !o)}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+          {open ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+        </svg>
+      </button>
+      {open && (
+        <div className="h-mnav" id="h-mnav" onClick={(e) => (e.target as HTMLElement).closest('a,button') && close()}>
+          <nav aria-label="Main">{links}</nav>
+          <div className="h-mnavfoot">
+            {session ? (
+              <>
+                <Link className="h-btn h-p" to="/app">
+                  Open Generate
+                </Link>
+                <button className="h-btn" onClick={out}>
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link className="h-btn h-p" to="/signup">
+                  Start free
+                </Link>
+                <Link className="h-btn" to="/signin">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </header>
   )

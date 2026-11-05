@@ -58,6 +58,7 @@ export default function App() {
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/reset" element={<Reset />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/sign" element={<SignDocument isPublic />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />
         <Route path="/app" element={<Private>{(p) => <Dashboard profile={p} />}</Private>} />

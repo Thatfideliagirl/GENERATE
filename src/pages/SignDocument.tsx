@@ -13,6 +13,7 @@ import { exportSigned, fileToPdfBytes, lineImage, loadPdfjs, textToImage } from 
 import type { Placed } from '../lib/signpdf'
 import { saveFile } from '../lib/pdf'
 import { saveSigned } from '../lib/signedStore'
+import { saveLead } from '../lib/leads'
 import { useAuth } from '../data/session'
 
 const MAX_WIDTH = 860
@@ -27,7 +28,7 @@ function imageAspect(src: string): Promise<number> {
 }
 
 /** Open a PDF or picture, drop your signature, initials, the date or some text on any page, and save the signed copy. Nothing leaves the device. */
-export default function SignDocument({ profile }: { profile: Profile }) {
+export default function SignDocument({ profile, isPublic = false }: { profile?: Profile; isPublic?: boolean }) {
   const nav = useNavigate()
   const toast = useToast()
   const { session } = useAuth()
@@ -43,6 +44,10 @@ export default function SignDocument({ profile }: { profile: Profile }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [over, setOver] = useState(false)
+  // Free signing on the website: an email is asked for once before the first download, then Generate is offered.
+  const [gate, setGate] = useState<'email' | 'more' | null>(null)
+  const [emailGiven, setEmailGiven] = useState(false)
+  const signature = profile?.signature ?? ''
   const wrap = useRef<HTMLDivElement>(null)
   const pageEls = useRef<Record<number, HTMLDivElement | null>>({})
 
@@ -117,8 +122,8 @@ export default function SignDocument({ profile }: { profile: Profile }) {
   }
 
   const addSaved = async () => {
-    if (!profile.signature) return setModal('draw')
-    add(profile.signature, await imageAspect(profile.signature), 0.3)
+    if (!signature) return setModal('draw')
+    add(signature, await imageAspect(signature), 0.3)
   }
 
   const addText = async (value: string, script: boolean, replaceId?: string) => {
@@ -146,9 +151,10 @@ export default function SignDocument({ profile }: { profile: Profile }) {
     return () => document.removeEventListener('keydown', key)
   }, [sel])
 
-  const download = async () => {
+  const download = async (force = false) => {
     if (!bytes) return
     if (!items.length) return toast('Add a signature or some text first.')
+    if (isPublic && !emailGiven && !force) return setGate('email')
     setBusy(true)
     try {
       const out = await exportSigned(bytes, items)
@@ -159,6 +165,7 @@ export default function SignDocument({ profile }: { profile: Profile }) {
         await saveSigned({ id: uid(), userId: session.userId, name: name || 'Document', pages: pdf?.numPages ?? 1, size: blob.size, createdAt: Date.now() }, blob).catch(() => undefined)
       }
       toast('Signed copy saved')
+      if (isPublic) setGate('more')
     } catch {
       toast('The signed copy could not be made. Try again.')
     } finally {
@@ -179,7 +186,7 @@ export default function SignDocument({ profile }: { profile: Profile }) {
 
   return (
     <>
-      <PageHeader title="Sign a document" onBack={() => nav('/app')} />
+      <PageHeader title={isPublic ? 'Sign a document, free' : 'Sign a document'} onBack={() => nav(isPublic ? '/' : '/app')} />
       <main className="wrap sign" ref={wrap}>
         {!pdf ? (
           <div
@@ -205,14 +212,14 @@ export default function SignDocument({ profile }: { profile: Profile }) {
           <>
             <div className="sg-tools" role="toolbar" aria-label="Add to the document">
               <button className="btn" onClick={addSaved}>
-                {profile.signature ? 'My signature' : 'Draw signature'}
+                {signature ? 'My signature' : 'Draw signature'}
               </button>
-              {profile.signature && (
+              {signature && (
                 <button className="btn" onClick={() => setModal('draw')}>
                   Draw a new one
                 </button>
               )}
-              <button className="btn" onClick={() => addText(initialsOf(profile.owner || profile.name), false)}>
+              <button className="btn" onClick={() => (profile ? addText(initialsOf(profile.owner || profile.name), false) : (setEditId(null), setModal('text')))}>
                 Initials
               </button>
               <button className="btn" onClick={() => addText(fmtDate(today()), false)}>
@@ -259,12 +266,23 @@ export default function SignDocument({ profile }: { profile: Profile }) {
           <button className="btn" onClick={reset}>
             Choose another
           </button>
-          <button className="btn p" onClick={download} disabled={busy}>
+          <button className="btn p" onClick={() => download()} disabled={busy}>
             {busy ? 'Saving' : 'Download signed PDF'}
           </button>
         </div>
       )}
 
+      {gate === 'email' && (
+        <EmailGate
+          onClose={() => setGate(null)}
+          onDone={() => {
+            setEmailGiven(true)
+            setGate(null)
+            download(true)
+          }}
+        />
+      )}
+      {gate === 'more' && <MoreWithGenerate onClose={() => setGate(null)} />}
       {modal === 'draw' && (
         <DrawSignatureModal
           onClose={() => setModal(null)}
@@ -436,5 +454,72 @@ function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, 
         </div>
       ))}
     </div>
+  )
+}
+
+const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+/** Free signing asks for an email once, before the first download. */
+function EmailGate({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
+  const [email, setEmail] = useState('')
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+  const go = async () => {
+    if (!EMAIL_OK.test(email.trim())) return setErr('Enter a valid email, like name@example.com.')
+    setBusy(true)
+    await saveLead(email).catch(() => undefined)
+    onDone()
+  }
+  return (
+    <Modal label="Your email" onClose={onClose}>
+      <h3 className="s a-sheet-h">Your signed copy is ready</h3>
+      <p className="mu" style={{ marginTop: 0 }}>
+        Enter your email to download it. It is free, and we will only write to you about Generate.
+      </p>
+      <label className="f">
+        <span>Email</span>
+        <input type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => (setEmail(e.target.value), setErr(''))} onKeyDown={(e) => e.key === 'Enter' && go()} placeholder="name@example.com" />
+      </label>
+      <p className="err" role="alert">
+        {err}
+      </p>
+      <div className="row2">
+        <button className="btn" onClick={onClose}>
+          Cancel
+        </button>
+        <button className="btn p" onClick={go} disabled={busy}>
+          Download signed PDF
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+/** After a free download: what Generate can do, and a way to start. */
+function MoreWithGenerate({ onClose }: { onClose: () => void }) {
+  const nav = useNavigate()
+  return (
+    <Modal label="Enjoy more with Generate" onClose={onClose}>
+      <h3 className="s a-sheet-h">
+        Enjoy more with <em className="em-s">Generate</em>
+      </h3>
+      <p className="mu" style={{ marginTop: 0 }}>
+        Your signed copy has downloaded. With a free account you can also:
+      </p>
+      <ul className="a-more-list">
+        <li>Save your signature once and use it on everything</li>
+        <li>Make invoices, receipts and contracts with your name and logo</li>
+        <li>Send them on WhatsApp and see who has paid</li>
+        <li>Keep every signed document in one place</li>
+      </ul>
+      <div className="row2">
+        <button className="btn" onClick={onClose}>
+          Sign another
+        </button>
+        <button className="btn p" onClick={() => nav('/signup')}>
+          Start free
+        </button>
+      </div>
+    </Modal>
   )
 }

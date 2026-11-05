@@ -382,3 +382,15 @@
 .a-tourdots i.on{width:20px;background:var(--clay)}
 .a-tourbtns{display:flex;gap:8px;justify-content:flex-end}
 .a-tourbtns .btn{min-height:42px}
+/* sign out */
+.a-signout{display:flex;align-items:center;gap:10px;min-height:42px;padding:0 12px;border-radius:14px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);font:500 14.5px var(--ui);cursor:pointer;transition:border-color .2s ease,color .2s ease}
+.a-signout:hover{border-color:var(--bad);color:var(--bad)}
+.a-signout svg{width:19px;height:19px}
+.a-folded .a-signout{width:40px;height:40px;padding:0;justify-content:center;border-radius:50%;margin:0 auto}
+.a-hellosignout{display:none;align-items:center;gap:8px;min-height:46px;padding:0 18px;border-radius:99px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);font:500 15px var(--ui);cursor:pointer}
+.a-hellosignout:hover{border-color:var(--bad);color:var(--bad)}
+.a-hellosignout svg{width:19px;height:19px}
+@media (min-width:1000px){.a-hellosignout{display:inline-flex}}
+.a-more-list{margin:4px 0 6px;padding:0;list-style:none;display:grid;gap:10px}
+.a-more-list li{padding-left:26px;position:relative;font-size:15px}
+.a-more-list li::before{content:'';position:absolute;left:3px;top:.45em;width:10px;height:6px;border-left:2px solid var(--clay);border-bottom:2px solid var(--clay);transform:rotate(-45deg)}

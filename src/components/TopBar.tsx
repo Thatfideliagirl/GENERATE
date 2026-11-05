@@ -4,6 +4,7 @@ import type { Profile } from '../lib/types'
 import { initialsOf } from '../lib/initials'
 import { BackIcon } from './Icons'
 import { ThemeToggle } from './ThemeToggle'
+import { SignOutButton } from './SignOutButton'
 
 export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
   if (profile.logo) {
@@ -27,6 +28,7 @@ export function AppHeader({ profile }: { profile: Profile }) {
       </Link>
       <span className="a-phonetools">
         <ThemeToggle />
+        <SignOutButton label={false} className="a-theme" />
         <Link to="/app/profile" className="a-avatar" aria-label="Your profile">
           {initialsOf(profile.owner || profile.name)}
         </Link>

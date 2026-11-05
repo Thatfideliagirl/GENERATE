@@ -22,12 +22,14 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 6. Questions and answers, with a "Chat with us on WhatsApp" button.
 7. A dark closing box with a second search bar.
 8. Footer with links, Chat on WhatsApp and Send us an email (the number and email are never printed), Instagram and LinkedIn (not linked yet), Privacy, and "© 2026 Generate. All rights reserved."
-9. A separate Pricing page: Generate is free, Generate more is coming soon.
+9. Sign any document free: a section after the questions and a menu link. Visitors without an account upload, sign, give their email before downloading, then are invited to start free. There is no pricing anywhere: Generate is presented as free.
+10. A menu button on phones with every link, Start free and Sign in, or Open Generate and Sign out when signed in.
 
 ## Accounts
 1. Sign up is the full business setup in one go: business name, your name, email, WhatsApp number, what kind of business, what you sell, logo or initials, signature (draw, type or upload a photo), bank details, VAT, social handles and a password.
 2. Sign in, forgot password and reset password.
-3. Supabase is connected: real accounts, row level security so each person only ever sees their own data. The owner page lists who signed up but can never open anyone's documents.
+3. Supabase is connected: real accounts, row level security so each person only ever sees their own data. The owner dashboard shows signups over time, who is signing up, usage counts, and emails from free signing, but can never open anyone's documents.
+5. Sign out on Home, the side menu, the phone header, Settings and the website.
 4. A short guided tour the first time someone opens Home. It can be taken again from Settings.
 
 ## Inside the app
@@ -45,6 +47,5 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 1. Put the site online on Vercel so it has a real address, then finish Supabase setup (site address, owner account, run supabase/customers.sql, a full live test).
 2. The content system: a brand brief, three ready posts a week, price list cards, promo flyers, tips flyers, mass cards, a content calendar.
 3. The template gallery (about 30 templates, Generate more) and uploading your own design.
-4. Free signing on the website for visitors without an account, with an email before download, then an invitation to start free.
 5. Sending a contract to a client to sign by link, and a pay page.
 6. Email change, custom email sender for Supabase, and the privacy page checked by a lawyer.

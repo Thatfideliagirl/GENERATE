@@ -457,3 +457,46 @@ a.h-ask{text-decoration:none;transition:border-color .2s ease}a.h-ask:hover{bord
   .h-step li{font-size:12.5px;padding:4px 10px}
   .h-go{margin-top:10px;padding:9px 16px;font-size:14px}
 }
+
+/* header: slightly bigger links, sign out, and a menu on phones */
+.h-top{position:relative}
+.h-top nav{font-size:16px}
+.h-top .h-si{font-size:16px}
+.h-linkbtn{all:unset;cursor:pointer;font:500 16px var(--ui);color:var(--ink)}
+.h-linkbtn:hover{color:var(--clay)}
+.h-menu{display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--ln);background:var(--paper);color:var(--ink);place-items:center;cursor:pointer;flex:none}
+.h-mnav{position:absolute;left:12px;right:12px;top:calc(100% + 4px);z-index:40;background:var(--paper);border:1px solid var(--ln);border-radius:24px;padding:10px 10px 14px;box-shadow:0 30px 60px -30px rgba(19,32,58,.5);animation:h-pop .3s cubic-bezier(.2,.9,.3,1.2)}
+.h-mnav nav{display:grid!important;gap:2px}
+.h-mnav nav a{display:block;padding:14px 12px;border-radius:14px;font:500 18px var(--ui);color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+.h-mnav nav a:hover{background:var(--sky)}
+.h-mnavfoot{display:grid;gap:8px;margin-top:8px;padding:10px 4px 0;border-top:1px solid var(--ln)}
+.h-mnavfoot .h-btn{width:100%}
+@media(max-width:959px){
+  .h-menu{display:grid}
+  .h-top>.h-si,.h-top>.h-linkbtn{display:none}
+  .h-top>.h-btn{min-height:42px;padding:0 16px;font-size:14.5px}
+}
+@media(max-width:380px){.h-top>.h-btn{display:none}}
+
+/* free signing */
+.h-freew{display:grid;gap:40px;align-items:center}
+.h-freelede{color:var(--mu);font-size:clamp(17px,1.5vw,19px);margin:16px 0 22px;max-width:30em}
+.h-freesteps{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:12px;counter-reset:fs}
+.h-freesteps li{display:grid;grid-template-columns:36px 1fr;column-gap:14px;align-items:center;counter-increment:fs}
+.h-freesteps li::before{content:counter(fs);grid-row:1/3;width:36px;height:36px;border-radius:50%;background:var(--paper);border:1px solid var(--ln);display:grid;place-items:center;font:600 14px var(--ui);color:var(--clay)}
+.h-freesteps b{font-size:17px}
+.h-freesteps span{color:var(--mu);font-size:15px}
+.h-freenote{margin:14px 0 0;font-size:14px;color:var(--mu)}
+.h-freeart{position:relative;display:grid;place-items:center;background:var(--sky2);border-radius:32px;padding:clamp(28px,5vw,56px);min-height:380px}
+.h-freepage{width:min(100%,300px);aspect-ratio:3/4;background:#fff;border-radius:8px;padding:20px 22px;display:flex;flex-direction:column;gap:7px;box-shadow:0 30px 50px -28px rgba(19,32,58,.55);transform:rotate(-2deg)}
+.h-freepage .h-fname{font-size:11px;color:var(--mu);margin-bottom:6px}
+.h-freepage i{display:block;height:7px;border-radius:4px;background:#E3E7ED}
+.h-freepage i.h-t{height:10px;width:55%;background:#D0D6DF;margin-bottom:6px}
+.h-freepage i.s{width:62%}
+.h-freesig{margin-top:auto;border:1.5px dashed var(--clay);border-radius:8px;width:72%;padding:4px 8px;position:relative}
+.h-freesig::after{content:'';position:absolute;right:-7px;bottom:-7px;width:12px;height:12px;border-radius:50%;background:var(--clay);border:2px solid #fff}
+.h-freesig svg{width:100%;height:42px;display:block}
+.h-freesig path{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:h-draw 2s ease-in-out .4s infinite alternate}
+.h-freedate{align-self:flex-start;margin-top:8px;border:1px dashed var(--clay);border-radius:6px;padding:2px 7px;font-size:11px}
+.h-freetag{position:absolute;right:clamp(18px,4vw,40px);top:clamp(18px,4vw,40px);background:#1E7A4F;color:#fff;font:600 13px var(--ui);padding:7px 12px;border-radius:99px;transform:rotate(6deg)}
+@media(min-width:960px){.h-freew{grid-template-columns:1fr 1fr;gap:6vw}}

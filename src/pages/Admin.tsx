@@ -6,6 +6,7 @@ import { auth } from '../data/authService'
 import type { Account } from '../data/auth'
 import { useAuth } from '../data/session'
 import { getActivity, type Activity } from '../lib/ownerStats'
+import { listLeads, type Lead } from '../lib/leads'
 
 const KNOWN_TYPES = BUSINESS_TYPES.filter(([k]) => k !== 'other').map(([k]) => k)
 const KNOWN_TRADES = Object.keys(TRADES).filter((k) => k !== 'other')
@@ -31,11 +32,13 @@ export default function Admin() {
   const isAdmin = session?.role === 'admin'
 
   const [activity, setActivity] = useState<Activity | null | undefined>(undefined)
+  const [leads, setLeads] = useState<Lead[] | null | undefined>(undefined)
 
   useEffect(() => {
     if (!isAdmin) return
     auth.listSignups().then(setRows, () => setFailed(true))
     getActivity().then(setActivity, () => setActivity(null))
+    listLeads().then(setLeads, () => setLeads(null))
   }, [isAdmin])
 
   const shown = useMemo(() => {
@@ -223,6 +226,55 @@ export default function Admin() {
             ))}
           </section>
         </div>
+
+        <section className="adm-card" aria-label="Emails from free signing">
+          <div className="adm-cardh">
+            <h2>Emails from free signing</h2>
+            {leads && leads.length > 0 && (
+              <button
+                className="btn"
+                onClick={() => {
+                  const body = ['Email,Date', ...leads.map((l) => `"${l.email}",${day(l.createdAt)}`)].join('\n')
+                  saveFile(`${BRAND} free signing emails.csv`, new Blob([body], { type: 'text/csv' }))
+                }}
+              >
+                Download emails
+              </button>
+            )}
+          </div>
+          {leads === undefined ? (
+            <p className="adm-note">Loading</p>
+          ) : leads === null ? (
+            <p className="adm-note">To collect these, run the file supabase/leads.sql once in Supabase (SQL Editor, New query, paste, Run).</p>
+          ) : leads.length === 0 ? (
+            <p className="adm-note">No one has used free signing yet. Visitors who sign a document on the website leave their email here before downloading.</p>
+          ) : (
+            <>
+              <div className="adm-grid adm-grid3">
+                <div>
+                  <b className="num">{leads.length}</b>
+                  <span>Emails in total</span>
+                </div>
+                <div>
+                  <b className="num">{leads.filter((l) => Date.now() - l.createdAt < WEEK).length}</b>
+                  <span>In the last 7 days</span>
+                </div>
+                <div>
+                  <b className="num">{leads.filter((l) => (rows ?? []).some((r) => r.email.toLowerCase() === l.email)).length}</b>
+                  <span>Went on to sign up</span>
+                </div>
+              </div>
+              <ul className="adm-leads">
+                {leads.slice(0, 8).map((l, i) => (
+                  <li key={i}>
+                    <span>{l.email}</span>
+                    <span className="num">{day(l.createdAt)}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
 
         <section className="adm-card adm-soon">
           <h2>Visitors, countries and time spent</h2>

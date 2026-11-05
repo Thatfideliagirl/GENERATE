@@ -160,3 +160,8 @@
 .adm-sub{margin:14px 0 4px;font:600 13px var(--ui);color:var(--mu)}
 .adm-soon p{margin:8px 0 0;color:var(--mu);font-size:15px}
 .adm-listh{margin:30px 0 12px}
+.adm-cardh .btn{min-height:40px;padding:0 16px;font-size:14px}
+.adm-grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.adm-leads{list-style:none;margin:12px 0 0;padding:0}
+.adm-leads li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid #E9EEF3;font-size:14.5px;overflow-wrap:anywhere}
+.adm-leads li span:last-child{color:var(--mu);flex:none}

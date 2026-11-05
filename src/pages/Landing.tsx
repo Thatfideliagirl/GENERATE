@@ -4,6 +4,7 @@ import { PhoneStory } from '../components/home/PhoneStory'
 import { WhoFor } from '../components/home/WhoFor'
 import { Features } from '../components/home/Features'
 import { Faq } from '../components/home/Faq'
+import { FreeSign } from '../components/home/FreeSign'
 import { SiteFooter, SiteHeader, TypingSearch, useStartPath } from '../components/home/site'
 import { usePageTitle } from '../components/home/usePageTitle'
 
@@ -90,6 +91,7 @@ export default function Landing() {
         <WhoFor />
         <Features />
         <Faq />
+        <FreeSign />
 
         <section className="h-in h-sec h-end" aria-labelledby="en">
           <div className="h-endbox">

@@ -5,6 +5,7 @@ import { useAuth } from '../data/session'
 import { BrandMark } from './TopBar'
 import { Modal } from './Modal'
 import { ThemeToggle } from './ThemeToggle'
+import { SignOutButton } from './SignOutButton'
 import { ContractIcon, FolderIcon, HomeIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, ShieldIcon, UserIcon } from './Icons'
 
 const MAKE = [
@@ -125,6 +126,7 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
         </nav>
         <div className="a-sidefoot">
           <ThemeToggle label={!folded} />
+          <SignOutButton label={!folded} />
           <Link to="/" className="a-site" title={folded ? 'Generate homepage' : undefined}>
             <img src="./favicon.png" alt="" width={28} height={28} />
             <span>
