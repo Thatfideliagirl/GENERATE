@@ -104,3 +104,15 @@ export const SIGNATURE_FONTS: [string, string][] = [
  * With Supabase this becomes a role in the database, so change it there.
  */
 export const ADMIN_EMAILS: string[] = ['adewoyeemmanuel77@gmail.com']
+
+/**
+ * Contact details shown in the site footer and FAQ. Anything left empty is simply not shown.
+ * WhatsApp can be written as 0803... or 234803...; social handles with or without the @.
+ */
+export const CONTACT = {
+  whatsapp: '',
+  email: '',
+  instagram: '',
+  tiktok: '',
+  x: '',
+}

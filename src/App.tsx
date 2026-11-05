@@ -13,6 +13,7 @@ import { Forgot, Reset, SignIn, SignUp } from './pages/Auth'
 import Admin from './pages/Admin'
 import SignDocument from './pages/SignDocument'
 import Privacy from './pages/Privacy'
+import Pricing from './pages/Pricing'
 
 /** Pages inside the app need an account and a profile. Without an account people go to sign in, without a profile to setup. */
 function Private({ children }: { children: (profile: Profile) => ReactElement }) {
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/reset" element={<Reset />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />
         <Route path="/app" element={<Private>{(p) => <Dashboard profile={p} />}</Private>} />

@@ -8,6 +8,7 @@ import './styles/global.css'
 import './styles/paper.css'
 import './styles/landing.css'
 import './styles/auth.css'
+import './styles/home.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
