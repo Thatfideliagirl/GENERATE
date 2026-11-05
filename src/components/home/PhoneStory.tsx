@@ -1,36 +1,92 @@
-import { useEffect, useRef, useState } from 'react'
-import { SectionLink, Stroke } from './site'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { reducedMotion, SectionLink, Stroke } from './site'
+
+type Msg = { from: 'me' | 'them'; at: number; body: ReactNode }
+
+/** The conversation, played like real WhatsApp: one message at a time, with typing dots before Mr. Wale replies. */
+const CHAT: Msg[] = [
+  { from: 'me', at: 700, body: <>Good morning, Mr. Wale. Your invoice for the logo design is ready.<small>10:20 ✓✓</small></> },
+  { from: 'them', at: 3300, body: 'Good morning. Thank you, please send it.' },
+  {
+    from: 'me',
+    at: 5200,
+    body: (
+      <>
+        <div className="h-file">
+          <u>PDF</u>
+          <span>
+            <b>Invoice-0042.pdf</b>1 page · 84 KB
+          </span>
+        </div>
+        Hello Mr. Wale, here is your invoice from Amaka Obi Studio for ₦125,000, due on Friday. If you have any questions, please reach out. Thank you for your business.
+        <small>10:24 ✓✓</small>
+      </>
+    ),
+  },
+  { from: 'them', at: 8600, body: 'Received with thanks. I will pay today.' },
+]
+const TYPING = 1500
+
+function Chat({ active }: { active: boolean }) {
+  const [t, setT] = useState(-1)
+  useEffect(() => {
+    // Start again from the top every time the chat comes back into view.
+    if (!active) {
+      setT(-1)
+      return
+    }
+    if (reducedMotion()) {
+      setT(1e9)
+      return
+    }
+    const start = performance.now()
+    setT(0)
+    let raf = 0
+    const tick = () => {
+      const now = performance.now() - start
+      setT(now)
+      if (now < CHAT[CHAT.length - 1].at + 400) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [active])
+
+  const shown = CHAT.filter((m) => t >= m.at)
+  const typing = CHAT.some((m) => m.from === 'them' && t >= m.at - TYPING && t < m.at)
+  return (
+    <>
+      <div className="h-wah">
+        <i />
+        <span>
+          Mr. Wale<small>{typing ? 'typing…' : 'online'}</small>
+        </span>
+      </div>
+      <div className="h-wab">
+        <span className="h-day">Today</span>
+        {shown.map((m, i) => (
+          <div key={i} className={'h-bu ' + (m.from === 'me' ? 'h-bout' : 'h-bin')}>
+            {m.body}
+          </div>
+        ))}
+        {typing && (
+          <div className="h-bu h-bin h-tdots" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
 
 /** The six screens the phone shows, one per step: chat, setup, make, send, dashboard, sign. */
-function Screens({ on }: { on: number }) {
+function Screens({ on, live }: { on: number; live: boolean }) {
   const cls = (n: number) => 'h-sc' + (on === n ? ' h-on' : '')
   return (
     <div className="h-scr">
       <div className={cls(0)} data-s="0">
-        <div className="h-wah">
-          <i />
-          <span>
-            Mr. Wale<small>online</small>
-          </span>
-        </div>
-        <div className="h-wab">
-          <span className="h-day">Today</span>
-          <div className="h-bu h-bout">
-            Good morning, Mr. Wale. Your invoice for the logo design is ready.<small>10:20 ✓✓</small>
-          </div>
-          <div className="h-bu h-bin">Good morning. Thank you, please send it.</div>
-          <div className="h-bu h-bout">
-            <div className="h-file">
-              <u>PDF</u>
-              <span>
-                <b>Invoice-0042.pdf</b>1 page · 84 KB
-              </span>
-            </div>
-            Hello Mr. Wale, here is your invoice from Amaka Obi Studio for ₦125,000, due on Friday. If you have any questions, please reach out. Thank you for your business.
-            <small>10:24 ✓✓</small>
-          </div>
-          <div className="h-bu h-bin">Received with thanks. I will pay today.</div>
-        </div>
+        <Chat active={on === 0 && live} />
       </div>
 
       <div className={cls(1)} data-s="1">
@@ -242,7 +298,18 @@ const STEPS: Step[] = [
  */
 export function PhoneStory() {
   const [on, setOn] = useState(0)
+  const [live, setLive] = useState(false)
   const box = useRef<HTMLElement>(null)
+  const phone = useRef<HTMLDivElement>(null)
+
+  // The chat only plays while the phone is really on screen.
+  useEffect(() => {
+    const el = phone.current
+    if (!el || !('IntersectionObserver' in window)) return setLive(true)
+    const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting), { threshold: 0.45 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   useEffect(() => {
     let ticking = false
@@ -305,8 +372,8 @@ export function PhoneStory() {
   return (
     <section className="h-in h-story" aria-label="How Generate works, shown on a phone" ref={box}>
       <div className="h-pin" aria-hidden="true">
-        <div className="h-phone">
-          <Screens on={on} />
+        <div className="h-phone" ref={phone}>
+          <Screens on={on} live={live} />
         </div>
         <div className="h-dots">
           {[0, 1, 2, 3, 4, 5].map((i) => (
