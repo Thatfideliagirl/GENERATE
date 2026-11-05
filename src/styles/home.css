@@ -105,15 +105,15 @@ em.h-s{font-family:var(--acc);font-style:italic;font-weight:400;letter-spacing:-
 .h-wah{background:var(--wagreen);color:#fff;margin:-52px -16px 0;padding:50px 16px 12px;display:flex;align-items:center;gap:10px;font-weight:600}
 .h-wah i{width:30px;height:30px;border-radius:50%;background:#D9BB82}
 .h-wah small{display:block;font-weight:400;font-size:10.5px;opacity:.8}
-.h-wab{background:#EFE6D6;margin:0 -16px -18px;flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
+.h-wab{background:#EFE6D6;margin:0 -16px -18px;flex:1;padding:12px 12px;display:flex;flex-direction:column;gap:8px;justify-content:flex-start}
 .h-bu{max-width:82%;padding:8px 10px;border-radius:12px;font-size:12.5px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.08)}
-.h-bu.h-in{background:#fff;border-top-left-radius:3px;align-self:flex-start}
-.h-bu.h-out{background:var(--wa);align-self:flex-end;border-top-right-radius:3px}
+.h-bu.h-bin{background:#fff;border-top-left-radius:3px;align-self:flex-start}
+.h-bu.h-bout{background:var(--wa);align-self:flex-end;border-top-right-radius:3px}
 .h-bu small{display:block;text-align:right;font:500 9.5px var(--mono);color:#3B82D6;margin-top:3px}
 .h-file{display:flex;gap:8px;align-items:center;background:#fff;border-radius:8px;padding:7px;margin-bottom:5px}
 .h-file u{width:24px;height:30px;border-radius:3px;border:1.5px solid var(--clay);text-decoration:none;font:700 7px/30px var(--ui);text-align:center;color:var(--clay)}
 .h-file b{display:block;font-size:11.5px}.h-file span{font-size:10px;color:var(--mu)}
-.h-day{align-self:center;background:#fff;border-radius:8px;padding:3px 10px;font-size:10.5px;color:var(--mu);box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.h-day{align-self:center;margin-bottom:2px;background:#fff;border-radius:8px;padding:3px 10px;font-size:10.5px;color:var(--mu);box-shadow:0 1px 1px rgba(0,0,0,.06)}
 .h-sc.h-on .h-bu{animation:h-pop .5s cubic-bezier(.2,.9,.3,1.2) both}.h-sc.h-on .h-bu:nth-child(3){animation-delay:.4s}.h-sc.h-on .h-bu:nth-child(4){animation-delay:.8s}.h-sc.h-on .h-bu:nth-child(5){animation-delay:1.4s}.h-sc.h-on .h-bu:nth-child(6){animation-delay:2.2s}
 @keyframes h-pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
 .h-hi{font-size:19px;font-weight:600;letter-spacing:-.03em}.h-hi em{font:italic 400 1.1em var(--acc);color:var(--clay)}

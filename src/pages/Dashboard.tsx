@@ -16,6 +16,8 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { useSigned } from '../components/useSigned'
 import { ContractIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, WhatsAppIcon } from '../components/Icons'
 import { useStore } from '../data/store'
+import { useAuth } from '../data/session'
+import { Tour, tourDone, type TourStep } from '../components/Tour'
 import { useToast } from '../components/Toast'
 
 type Money = Record<string, number>
@@ -104,6 +106,20 @@ function MoneyChart({ docs, currency, period }: { docs: Doc[]; currency: string;
   )
 }
 
+/** The first time tour of Home. Targets that are not on this screen size are skipped by the tour itself. */
+const tourSteps = (first: string): TourStep[] => [
+  { title: `Welcome to Generate, ${first}.`, text: 'Here is a quick look around, so you know where everything is. It takes less than a minute.' },
+  { target: '.a-side .a-newbtn, .a-tabs .a-new, .a-hellobtn', title: 'Make anything from here', text: 'Tap New to make an invoice, a receipt or a contract, or to sign a document someone sent you.' },
+  { target: '[data-tour=filter]', title: 'Choose the time', text: 'Pick today, this week, this month, this year or all time. Every number on Home changes with it.' },
+  { target: '[data-tour=money]', title: 'Your money at a glance', text: 'What came in, what you are still waiting for, what is overdue, and who has paid part.' },
+  { target: '[data-tour=chart]', title: 'See how you are growing', text: 'Money received each month, with your best month at the top.' },
+  { target: '[data-tour=counts]', title: 'Everything you made', text: 'Invoices, receipts, contracts, signed documents and customers. Tap any box to open its own page.' },
+  { target: '[data-tour=owe]', title: 'Who owes you', text: 'Unpaid invoices, late ones first. Tap Remind to send a friendly, firm or final message on WhatsApp.' },
+  { target: '.a-side nav, .a-tabs', title: 'Find your way around', text: 'Your documents, customers, profile and settings are always here.' },
+  { target: '.a-sidefoot .a-theme, .a-phonetools .a-theme, .a-hellotools .a-theme', title: 'Make it yours', text: 'Switch between light and dark here. In Settings you can also pick your own accent colour.' },
+  { title: 'You are all set.', text: 'Start with your first invoice. Your name, logo and signature are already on it.' },
+]
+
 /**
  * Home. One time filter drives everything here:
  * money (received, waiting, overdue, part paid), a chart of money received,
@@ -118,8 +134,11 @@ export default function Dashboard({ profile }: { profile: Profile }) {
   const [period, setPeriod] = useState<Period>('month')
   const [remind, setRemind] = useState<Doc | null>(null)
   const [making, setMaking] = useState(false)
+  const { session } = useAuth()
+  const [touring, setTouring] = useState(() => !!session && !tourDone(session.userId))
   const from = startOf(period)
   const first = (profile.owner || profile.name).trim().split(' ')[0]
+  const steps = useMemo(() => tourSteps(first), [first])
 
   const s = useMemo(() => {
     const received: Money = {}
@@ -199,9 +218,11 @@ export default function Dashboard({ profile }: { profile: Profile }) {
           </div>
         </section>
 
-        <PeriodTabs value={period} onChange={setPeriod} label="Show numbers for" />
+        <div data-tour="filter">
+          <PeriodTabs value={period} onChange={setPeriod} label="Show numbers for" />
+        </div>
 
-        <section className="a-money" aria-label={'Money, ' + pname}>
+        <section data-tour="money" className="a-money" aria-label={'Money, ' + pname}>
           <div className="a-tile dk big">
             <span>Money received</span>
             <b className="num">
@@ -233,9 +254,11 @@ export default function Dashboard({ profile }: { profile: Profile }) {
           </div>
         </section>
 
-        <MoneyChart docs={data.docs} currency={profile.currency} period={period} />
+        <div data-tour="chart">
+          <MoneyChart docs={data.docs} currency={profile.currency} period={period} />
+        </div>
 
-        <section className="a-counts" aria-label={'What you made, ' + pname}>
+        <section data-tour="counts" className="a-counts" aria-label={'What you made, ' + pname}>
           {counts.map((x) => (
             <Link key={x.to} to={x.to} className="a-count">
               <span className={'a-dico ' + x.c}>{x.icon}</span>
@@ -246,7 +269,7 @@ export default function Dashboard({ profile }: { profile: Profile }) {
         </section>
 
         <div className="a-cols2">
-          <section aria-labelledby="owe-h">
+          <section aria-labelledby="owe-h" data-tour="owe">
             <div className="a-head">
               <h2 id="owe-h">
                 Who owes <em>you</em>
@@ -320,6 +343,17 @@ export default function Dashboard({ profile }: { profile: Profile }) {
       </main>
       {remind && <ReminderModal onClose={() => setRemind(null)} onPick={sendReminder} />}
       {making && <MakeSheet onClose={() => setMaking(false)} />}
+      {touring && session && (
+        <Tour
+          userId={session.userId}
+          steps={steps}
+          onFinish={(make) => {
+            setTouring(false)
+            window.scrollTo(0, 0)
+            if (make) nav('/app/new/invoice')
+          }}
+        />
+      )}
     </>
   )
 }

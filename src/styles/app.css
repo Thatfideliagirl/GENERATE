@@ -363,3 +363,22 @@
 .a-folded .a-biz>span:first-child{display:inline-flex}
 @media (min-width:1000px){.a-folded .a-biz>span:last-child{display:none}.a-hellobtn{display:none!important}}
 @media (max-width:719px){.a-period{gap:2px}.a-period button{padding:8px 2px;font-size:13px;min-height:38px}}
+.a-accents{display:flex;gap:10px;flex-wrap:wrap}
+.a-acc{width:36px;height:36px;border-radius:50%;border:3px solid var(--sf);box-shadow:0 0 0 1px var(--ln);cursor:pointer;transition:transform .15s ease}
+.a-acc:hover{transform:scale(1.08)}
+.a-acc.on{box-shadow:0 0 0 2px var(--ink)}
+
+/* first time tour */
+.a-tour{position:fixed;inset:0;z-index:70}
+.a-dim{position:fixed;inset:0;background:rgba(12,19,34,.55)}
+.a-spot{position:fixed;border-radius:20px;box-shadow:0 0 0 9999px rgba(12,19,34,.55),0 0 0 2px var(--clay);transition:all .35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.a-tourcard{position:fixed;background:var(--sf);color:var(--ink);border-radius:22px;padding:18px 18px 16px;box-shadow:0 30px 60px -20px rgba(12,19,34,.6);transition:top .35s cubic-bezier(.2,.8,.2,1),left .35s cubic-bezier(.2,.8,.2,1);animation:sheetup .3s ease}
+.a-tourtop{display:flex;justify-content:space-between;align-items:center;font:500 12.5px var(--ui);color:var(--mu)}
+.a-tourskip{border:0;background:none;color:var(--mu);font:500 13px var(--ui);cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+.a-tourcard h3{margin:8px 0 4px;font:600 19px/1.25 var(--ui);letter-spacing:-.02em}
+.a-tourcard p{margin:0;color:var(--mu);font-size:15px}
+.a-tourdots{display:flex;gap:5px;margin:14px 0 12px}
+.a-tourdots i{width:6px;height:6px;border-radius:6px;background:var(--ln);transition:all .3s ease}
+.a-tourdots i.on{width:20px;background:var(--clay)}
+.a-tourbtns{display:flex;gap:8px;justify-content:flex-end}
+.a-tourbtns .btn{min-height:42px}

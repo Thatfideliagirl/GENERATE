@@ -10,26 +10,26 @@ function Screens({ on }: { on: number }) {
         <div className="h-wah">
           <i />
           <span>
-            Tunde Bello<small>online</small>
+            Mr. Wale<small>online</small>
           </span>
         </div>
         <div className="h-wab">
           <span className="h-day">Today</span>
-          <div className="h-bu h-in">Good morning. Is the logo ready?</div>
-          <div className="h-bu h-out">
-            Yes, all done. Sending your invoice now.<small>10:22 ✓✓</small>
+          <div className="h-bu h-bout">
+            Good morning, Mr. Wale. Your invoice for the logo design is ready.<small>10:20 ✓✓</small>
           </div>
-          <div className="h-bu h-in">Great, please send it.</div>
-          <div className="h-bu h-out">
+          <div className="h-bu h-bin">Good morning. Thank you, please send it.</div>
+          <div className="h-bu h-bout">
             <div className="h-file">
               <u>PDF</u>
               <span>
                 <b>Invoice-0042.pdf</b>1 page · 84 KB
               </span>
             </div>
-            Here you go. ₦125,000, due Friday. Thank you.<small>10:24 ✓✓</small>
+            Hello Mr. Wale, here is your invoice from Amaka Obi Studio for ₦125,000, due on Friday. If you have any questions, please reach out. Thank you for your business.
+            <small>10:24 ✓✓</small>
           </div>
-          <div className="h-bu h-in">Received, thank you. I will pay today.</div>
+          <div className="h-bu h-bin">Received with thanks. I will pay today.</div>
         </div>
       </div>
 

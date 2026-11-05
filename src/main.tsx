@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import { applyTheme } from './lib/theme'
+import { applyAccent, applyTheme } from './lib/theme'
 import { AuthProvider } from './data/session'
 import { StoreProvider } from './data/store'
 import { ToastProvider } from './components/Toast'
@@ -13,6 +13,7 @@ import './styles/home.css'
 import './styles/app.css'
 
 applyTheme()
+applyAccent()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

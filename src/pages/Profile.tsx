@@ -6,13 +6,14 @@ import { BRAND, BUSINESS_TYPES, FONTS, LAYOUTS, TRADES } from '../lib/constants'
 import { saveFile } from '../lib/pdf'
 import { socialLines } from '../lib/social'
 import { accentOf } from '../lib/style'
-import { getTheme, setTheme, type Theme } from '../lib/theme'
+import { ACCENT_CHOICES, getAccent, getTheme, setAccent, setTheme, type Theme } from '../lib/theme'
 import { BrandMark, PageHeader } from '../components/TopBar'
 import { ProfileForm } from '../components/ProfileForm'
 import { EditIcon, GlobeIcon, MoonIcon, SunIcon } from '../components/Icons'
 import { useStore } from '../data/store'
 import { useAuth } from '../data/session'
 import { useToast } from '../components/Toast'
+import { resetTour } from '../components/Tour'
 
 function Info({ title, onEdit, children }: { title: string; onEdit: () => void; children: ReactNode }) {
   return (
@@ -44,6 +45,7 @@ export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
   const { data, restore } = useStore()
   const { session, signOut } = useAuth()
   const [theme, setThemeState] = useState<Theme>(getTheme())
+  const [accent, setAccentState] = useState(getAccent())
   const edit = () => nav('/app/profile/edit')
 
   const bizType = p.bizType === 'other' ? p.bizOther : BUSINESS_TYPES.find(([v]) => v === p.bizType)?.[1]
@@ -150,6 +152,29 @@ export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
           </div>
           <div className="a-set">
             <div>
+              <b>Accent colour</b>
+              <span className="mu small">The colour of highlights, buttons and icons inside Generate. Your documents keep their own look.</span>
+            </div>
+            <div className="a-accents" role="radiogroup" aria-label="Accent colour">
+              {ACCENT_CHOICES.map(([k, hex]) => (
+                <button
+                  key={k}
+                  role="radio"
+                  aria-checked={accent === k}
+                  aria-label={k}
+                  title={k[0].toUpperCase() + k.slice(1)}
+                  className={'a-acc' + (accent === k ? ' on' : '')}
+                  style={{ background: hex }}
+                  onClick={() => {
+                    setAccent(k)
+                    setAccentState(k)
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="a-set">
+            <div>
               <b>Backup</b>
               <span className="mu small">Download a copy of everything, or bring one back.</span>
             </div>
@@ -162,6 +187,21 @@ export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
                 <input type="file" accept=".json,application/json" hidden onChange={restoreFile} />
               </label>
             </div>
+          </div>
+          <div className="a-set">
+            <div>
+              <b>The tour</b>
+              <span className="mu small">See the quick walk through Home again.</span>
+            </div>
+            <button
+              className="btn"
+              onClick={() => {
+                if (session) resetTour(session.userId)
+                nav('/app')
+              }}
+            >
+              Take the tour again
+            </button>
           </div>
           <div className="a-set">
             <div>

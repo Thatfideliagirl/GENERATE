@@ -16,10 +16,15 @@ export function waLink(phone: string, message: string): string {
 export function sendMessage(doc: Doc, profile: Profile): string {
   const name = doc.client.name || ''
   if (doc.type === 'contract') {
-    return `Hello ${name}, here is the ${resolveText(doc.title, doc, profile)} from ${profile.name}. Please review and sign.`
+    return `Hello ${name}, I hope you are well. Here is the ${resolveText(doc.title, doc, profile)} from ${profile.name}. Please read it through, and if you have any questions, please reach out.`
   }
-  const due = doc.type === 'invoice' && doc.dueDate ? `, due ${fmtDate(doc.dueDate)}` : ''
-  return `Hello ${name}, ${DOC_LABEL[doc.type]} ${doc.number} from ${profile.name} for ${money(totals(doc).total, doc.currency)}${due}. Thank you.`
+  const amount = money(totals(doc).total, doc.currency)
+  const hello = name ? `Hello ${name}` : 'Hello'
+  if (doc.type === 'receipt') {
+    return `${hello}, thank you for your payment. Here is your receipt ${doc.number} from ${profile.name} for ${amount}. We truly appreciate your business.`
+  }
+  const due = doc.dueDate ? `, due on ${fmtDate(doc.dueDate)}` : ''
+  return `${hello}, I hope you are well. Here is your invoice ${doc.number} from ${profile.name} for ${amount}${due}. If you have any questions, please reach out. Thank you for your business.`
 }
 
 export function reminderMessage(doc: Doc, profile: Profile, tone: ReminderTone): string {
