@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Profile } from '../lib/types'
 import { initialsOf } from '../lib/initials'
 import { BackIcon } from './Icons'
+import { ThemeToggle } from './ThemeToggle'
 
 export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
   if (profile.logo) {
@@ -10,7 +11,7 @@ export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: num
   }
   const letter = profile.useInitials ? initialsOf(profile.name) : (profile.name || 'G').trim()[0].toUpperCase()
   return (
-    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * (letter.length > 1 ? 0.42 : 0.52)) }}>
+    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * (letter.length > 1 ? 0.36 : 0.44)), borderRadius: Math.round(size * 0.3) }}>
       {letter}
     </span>
   )
@@ -24,9 +25,12 @@ export function AppHeader({ profile }: { profile: Profile }) {
         <BrandMark profile={profile} />
         <span>{profile.name}</span>
       </Link>
-      <Link to="/app/profile" className="a-avatar" aria-label="Your profile">
-        {initialsOf(profile.owner || profile.name)}
-      </Link>
+      <span className="a-phonetools">
+        <ThemeToggle />
+        <Link to="/app/profile" className="a-avatar" aria-label="Your profile">
+          {initialsOf(profile.owner || profile.name)}
+        </Link>
+      </span>
     </header>
   )
 }

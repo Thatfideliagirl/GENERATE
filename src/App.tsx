@@ -16,6 +16,7 @@ import Privacy from './pages/Privacy'
 import { AppShell } from './components/AppShell'
 import Pricing from './pages/Pricing'
 import Documents from './pages/Documents'
+import { DocSection, SignedDocs } from './pages/Sections'
 import { CustomerPage, CustomersPage } from './pages/Customers'
 
 /** Pages inside the app need an account and a profile. Without an account people go to sign in, without a profile to setup. */
@@ -68,6 +69,10 @@ export default function App() {
         <Route path="/app/doc/:id" element={<Private>{(p) => <OpenDoc profile={p} />}</Private>} />
         <Route path="/app/profile" element={<Private>{(p) => <ProfilePage profile={p} />}</Private>} />
         <Route path="/app/profile/edit" element={<Private>{(p) => <ProfileEdit profile={p} />}</Private>} />
+        <Route path="/app/invoices" element={<Private>{(p) => <DocSection key="i" profile={p} type="invoice" />}</Private>} />
+        <Route path="/app/receipts" element={<Private>{(p) => <DocSection key="r" profile={p} type="receipt" />}</Private>} />
+        <Route path="/app/contracts" element={<Private>{(p) => <DocSection key="c" profile={p} type="contract" />}</Private>} />
+        <Route path="/app/signed" element={<Private>{() => <SignedDocs />}</Private>} />
         <Route path="/app/documents" element={<Private>{(p) => <Documents profile={p} />}</Private>} />
         <Route path="/app/customers" element={<Private>{() => <CustomersPage />}</Private>} />
         <Route path="/app/customers/:id" element={<Private>{(p) => <CustomerPage profile={p} />}</Private>} />

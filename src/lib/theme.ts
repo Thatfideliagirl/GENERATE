@@ -21,4 +21,5 @@ export function setTheme(t: Theme) {
     /* the choice lasts for this visit only */
   }
   applyTheme(t)
+  window.dispatchEvent(new CustomEvent('generate-theme', { detail: t }))
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Profile as ProfileType } from '../lib/types'
@@ -50,10 +50,12 @@ export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
   const trade = p.trade === 'other' ? p.tradeOther : TRADES[p.trade]
   const socials = socialLines(p)
 
-  const pickTheme = (t: Theme) => {
-    setTheme(t)
-    setThemeState(t)
-  }
+  useEffect(() => {
+    const on = (e: Event) => setThemeState((e as CustomEvent<Theme>).detail)
+    window.addEventListener('generate-theme', on)
+    return () => window.removeEventListener('generate-theme', on)
+  }, [])
+  const pickTheme = (t: Theme) => setTheme(t)
 
   const backup = () => saveFile(`${BRAND} backup.json`, new Blob([JSON.stringify(data)], { type: 'application/json' }))
   const restoreFile = async (e: ChangeEvent<HTMLInputElement>) => {

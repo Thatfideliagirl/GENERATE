@@ -105,7 +105,7 @@ export function TypingSearch({ phrases, label = 'Start free' }: { phrases: strin
           enterKeyHint="go"
         />
         {typing && (
-          <span className="h-ghost" aria-hidden="true">
+          <span className="h-hint" aria-hidden="true">
             {hint}
           </span>
         )}

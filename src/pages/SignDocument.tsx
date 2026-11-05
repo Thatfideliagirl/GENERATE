@@ -12,6 +12,8 @@ import { fmtDate, today, uid } from '../lib/format'
 import { exportSigned, fileToPdfBytes, lineImage, loadPdfjs, textToImage } from '../lib/signpdf'
 import type { Placed } from '../lib/signpdf'
 import { saveFile } from '../lib/pdf'
+import { saveSigned } from '../lib/signedStore'
+import { useAuth } from '../data/session'
 
 const MAX_WIDTH = 860
 
@@ -28,6 +30,7 @@ function imageAspect(src: string): Promise<number> {
 export default function SignDocument({ profile }: { profile: Profile }) {
   const nav = useNavigate()
   const toast = useToast()
+  const { session } = useAuth()
   const [bytes, setBytes] = useState<Uint8Array | null>(null)
   const [name, setName] = useState('')
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null)
@@ -149,7 +152,12 @@ export default function SignDocument({ profile }: { profile: Profile }) {
     setBusy(true)
     try {
       const out = await exportSigned(bytes, items)
-      saveFile(`${name || 'document'} signed.pdf`, new Blob([out as BlobPart], { type: 'application/pdf' }))
+      const blob = new Blob([out as BlobPart], { type: 'application/pdf' })
+      saveFile(`${name || 'document'} signed.pdf`, blob)
+      if (session) {
+        // Keep a copy on this device so it shows under Signed documents.
+        await saveSigned({ id: uid(), userId: session.userId, name: name || 'Document', pages: pdf?.numPages ?? 1, size: blob.size, createdAt: Date.now() }, blob).catch(() => undefined)
+      }
       toast('Signed copy saved')
     } catch {
       toast('The signed copy could not be made. Try again.')
