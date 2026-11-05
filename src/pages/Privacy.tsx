@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { BRAND } from '../lib/constants'
+import { BackIcon } from '../components/Icons'
 
 /** A plain language privacy page. It is a draft for the owner to have a lawyer check before launch. */
 export default function Privacy() {
@@ -10,7 +11,8 @@ export default function Privacy() {
           <img src="./logo.png" alt={BRAND} width={150} height={33} />
         </Link>
         <span className="adm-gap" />
-        <Link className="btn g" to="/">
+        <Link className="back" to="/">
+          <BackIcon />
           Back to home
         </Link>
       </header>

@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BRAND } from '../lib/constants'
+import { BackIcon } from './Icons'
 
-/** The frame around sign in, sign up and reset: a green wall on one side, paper on the other. */
+/** The frame around sign in, sign up and reset: a navy side with the promise, the form on powder blue. */
 export function AuthShell({ title, lead, children, foot, wide }: { title: string; lead: string; children: ReactNode; foot?: ReactNode; wide?: boolean }) {
   return (
     <div className="auth">
@@ -25,6 +26,7 @@ export function AuthShell({ title, lead, children, foot, wide }: { title: string
       <main className="auth-main">
         <div className={'auth-card' + (wide ? ' wide' : '')}>
           <Link to="/" className="auth-back">
+            <BackIcon />
             Back to home
           </Link>
           <h1>{title}</h1>

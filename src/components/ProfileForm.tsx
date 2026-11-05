@@ -36,14 +36,15 @@ export function ProfileForm({ profile: p, onChange, showLook = true }: Props) {
 
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>Your business</h2>
-      <Field label="Business name" value={p.name} onChange={(v) => onChange({ name: v })} placeholder="Atelier Obi" />
-      <Field label="Your name" value={p.owner} onChange={(v) => onChange({ owner: v })} placeholder="Chioma Obi" />
-      <Grid2>
-        <Field label="Email" type="email" value={p.email} onChange={(v) => onChange({ email: v })} />
-        <Field label="Phone or WhatsApp" type="tel" value={p.phone} onChange={(v) => onChange({ phone: v })} />
-      </Grid2>
-      <Field label="Address" value={p.address} onChange={(v) => onChange({ address: v })} />
+      <Section title="Your business">
+        <Field label="Business name" value={p.name} onChange={(v) => onChange({ name: v })} placeholder="Atelier Obi" />
+        <Field label="Your name" value={p.owner} onChange={(v) => onChange({ owner: v })} placeholder="Chioma Obi" />
+        <Grid2>
+          <Field label="Email" type="email" value={p.email} onChange={(v) => onChange({ email: v })} />
+          <Field label="Phone or WhatsApp" type="tel" value={p.phone} onChange={(v) => onChange({ phone: v })} />
+        </Grid2>
+        <Field label="Address" value={p.address} onChange={(v) => onChange({ address: v })} />
+      </Section>
 
       <Section title="About you">
         <SelectField label="Which describes you best" value={p.bizType} onChange={(v) => onChange({ bizType: v })} options={BUSINESS_TYPES} />

@@ -13,6 +13,7 @@ import { Forgot, Reset, SignIn, SignUp } from './pages/Auth'
 import Admin from './pages/Admin'
 import SignDocument from './pages/SignDocument'
 import Privacy from './pages/Privacy'
+import { AppShell } from './components/AppShell'
 import Pricing from './pages/Pricing'
 
 /** Pages inside the app need an account and a profile. Without an account people go to sign in, without a profile to setup. */
@@ -22,7 +23,7 @@ function Private({ children }: { children: (profile: Profile) => ReactElement })
   if (!ready) return null
   if (!session) return <Navigate to="/signin" replace />
   if (!data.profile) return <Navigate to="/setup" replace />
-  return children(data.profile)
+  return <AppShell profile={data.profile}>{children(data.profile)}</AppShell>
 }
 
 /** Setup is part of creating an account, so it needs one. */
@@ -60,7 +61,7 @@ export default function App() {
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />
         <Route path="/app" element={<Private>{(p) => <Dashboard profile={p} />}</Private>} />
         <Route path="/app/sign" element={<Private>{(p) => <SignDocument profile={p} />}</Private>} />
-        <Route path="/app/contract" element={<Private>{() => <ContractTemplates />}</Private>} />
+        <Route path="/app/contract" element={<Private>{(p) => <ContractTemplates profile={p} />}</Private>} />
         <Route path="/app/new/:type" element={<Private>{(p) => <NewDoc profile={p} />}</Private>} />
         <Route path="/app/doc/:id" element={<Private>{(p) => <OpenDoc profile={p} />}</Private>} />
         <Route path="/app/profile" element={<Private>{(p) => <ProfilePage profile={p} />}</Private>} />

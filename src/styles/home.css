@@ -332,3 +332,5 @@ a.h-ask{text-decoration:none;transition:border-color .2s ease}a.h-ask:hover{bord
 .h-pnote{text-align:center;color:var(--mu);max-width:36em;margin:28px auto 0;font-size:15px}
 @media(min-width:800px){.h-plans{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.h-sheet{opacity:1;transform:rotate(var(--r))}.h-sheet .h-sg path{stroke-dashoffset:0}}
+.h-back{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 16px 0 12px;border-radius:99px;border:1px solid var(--ln);background:var(--paper);font:500 14.5px var(--ui);color:var(--ink);text-decoration:none;margin-bottom:22px;transition:border-color .2s ease}
+.h-back:hover{border-color:var(--ink)}

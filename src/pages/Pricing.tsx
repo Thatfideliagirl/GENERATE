@@ -26,6 +26,12 @@ export default function Pricing() {
     <div className="h-root">
       <SiteHeader />
       <main className="h-in h-price">
+        <Link className="h-back" to="/">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 5 8 12l7 7" />
+          </svg>
+          Back to home
+        </Link>
         <div className="h-phead">
           <p className="h-lbl">Pricing</p>
           <h1>

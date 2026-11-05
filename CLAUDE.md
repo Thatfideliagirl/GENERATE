@@ -29,7 +29,13 @@ Contracts use {{business}}, {{client}}, {{owner}}, {{date}}, {{fee}}, {{start}},
 WhatsApp: numbers starting with 0 get 234 added. Reminder tones: friendly, firm, final.
 
 ## Brand look
-Emerald #0F4D3C, ivory #F6F1E7 and #FBF8F1, brass gold #B08D57. Headings use Fraunces, interface uses Instrument Sans. The landing page alone uses Bodoni Moda for display and Hanken Grotesk for text, set as variables on .landing in landing.css. Light and dark mode both supported through CSS variables in global.css. Avoid generic gradients, purple, and template looking cards.
+The whole product now uses one look: powder blue #E6EDF3 background, white cards, navy ink #13203A, one clay accent #B4603F, Geist for text, Geist Mono for small labels, and Instrument Serif italic for the single human word in a heading (wrap it in <em>). The logo keeps its own green and gold. Light and dark mode both work through the tokens in global.css (dark is deep navy). Avoid generic gradients, purple, and rows of identical icon cards. Default document look for new profiles is classic, editorial font, navy accent, charcoal text; documents are the user's own brand, so they can pick any look.
+
+## Inside the app (rebuilt in the new look)
+src/components/AppShell.tsx wraps every signed in page (App.tsx Private does it). On a laptop (1000px and up) a white side bar shows the logo, the business card linking to Profile, Home, a Make group (Invoice, Receipt, Contract, Sign a document), Profile and the Owner page for admins. On a phone, /app and /app/contract show bottom tabs (Home, Sign, a raised New button that opens MakeSheet, Contracts, Profile); pages with their own action bar (editor, profile, sign) show a Back pill instead. TopBar.tsx has AppHeader (phone top of home) and PageHeader (Back pill, title, optional right slot). Icons are in components/Icons.tsx. Styles: global.css (tokens and every shared class, kept with the old names), app.css (a- classes for the shell, home screen, editor split, contract templates).
+Home (Dashboard.tsx): date and greeting with the first name in serif, four money tiles (received in navy), four make buttons, Who owes you (unpaid sent, part paid and overdue invoices, late first, with a WhatsApp Remind button using ReminderModal), then documents with search, a segmented filter and type icons, and a drawn empty state.
+Editor: status tag in the header, every block is a white card, and from 1180px the live preview sits beside the form (useWide hook) with the look controls folded in a details box, and the bar shows Save, Download PDF and Send on WhatsApp together. On a phone the Preview tab shows the paper first and the look controls folded underneath.
+Contract templates show previews with the user's details filled in through resolveText (polish item 6 is done). Sign in, sign up, owner and privacy pages share the new look in auth.css, each with a Back pill.
 
 ## Accounts and owner page
 Routes: /signup, /signin, /forgot, /reset, /privacy, /admin, /setup (needs an account), /app (needs account and profile), /app/sign (sign a document).
@@ -49,7 +55,7 @@ supabase/schema.sql builds everything: profiles (who signed up, owner can read),
 3. Landing page images. The landing page has no photo slots now, Coco asked for none. If he sends pictures later, add them where he says.
 4. Client signing links for contracts, and a pay page.
 5. Email change (password reset is built).
-6. Small polish: contract template cards currently show raw {{placeholders}} in their preview text, resolve them.
+6. Done: contract template previews now fill in the placeholders.
 
 ## Sign a document (built)
 Route /app/sign, src/pages/SignDocument.tsx and src/lib/signpdf.ts. The person opens a PDF or picture (png, jpg, webp), pages are drawn with pdfjs-dist (legacy build, loaded only on this page), they add their saved or a newly drawn signature, initials, date or text, drag and resize on any page, and download a signed PDF written with pdf-lib. Everything is a picture placed by fraction of the page, so it works on rotated pages and cropped pages. All on the device, nothing uploaded. Not built: sending a document to someone else to sign (needs Supabase), several people signing, locking or certifying the file. Needs a decision on free or Generate more.

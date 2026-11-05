@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { useWide } from '../components/useWide'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import type { Client, Doc, DocType, Item, Payment, Profile } from '../lib/types'
-import { CURRENCIES, DOC_LABEL, PAY_METHODS, TRADE_ITEMS, TRADES } from '../lib/constants'
+import { CURRENCIES, DOC_LABEL, PAY_METHODS, STATUS_LABEL, TRADE_ITEMS, TRADES } from '../lib/constants'
 import { balanceOf, paidOf, statusOf, totals } from '../lib/calc'
 import { clone, money, today, uid } from '../lib/format'
 import { newDoc } from '../lib/factory'
@@ -54,12 +55,17 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
   const [armed, setArmed] = useState(false)
   const [busy, setBusy] = useState(false)
   const armTimer = useRef<number>()
+  // On a wide screen the preview sits beside the form, so there is no tab to switch.
+  const wide = useWide(1180)
+  const view = wide ? 'edit' : tab
 
   const isSaved = data.docs.some((d) => d.id === doc.id)
   const status = statusOf(doc)
 
   useEffect(() => () => window.clearTimeout(armTimer.current), [])
-  useEffect(() => window.scrollTo(0, 0), [tab])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [tab])
 
   const patch = (p: Partial<Doc>) => setDoc((d) => ({ ...d, ...p }))
   const patchClient = (p: Partial<Client>) => setDoc((d) => ({ ...d, client: { ...d.client, ...p } }))
@@ -211,9 +217,9 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
 
   return (
     <>
-      <PageHeader title={`${DOC_LABEL[doc.type]} ${doc.number}`} onBack={back} />
-      <main className="wrap">
-        <div className="seg">
+      <PageHeader title={`${DOC_LABEL[doc.type]} ${doc.number}`} onBack={back} right={<span className={'bd ' + status}>{STATUS_LABEL[status]}</span>} />
+      <main className="wrap a-ed">
+        <div className="seg a-tabsw">
           <button className={tab === 'edit' ? 'on' : ''} onClick={() => setTab('edit')}>
             Details
           </button>
@@ -222,12 +228,15 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
           </button>
         </div>
 
-        {tab === 'edit' ? (
+        <div className="a-split">
+        <div>
+        {view === 'edit' ? (
           <>
             {doc.type === 'contract' ? (
               <ContractForm doc={doc} profile={profile} patch={patch} patchClient={patchClient} onSaveFirst={() => persist(doc)} />
             ) : (
               <>
+                <Section title="Details">
                 <Grid2>
                   <Field label="Number" value={doc.number} onChange={(v) => patch({ number: v })} />
                   <Field label={doc.type === 'receipt' ? 'Date paid' : 'Issue date'} type="date" value={doc.issueDate} onChange={(v) => patch({ issueDate: v })} />
@@ -249,6 +258,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
                     />
                   </Grid2>
                 )}
+                </Section>
 
                 <Section title={doc.type === 'receipt' ? 'Received from' : 'Billed to'}>
                   <ClientFields client={doc.client} patchClient={patchClient} />
@@ -376,20 +386,50 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
           </>
         ) : (
           <>
-            <LookControls style={doc.style} onChange={(p) => patch({ style: { ...doc.style, ...p } })} />
             <PaperPreview doc={doc} profile={profile} />
-            <p className="mu small">To send it, download the PDF and attach it in WhatsApp or email. The WhatsApp button opens a ready message to your client.</p>
+            <details className="sec a-looks">
+              <summary>Change the look</summary>
+              <LookControls style={doc.style} onChange={(p) => patch({ style: { ...doc.style, ...p } })} />
+            </details>
+            <p className="mu small">Download the PDF to attach it anywhere, or tap Send on WhatsApp to open a ready message to your client.</p>
           </>
         )}
+        </div>
+        {wide && (
+          <aside className="a-live" aria-label="Live preview">
+            <div className="a-live-h">
+              <span>Live preview</span>
+              <span>Updates as you type</span>
+            </div>
+            <details className="sec a-looks">
+              <summary>Change the look</summary>
+              <LookControls style={doc.style} onChange={(p) => patch({ style: { ...doc.style, ...p } })} />
+            </details>
+            <PaperPreview doc={doc} profile={profile} />
+          </aside>
+        )}
+        </div>
       </main>
 
       <div className="bar">
-        {tab === 'edit' ? (
+        {wide ? (
           <>
-            <button className="btn p" onClick={save}>
+            <button className="btn" onClick={save}>
               Save
             </button>
-            <button className="btn" onClick={() => setTab('prev')}>
+            <button className="btn p" onClick={download} disabled={busy}>
+              Download PDF
+            </button>
+            <button className="btn wa" onClick={sendOnWhatsApp}>
+              Send on WhatsApp
+            </button>
+          </>
+        ) : tab === 'edit' ? (
+          <>
+            <button className="btn" onClick={save}>
+              Save
+            </button>
+            <button className="btn p" onClick={() => setTab('prev')}>
               Preview
             </button>
           </>
@@ -398,7 +438,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
             <button className="btn p" onClick={download} disabled={busy}>
               Download PDF
             </button>
-            <button className="btn" onClick={sendOnWhatsApp}>
+            <button className="btn wa" onClick={sendOnWhatsApp}>
               Send on WhatsApp
             </button>
           </>
@@ -503,6 +543,7 @@ function ContractForm({
 }) {
   return (
     <>
+      <Section title="Details">
       <Grid2>
         <Field label="Number" value={doc.number} onChange={(v) => patch({ number: v })} />
         <Field label="Date" type="date" value={doc.issueDate} onChange={(v) => patch({ issueDate: v })} />
@@ -518,6 +559,7 @@ function ContractForm({
           ['signed', 'Signed'],
         ]}
       />
+      </Section>
       <Section title="Client">
         <Field label="Name" value={doc.client.name} onChange={(v) => patchClient({ name: v })} placeholder="Client or company name" />
         <Grid2>

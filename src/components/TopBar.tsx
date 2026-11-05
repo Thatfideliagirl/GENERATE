@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Profile } from '../lib/types'
-import { useAuth } from '../data/session'
 import { initialsOf } from '../lib/initials'
+import { BackIcon } from './Icons'
 
 export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
   if (profile.logo) {
@@ -10,42 +10,37 @@ export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: num
   }
   const letter = profile.useInitials ? initialsOf(profile.name) : (profile.name || 'G').trim()[0].toUpperCase()
   return (
-    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * (letter.length > 1 ? 0.4 : 0.5)) }}>
+    <span className="mono" style={{ width: size, height: size, fontSize: Math.round(size * (letter.length > 1 ? 0.42 : 0.52)) }}>
       {letter}
     </span>
   )
 }
 
+/** The top of the home screen on a phone: your business on the left, your profile on the right. */
 export function AppHeader({ profile }: { profile: Profile }) {
-  const { session } = useAuth()
   return (
-    <header className="top">
+    <header className="top a-phonetop">
       <Link to="/app" className="brand">
         <BrandMark profile={profile} />
         <span>{profile.name}</span>
       </Link>
-      <span className="top-end">
-        {session?.role === 'admin' && (
-          <Link className="btn g" to="/admin">
-            Owner
-          </Link>
-        )}
-        <Link className="btn g" to="/app/profile">
-          Profile
-        </Link>
-      </span>
+      <Link to="/app/profile" className="a-avatar" aria-label="Your profile">
+        {initialsOf(profile.owner || profile.name)}
+      </Link>
     </header>
   )
 }
 
+/** Every inner page starts with a clear Back button and its title. */
 export function PageHeader({ title, onBack, right }: { title: string; onBack: () => void; right?: ReactNode }) {
   return (
-    <header className="top">
-      <button className="btn g" onClick={onBack}>
+    <header className="top a-pagetop">
+      <button className="back" onClick={onBack}>
+        <BackIcon />
         Back
       </button>
       <div className="ttl2">{title}</div>
-      {right ?? <span />}
+      <span className="a-right">{right}</span>
     </header>
   )
 }

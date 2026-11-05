@@ -4,8 +4,8 @@ import { addDays, clone, today, uid } from './format'
 export const defaultStyle = (): Style => ({
   layout: 'classic',
   font: 'editorial',
-  accent: 'emerald',
-  text: '#14251F',
+  accent: 'navy',
+  text: '#2B2B2B',
   paper: 'white',
 })
 
