@@ -74,11 +74,13 @@ export function DocumentPaper({ doc, profile }: { doc: Doc; profile: Profile }) 
                 </div>
               </div>
               <div>
-                <div className="sp" />
+                <div className="sp">{doc.clientSig && <img src={doc.clientSig} alt="" />}</div>
                 <div className="ln">
-                  {doc.client.name || 'Client name'}
+                  {doc.clientSignedName || doc.client.name || 'Client name'}
                   <br />
-                  <span className="soft">Client</span>
+                  <span className="soft">
+                    {doc.clientSignedAt ? `Client, signed ${new Date(doc.clientSignedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}` : 'Client'}
+                  </span>
                 </div>
               </div>
             </div>

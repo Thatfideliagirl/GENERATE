@@ -21,7 +21,8 @@ import { useStore } from '../data/store'
 import { clientFromCustomer, customerFromClient, findCustomer } from '../lib/customers'
 import { CustomerForm, PickCustomer } from '../components/CustomerSheets'
 import { Modal } from '../components/Modal'
-import { PeopleIcon } from '../components/Icons'
+import { PeopleIcon, WhatsAppIcon } from '../components/Icons'
+import { payLink, signLink } from '../lib/links'
 
 /* ---------- routes: open a saved document, or start a new one ---------- */
 
@@ -63,6 +64,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
   // A new document opens again under its own address once saved, so the question about the customer travels with it.
   const { state } = useLocation() as { state: { askAdd?: Customer } | null }
   const [askAdd, setAskAdd] = useState<Customer | null>(state?.askAdd ?? null)
+  const [share, setShare] = useState<{ kind: 'pay' | 'sign'; link: string } | null>(null)
   const [doc, setDoc] = useState<Doc>(initial)
   const [tab, setTab] = useState<'edit' | 'prev'>('edit')
   const [reminder, setReminder] = useState(false)
@@ -123,6 +125,40 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
     persist(doc, askFor(doc))
     toast('Saved')
   }
+
+  // A pay link (invoices) or a signing link (contracts) the client opens without an account.
+  const makeLink = async (kind: 'pay' | 'sign') => {
+    if (kind === 'pay' && !profile.bank.acct) return toast('Add your bank details in Profile first, so your client knows where to pay')
+    if (kind === 'sign' && !doc.body?.trim()) return toast('Write the contract first')
+    const d = markSent()
+    setDoc(d)
+    persist(d)
+    setShare({ kind, link: kind === 'pay' ? await payLink(d, profile) : await signLink(d, profile) })
+  }
+
+  const linkCard =
+    isSaved && doc.type === 'invoice' && status !== 'paid' ? (
+      <div className="sec a-linkcard">
+        <h3 className="s">Get paid faster</h3>
+        <p className="mu small">Send a pay link. Your client sees the amount, what is left and your bank details with a copy button, then taps "I have paid".</p>
+        <button className="btn p" onClick={() => makeLink('pay')}>
+          Send pay link
+        </button>
+      </div>
+    ) : isSaved && doc.type === 'contract' && status !== 'signed' ? (
+      <div className="sec a-linkcard">
+        <h3 className="s">Get it signed</h3>
+        <p className="mu small">Send a signing link. Your client reads the contract on their phone, signs, and sends it back to you on WhatsApp. No account needed.</p>
+        <button className="btn p" onClick={() => makeLink('sign')}>
+          Send to sign
+        </button>
+      </div>
+    ) : doc.type === 'contract' && doc.clientSignedAt ? (
+      <div className="sec a-linkcard">
+        <h3 className="s">Signed by {doc.clientSignedName || doc.client.name}</h3>
+        <p className="mu small">On {new Date(doc.clientSignedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}. Their signature is on the contract. Download the PDF to keep a copy.</p>
+      </div>
+    ) : null
 
   const chooseCustomer = (c: Customer) => {
     patch({ client: clientFromCustomer(c), customerId: c.id })
@@ -410,6 +446,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
               </>
             )}
 
+            {linkCard}
             <Section title="More">
               <div className="chips">
                 {doc.type === 'contract' && (
@@ -514,6 +551,46 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
       </div>
 
       {reminder && <ReminderModal onClose={() => setReminder(false)} onPick={sendReminder} />}
+      {share && (
+        <Modal label={share.kind === 'pay' ? 'Pay link' : 'Signing link'} onClose={() => setShare(null)}>
+          <h3 className="s a-sheet-h">{share.kind === 'pay' ? 'Your pay link is ready' : 'Your signing link is ready'}</h3>
+          <p className="mu" style={{ marginTop: 0 }}>
+            {share.kind === 'pay'
+              ? `${doc.client.name || 'Your client'} opens it on their phone and sees what to pay and your bank details. No account needed.`
+              : `${doc.client.name || 'Your client'} opens it, reads, signs and sends it back to you on WhatsApp. Their signature then appears on your copy.`}
+          </p>
+          <div className="a-linkbox">{share.link}</div>
+          <div className="row2">
+            <button
+              className="btn"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(share.link)
+                  toast('Link copied')
+                } catch {
+                  toast('Could not copy. Press and hold the link to copy it.')
+                }
+              }}
+            >
+              Copy link
+            </button>
+            <button
+              className="btn wa"
+              onClick={() => {
+                const who = doc.client.name ? `Hello ${doc.client.name}` : 'Hello'
+                const msg =
+                  share.kind === 'pay'
+                    ? `${who}, here is your invoice ${doc.number} from ${profile.name}. You can see the amount and our bank details here: ${share.link} Thank you.`
+                    : `${who}, here is the ${doc.title || 'contract'} from ${profile.name}. Please read and sign it here: ${share.link} Thank you.`
+                window.open(waLink(doc.client.phone, msg), '_blank')
+              }}
+            >
+              <WhatsAppIcon />
+              Send on WhatsApp
+            </button>
+          </div>
+        </Modal>
+      )}
       {picking && (
         <PickCustomer
           onClose={() => setPicking(false)}

@@ -51,6 +51,10 @@ export interface Doc {
   fromId?: string
   /** The saved customer this document was made for, when picked from the customers list. */
   customerId?: string
+  /** Filled when the client signs a contract from a signing link. */
+  clientSig?: string
+  clientSignedName?: string
+  clientSignedAt?: number
   title?: string
   body?: string
   fee?: string

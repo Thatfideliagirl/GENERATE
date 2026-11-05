@@ -12,6 +12,9 @@ import { NewDoc, OpenDoc } from './pages/Editor'
 import { Forgot, Reset, SignIn, SignUp } from './pages/Auth'
 import Admin from './pages/Admin'
 import SignDocument from './pages/SignDocument'
+import PayPage from './pages/PayPage'
+import SignContract from './pages/SignContract'
+import SignedBackPage from './pages/SignedBack'
 import Privacy from './pages/Privacy'
 import { AppShell } from './components/AppShell'
 import Documents from './pages/Documents'
@@ -59,6 +62,9 @@ export default function App() {
         <Route path="/reset" element={<Reset />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/sign" element={<SignDocument isPublic />} />
+        <Route path="/pay/:code" element={<PayPage />} />
+        <Route path="/c/:code" element={<SignContract />} />
+        <Route path="/app/signed-back/:code" element={<Private>{() => <SignedBackPage />}</Private>} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/:tab" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />

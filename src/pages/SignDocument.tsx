@@ -274,6 +274,30 @@ export default function SignDocument({ profile, isPublic = false }: { profile?: 
         )}
       </main>
 
+      {pdf && sel && sizes.length > 1 && (
+        <div className="sg-move" role="group" aria-label="Move the chosen item to a page">
+          <span>Move to page</span>
+          <div>
+            {sizes.map((_, i) => {
+              const cur = items.find((it) => it.id === sel)?.page === i + 1
+              return (
+                <button
+                  key={i}
+                  className={cur ? 'on' : ''}
+                  onClick={() => {
+                    const it = items.find((x) => x.id === sel)
+                    if (!it) return
+                    patch(it.id, { page: i + 1 })
+                    pageEls.current[i + 1]?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+                  }}
+                >
+                  {i + 1}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
       {pdf && (
         <div className="bar">
           <button className="btn" onClick={reset}>
@@ -460,7 +484,7 @@ function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, 
       ref={box}
       style={{ width, height }}
       data-page={n}
-      onPointerDown={(e) => {
+      onClick={(e) => {
         const t = e.target as HTMLElement
         if (t !== e.currentTarget && t.tagName !== 'CANVAS') return
         if (!sel) return

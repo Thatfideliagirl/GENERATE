@@ -205,3 +205,45 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 /* in light mode the main buttons, New and the chosen tabs take the accent too, so the choice is easy to see */
 :root[data-accent]:not([data-theme="dark"]){--em:color-mix(in srgb,var(--accent-base) 78%,#0B1222);--em2:color-mix(in srgb,var(--accent-base) 90%,#0B1222)}
 :root[data-accent][data-theme="dark"]{--clay:color-mix(in srgb,var(--accent-base) 62%,#fff);--br:color-mix(in srgb,var(--accent-base) 62%,#fff);--brt:color-mix(in srgb,var(--accent-base) 26%,#151F35)}
+.sg-move{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:9;display:flex;align-items:center;gap:10px;margin:0 auto;width:max-content;max-width:calc(100% - 24px);padding:8px 10px 8px 16px;border-radius:99px;background:var(--ink);color:var(--on);box-shadow:0 14px 30px -14px rgba(12,19,34,.6);font:500 14px var(--ui)}
+.sg-move>div{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.sg-move button{min-width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;font:600 14px var(--ui);cursor:pointer;flex:none}
+.sg-move button.on{background:var(--on);color:var(--ink);border-color:var(--on)}
+
+/* pay page and contract signing page for clients (no account) */
+.pp{min-height:100vh;background:var(--bg);padding:24px 16px 40px;display:grid;justify-items:center;align-content:start;gap:16px}
+.pp-card{width:100%;max-width:520px;background:var(--sf);border:1px solid var(--ln);border-radius:28px;padding:clamp(20px,5vw,32px);box-shadow:0 30px 60px -40px rgba(19,32,58,.45);display:grid;gap:16px}
+.pp-card h1{margin:0;font-size:clamp(24px,5vw,32px)}
+.pp-biz{display:flex;align-items:center;gap:12px}
+.pp-biz span:last-child{display:grid}
+.pp-biz b{font-size:17px}
+.pp-biz small{color:var(--mu)}
+.pp-amt{background:#13203A;color:#FCFBF8;border-radius:22px;padding:20px;display:grid;gap:4px}
+.pp-amt span{color:#B9C3D6;font-size:14px}
+.pp-amt b{font:600 clamp(32px,8vw,44px)/1.05 var(--ui);letter-spacing:-.04em}
+.pp-amt small{color:#B9C3D6;font-size:13.5px}
+.pp-items{display:grid}
+.pp-items div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--hair);font-size:15px}
+.pp-bank{border:1px solid var(--ln);border-radius:20px;padding:6px 16px 10px}
+.pp-bank>p{margin:10px 0 4px;font-weight:600}
+.pp-row{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:12px;padding:10px 0;border-top:1px solid var(--hair);align-items:center}
+.pp-row:nth-of-type(1){border-top:0}
+.pp-row span{font-size:13px;color:var(--mu)}
+.pp-row b{font-size:17px;letter-spacing:.01em;font-variant-numeric:tabular-nums;grid-row:2}
+.pp-row button{grid-row:1/3;grid-column:2;min-height:38px;padding:0 14px;border-radius:99px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);font:600 13.5px var(--ui);cursor:pointer}
+.pp-paid{min-height:54px}
+.pp-paid svg,.pp-done .btn svg{width:20px;height:20px}
+.pp-note{margin:0;font-size:13px;color:var(--mu);text-align:center}
+.pp-made{font-size:13px;color:var(--mu);text-decoration:none}
+.pp-made b{color:var(--ink)}
+.pp-contract{max-width:680px}
+.pp-text{border:1px solid var(--hair);border-radius:18px;padding:18px;max-height:56vh;overflow:auto;font-size:15px;line-height:1.6;background:var(--sf2)}
+.pp-text h3{margin:14px 0 6px;font-size:16px}
+.pp-text h3:first-child{margin-top:0}
+.pp-text p{margin:0 0 10px}
+.pp-sign{display:grid;gap:4px;border-top:1px solid var(--hair);padding-top:16px}
+.pp-sign h2{margin:0 0 10px}
+.pp-sigbox{min-height:90px;border:1.5px dashed var(--clay);border-radius:16px;display:grid;place-items:center;margin-bottom:12px;background:#fff}
+.pp-sigbox img{max-height:80px;max-width:90%}
+.pp-done{text-align:center;justify-items:center}
+.pp-tick{width:64px;height:64px;border-radius:50%;background:var(--okbg);color:var(--ok);display:grid;place-items:center;font:600 30px var(--ui)}

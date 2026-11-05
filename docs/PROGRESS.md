@@ -40,15 +40,16 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 4. Invoice and receipt editor: items, discount, VAT, any currency, part payments with a receipt for each payment, notes, signature, social handles. A live preview beside the form on a laptop. Six layouts, six fonts, any colour, white or ivory paper. Download a one page PDF or send on WhatsApp with a warm ready message.
 5. Contracts: three starter templates (service agreement, creative project agreement, confidentiality agreement) that fill in your details by themselves, or start blank. Save your own templates. A note says a lawyer should check them.
 6. Sign a document: upload any PDF or photo, place your signature, initials, the date, text or a line anywhere on any page, and download the signed PDF. Tap anywhere on any page to put the chosen item there, or drag it, even from one page to another. A copy is kept on the device under Signed documents.
-7. Customers: add, edit, remove, or import from phone contacts (Android), a file, or a pasted list. Pick a customer when making a document. A new client name prompts "Add them to your customers?". Each customer has a page with what they owe, what they were billed and their documents.
+7. Pay links: on an unpaid invoice, "Send pay link" sends the client a page with the amount, what is left and the bank details with Copy buttons, plus an "I have paid" button that messages the business on WhatsApp. No account needed. Generate never holds money.
+8. Contract signing links: "Send to sign" sends the client a page to read the contract, sign it on their phone and download their copy; "Send it back" returns the signature on WhatsApp, and opening it marks the contract Signed with their signature and date on it.
+9. Customers: add, edit, remove, or import from phone contacts (Android), a file, or a pasted list. Pick a customer when making a document. A new client name prompts "Add them to your customers?". Each customer has a page with what they owe, what they were billed and their documents.
 8. Profile: your business shown in cards with edit pens. Settings: light or dark, accent colour, the tour again, backup and restore, sign out, privacy, and the Generate homepage.
 9. A notifications bell: late invoices, payments due in the next three days, forgotten drafts and missing setup details, with a red count.
 10. Side menu on laptops that folds to icons. Bottom bar on phones with a raised New button.
 
 ## Still to do
 1. Put the site online on Vercel so it has a real address, then finish Supabase setup (site address, a proper email sender, run supabase/setup_owner.sql, a full live test).
-2. Send a contract to a client to sign by link: the client opens the link on their phone with no account, reads, signs and taps Done; the business sees "Signed" and gets the signed copy.
-3. A pay page for invoices: the client opens a link and sees the amount, what is left, and the bank details with a copy button, then taps "I have paid"; the business confirms. Generate never holds money.
+2. The pay link and the contract signing link are built (see below) but only reach clients once the site has a real address. Later, with Supabase, they can become short links and show "signed" automatically.
 4. The content system: a brand brief, three ready posts a week, price list cards, promo and tips flyers, mass cards, a content calendar.
 5. The template gallery for invoices, receipts, contracts, price lists and flyers, and uploading your own design or letterhead.
 6. Signed documents saved to the account so they show on every device; real phone notifications.
