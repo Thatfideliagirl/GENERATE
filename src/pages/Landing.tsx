@@ -42,7 +42,7 @@ export default function Landing() {
   const nav = useNavigate()
   usePageTitle('Generate: invoices, receipts and contracts with your name on them')
 
-  // Arriving from another page with a section to show, for example Pricing then FAQ.
+  // Arriving from another page with a section to show, for example from Privacy back to the questions.
   useEffect(() => {
     const to = state?.section
     if (!to) return

@@ -5,6 +5,7 @@ import { saveFile } from '../lib/pdf'
 import { auth } from '../data/authService'
 import type { Account } from '../data/auth'
 import { useAuth } from '../data/session'
+import { getActivity, type Activity } from '../lib/ownerStats'
 
 const KNOWN_TYPES = BUSINESS_TYPES.filter(([k]) => k !== 'other').map(([k]) => k)
 const KNOWN_TRADES = Object.keys(TRADES).filter((k) => k !== 'other')
@@ -29,9 +30,12 @@ export default function Admin() {
   const [failed, setFailed] = useState(false)
   const isAdmin = session?.role === 'admin'
 
+  const [activity, setActivity] = useState<Activity | null | undefined>(undefined)
+
   useEffect(() => {
     if (!isAdmin) return
     auth.listSignups().then(setRows, () => setFailed(true))
+    getActivity().then(setActivity, () => setActivity(null))
   }, [isAdmin])
 
   const shown = useMemo(() => {
@@ -48,7 +52,36 @@ export default function Admin() {
     const all = rows ?? []
     const now = Date.now()
     const byType = Object.fromEntries(BUSINESS_TYPES.map(([k]) => [k, all.filter((r) => isType(r.bizType, k)).length]))
-    return { total: all.length, week: all.filter((r) => now - r.createdAt < WEEK).length, byType }
+    const startToday = new Date()
+    startToday.setHours(0, 0, 0, 0)
+    const startMonth = new Date(startToday)
+    startMonth.setDate(1)
+    // Signups per day for the last 30 days.
+    const days: { label: string; n: number; key: string }[] = []
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(startToday)
+      d.setDate(d.getDate() - i)
+      days.push({ key: d.toDateString(), label: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }), n: 0 })
+    }
+    const byDay = new Map(days.map((d) => [d.key, d]))
+    for (const r of all) {
+      const hit = byDay.get(new Date(r.createdAt).toDateString())
+      if (hit) hit.n++
+    }
+    const trades: Record<string, number> = {}
+    for (const r of all) trades[tradeName(r.trade)] = (trades[tradeName(r.trade)] || 0) + 1
+    const topTrades = Object.entries(trades)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+    return {
+      total: all.length,
+      today: all.filter((r) => r.createdAt >= startToday.getTime()).length,
+      week: all.filter((r) => now - r.createdAt < WEEK).length,
+      month: all.filter((r) => r.createdAt >= startMonth.getTime()).length,
+      byType,
+      days,
+      topTrades,
+    }
   }, [rows])
 
   if (!ready) return null
@@ -85,32 +118,121 @@ export default function Admin() {
       </header>
 
       <main className="adm-main">
-        <h1>Signups</h1>
-        <p className="adm-lead">Everyone who has created an account, newest first.</p>
+        <h1>
+          Your Generate, <em>at a glance</em>
+        </h1>
+        <p className="adm-lead">Who is signing up and how much Generate is being used. Counts only: nobody's documents are ever opened here.</p>
 
         {auth.demo && (
           <p className="adm-demo" role="note">
-            Demo mode: this list only shows accounts made in this browser. Once Supabase is connected it will show everyone who signs up.
+            Demo mode: these numbers only cover accounts made in this browser. Once the site is online with Supabase, they cover everyone.
           </p>
         )}
 
-        <section className="adm-stats" aria-label="Summary">
-          <div>
-            <b className="num">{stats.total}</b>
+        <section className="adm-stats4" aria-label="Signups">
+          <div className="dk">
             <span>Total signups</span>
+            <b className="num">{stats.total}</b>
           </div>
           <div>
-            <b className="num">{stats.week}</b>
-            <span>In the last 7 days</span>
+            <span>Today</span>
+            <b className="num">{stats.today}</b>
           </div>
-          {BUSINESS_TYPES.map(([k, n]) => (
-            <div key={k}>
-              <b className="num">{stats.byType[k] ?? 0}</b>
-              <span>{n}</span>
-            </div>
-          ))}
+          <div>
+            <span>Last 7 days</span>
+            <b className="num">{stats.week}</b>
+          </div>
+          <div>
+            <span>This month</span>
+            <b className="num">{stats.month}</b>
+          </div>
         </section>
 
+        <section className="adm-card" aria-label="Signups each day for the last 30 days">
+          <div className="adm-cardh">
+            <h2>Signups, last 30 days</h2>
+            <span>{stats.days.reduce((a, d) => a + d.n, 0)} in total</span>
+          </div>
+          <div className="adm-bars">
+            {stats.days.map((d, i) => {
+              const max = Math.max(1, ...stats.days.map((x) => x.n))
+              return (
+                <div key={d.key} className="adm-barcol" title={`${d.label}: ${d.n}`}>
+                  <span className="adm-bar" style={{ height: `${Math.max(3, (d.n / max) * 100)}%` }} />
+                  {i % 5 === 4 || i === 29 ? <small>{d.label}</small> : <small aria-hidden="true">&nbsp;</small>}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        <div className="adm-two">
+          <section className="adm-card" aria-label="How Generate is being used">
+            <div className="adm-cardh">
+              <h2>How it is being used</h2>
+              <span>All time</span>
+            </div>
+            {activity === undefined ? (
+              <p className="adm-note">Loading</p>
+            ) : activity === null ? (
+              <p className="adm-note">
+                To see these numbers, run the file supabase/owner_stats.sql once in Supabase (SQL Editor, New query, paste, Run).
+              </p>
+            ) : (
+              <div className="adm-grid">
+                {[
+                  ['Documents made', activity.documents],
+                  ['Invoices', activity.invoices],
+                  ['Receipts', activity.receipts],
+                  ['Contracts', activity.contracts],
+                  ['Customers saved', activity.customers],
+                  ['Made in the last 7 days', activity.made_week],
+                  ['Businesses active this week', activity.active_week],
+                  ['Businesses that made a document', activity.with_documents],
+                ].map(([k, v]) => (
+                  <div key={k as string}>
+                    <b className="num">{v as number}</b>
+                    <span>{k as string}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="adm-card" aria-label="Who is signing up">
+            <div className="adm-cardh">
+              <h2>Who is signing up</h2>
+            </div>
+            {BUSINESS_TYPES.map(([k, n]) => {
+              const v = stats.byType[k] ?? 0
+              return (
+                <div key={k} className="adm-hbar">
+                  <span>{n}</span>
+                  <i style={{ width: `${stats.total ? (v / stats.total) * 100 : 0}%` }} />
+                  <b className="num">{v}</b>
+                </div>
+              )
+            })}
+            {stats.topTrades.length > 0 && <p className="adm-sub">What they sell or do</p>}
+            {stats.topTrades.map(([n, v]) => (
+              <div key={n} className="adm-hbar">
+                <span>{n}</span>
+                <i className="t" style={{ width: `${(v / stats.total) * 100}%` }} />
+                <b className="num">{v}</b>
+              </div>
+            ))}
+          </section>
+        </div>
+
+        <section className="adm-card adm-soon">
+          <h2>Visitors, countries and time spent</h2>
+          <p>
+            Once the site is online on Vercel, we switch on Vercel Web Analytics. It shows how many people visit, which countries they are in, which pages
+            they open and how long they stay, without collecting anyone's personal details. Those numbers will appear here too.
+          </p>
+        </section>
+
+        <h2 className="adm-listh">Everyone who signed up</h2>
         <section className="adm-tools" aria-label="Search and filter">
           <label>
             <span>Search</span>

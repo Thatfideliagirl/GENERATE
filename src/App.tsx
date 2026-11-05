@@ -14,7 +14,6 @@ import Admin from './pages/Admin'
 import SignDocument from './pages/SignDocument'
 import Privacy from './pages/Privacy'
 import { AppShell } from './components/AppShell'
-import Pricing from './pages/Pricing'
 import Documents from './pages/Documents'
 import { DocSection, SignedDocs } from './pages/Sections'
 import { CustomerPage, CustomersPage } from './pages/Customers'
@@ -59,7 +58,6 @@ export default function App() {
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/reset" element={<Reset />} />
         <Route path="/privacy" element={<Privacy />} />
-        <Route path="/pricing" element={<Pricing />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />
         <Route path="/app" element={<Private>{(p) => <Dashboard profile={p} />}</Private>} />

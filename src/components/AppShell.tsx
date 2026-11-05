@@ -129,7 +129,7 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
             <img src="./favicon.png" alt="" width={28} height={28} />
             <span>
               <b>Generate homepage</b>
-              <small>Pricing, help and news</small>
+              <small>Help, questions and news</small>
             </span>
             <svg className="arr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
               <path d="M7 17 17 7M9 7h8v8" />

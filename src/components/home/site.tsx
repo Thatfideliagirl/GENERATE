@@ -126,7 +126,6 @@ export function SiteHeader() {
         <SectionLink to="how">How it works</SectionLink>
         <SectionLink to="who">Who it is for</SectionLink>
         <SectionLink to="features">Features</SectionLink>
-        <Link to="/pricing">Pricing</Link>
         <SectionLink to="faq">FAQ</SectionLink>
       </nav>
       <span className="h-sp" />
@@ -170,8 +169,7 @@ export function SiteFooter() {
             <h4>Product</h4>
             <SectionLink to="how">How it works</SectionLink>
             <SectionLink to="features">Features</SectionLink>
-            <Link to="/pricing">Pricing</Link>
-            <SectionLink to="faq">FAQ</SectionLink>
+                <SectionLink to="faq">FAQ</SectionLink>
           </div>
           {talk.length > 0 && (
             <div>

@@ -281,8 +281,9 @@ export function PhoneStory() {
         el.style.setProperty('--phs', String(k))
         el.style.setProperty('--pht', Math.max(16, Math.round((vh - 620 * k) / 2)) + 'px')
       } else {
-        const base = w <= 400 ? 0.72 : 0.8
-        const k = Math.max(0.55, Math.min(base, (vh - 96) / 620))
+        // Leave room under the phone for the step card, so the card does not cover the screen.
+        const base = w <= 400 ? 0.74 : 0.8
+        const k = Math.max(0.5, Math.min(base, (vh - 70 - 250) / 620))
         el.style.setProperty('--phs', String(k))
         el.style.setProperty('--pht', '70px')
       }

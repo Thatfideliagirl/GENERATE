@@ -127,3 +127,36 @@
   .adm-tag{font-size:10px;padding:4px 8px;white-space:nowrap}
   .adm-top .btn,.adm-top .back{padding:0 10px;font-size:14px;min-height:40px;white-space:nowrap}
 }
+
+/* owner dashboard */
+.adm h1 em{font-family:var(--acc);font-style:italic;font-weight:400;color:var(--clay)}
+.adm-stats4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0 12px}
+.adm-stats4 div{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:16px;display:grid;gap:6px}
+.adm-stats4 span{font-size:13px;color:var(--mu)}
+.adm-stats4 b{font:600 30px/1 var(--ui);letter-spacing:-.04em}
+.adm-stats4 .dk{background:var(--ink);border-color:var(--ink)}.adm-stats4 .dk span{color:#B9C3D6}.adm-stats4 .dk b{color:#FCFBF8}
+@media (min-width:720px){.adm-stats4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.adm-card{background:var(--sf);border:1px solid var(--ln);border-radius:22px;padding:18px;margin-top:12px}
+.adm-card h2{margin:0;font-size:17px}
+.adm-cardh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+.adm-cardh span{font-size:13px;color:var(--mu)}
+.adm-bars{display:grid;grid-template-columns:repeat(30,1fr);gap:4px;height:140px;align-items:end}
+.adm-barcol{display:grid;grid-template-rows:1fr auto;height:100%;gap:6px;min-width:0}
+.adm-bar{align-self:end;width:100%;border-radius:5px 5px 2px 2px;background:var(--clay);opacity:.85}
+.adm-barcol small{font-size:10px;color:var(--mu);white-space:nowrap;overflow:visible}
+.adm-two{display:grid;gap:12px}
+.adm-two .adm-card{margin-top:0}
+.adm-two{margin-top:12px}
+@media (min-width:860px){.adm-two{grid-template-columns:1fr 1fr}}
+.adm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.adm-grid div{background:var(--sf2);border-radius:16px;padding:12px 14px;display:grid;gap:4px}
+.adm-grid b{font:600 22px/1 var(--ui);letter-spacing:-.03em}
+.adm-grid span{font-size:12.5px;color:var(--mu);line-height:1.3}
+.adm-note{margin:0;color:var(--mu);font-size:15px}
+.adm-hbar{display:grid;grid-template-columns:minmax(0,1fr) 2fr auto;align-items:center;gap:12px;padding:7px 0;font-size:14.5px}
+.adm-hbar i{display:block;height:10px;border-radius:10px;background:var(--ink);min-width:4px}
+.adm-hbar i.t{background:var(--clay)}
+.adm-hbar b{font-weight:600;min-width:2ch;text-align:right}
+.adm-sub{margin:14px 0 4px;font:600 13px var(--ui);color:var(--mu)}
+.adm-soon p{margin:8px 0 0;color:var(--mu);font-size:15px}
+.adm-listh{margin:30px 0 12px}

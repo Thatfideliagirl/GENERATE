@@ -221,7 +221,7 @@ export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
           <div className="a-set">
             <div>
               <b>The Generate website</b>
-              <span className="mu small">Pricing, questions and how it works.</span>
+              <span className="mu small">How it works, questions and help.</span>
             </div>
             <div className="a-headbtns">
               <Link className="btn" to="/privacy">

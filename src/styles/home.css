@@ -446,3 +446,14 @@ a.h-ask{text-decoration:none;transition:border-color .2s ease}a.h-ask:hover{bord
 @media(min-width:960px){.h-st{grid-template-areas:"lbl stage" "list stage";grid-template-rows:auto 1fr;row-gap:16px}}
 .h-search .h-q:focus-visible{outline:none}
 @media(max-width:600px){.h-endbox{padding:36px 18px}.h-search{padding-left:16px;gap:10px}.h-search button{padding:11px 14px}}
+/* phones: compact step cards that sit under the phone instead of over the chat */
+@media(max-width:959px){
+  .h-step{padding-bottom:2vh}
+  .h-step .h-tx{padding:14px 18px;border-radius:20px}
+  .h-step .h-no{margin-bottom:4px}
+  .h-step h2{font-size:24px}
+  .h-step p{font-size:15px;margin-top:6px;line-height:1.45}
+  .h-step ul{margin-top:8px}
+  .h-step li{font-size:12.5px;padding:4px 10px}
+  .h-go{margin-top:10px;padding:9px 16px;font-size:14px}
+}
