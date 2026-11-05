@@ -1,23 +1,17 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import type { Doc, DocType, Profile } from '../lib/types'
 import { DOC_LABEL, STATUS_LABEL } from '../lib/constants'
 import { balanceOf, paidOf, statusOf, summarise, totals } from '../lib/calc'
-import { fmtDate, longToday, money } from '../lib/format'
+import { fmtDate, longToday, money, today } from '../lib/format'
 import { reminderMessage, waLink } from '../lib/whatsapp'
 import type { ReminderTone } from '../lib/whatsapp'
 import { AppHeader } from '../components/TopBar'
 import { ReminderModal } from '../components/ReminderModal'
-import { ContractIcon, InvoiceIcon, PenIcon, ReceiptIcon, WhatsAppIcon } from '../components/Icons'
+import { ContractIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, WhatsAppIcon } from '../components/Icons'
 import { useStore } from '../data/store'
 import { useToast } from '../components/Toast'
 
-const FILTERS: [DocType | 'all', string][] = [
-  ['all', 'All'],
-  ['invoice', 'Invoices'],
-  ['receipt', 'Receipts'],
-  ['contract', 'Contracts'],
-]
 
 const TYPE_ICON: Record<DocType, JSX.Element> = { invoice: <InvoiceIcon />, receipt: <ReceiptIcon />, contract: <ContractIcon /> }
 
@@ -63,12 +57,61 @@ function FirstDocArt() {
   )
 }
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+/** Money received in each of the last six months, in the main currency. */
+function useMonthly(docs: Doc[], currency: string) {
+  return useMemo(() => {
+    const now = new Date()
+    const keys: string[] = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`)
+    }
+    const sums: Record<string, number> = Object.fromEntries(keys.map((k) => [k, 0]))
+    for (const d of docs) {
+      if (d.currency !== currency) continue
+      if (d.type === 'invoice') {
+        for (const pm of d.payments) {
+          const k = (pm.date || '').slice(0, 7)
+          if (k in sums) sums[k] += Number(pm.amt) || 0
+        }
+      }
+      const k = (d.issueDate || '').slice(0, 7)
+      if (d.type === 'receipt' && !d.fromId && k in sums) sums[k] += totals(d).total
+    }
+    return keys.map((k) => ({ k, label: MONTHS[Number(k.slice(5)) - 1], v: sums[k] }))
+  }, [docs, currency])
+}
+
+function MonthChart({ data, currency }: { data: { k: string; label: string; v: number }[]; currency: string }) {
+  const max = Math.max(1, ...data.map((d) => d.v))
+  const cur = data[data.length - 1]
+  const prev = data[data.length - 2]
+  const change = prev.v ? Math.round(((cur.v - prev.v) / prev.v) * 100) : null
+  return (
+    <section className="card a-chart" aria-label="Money received in the last six months">
+      <div className="a-charth">
+        <span>Received this month</span>
+        <b className="num">{money(cur.v, currency)}</b>
+        {change !== null && <small className={change >= 0 ? 'up' : 'down'}>{(change >= 0 ? '+' : '') + change}% on last month</small>}
+      </div>
+      <div className="a-bars">
+        {data.map((d, i) => (
+          <div key={d.k} className={'a-barcol' + (i === data.length - 1 ? ' now' : '')} title={`${d.label}: ${money(d.v, currency)}`}>
+            <span className="a-bar" style={{ height: `${Math.max(4, (d.v / max) * 100)}%` }} />
+            <small>{d.label}</small>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export default function Dashboard({ profile }: { profile: Profile }) {
   const nav = useNavigate()
   const toast = useToast()
   const { data, saveDoc } = useStore()
-  const [filter, setFilter] = useState<DocType | 'all'>('all')
-  const [query, setQuery] = useState('')
   const [remind, setRemind] = useState<Doc | null>(null)
 
   const summary = useMemo(() => summarise(data.docs), [data.docs])
@@ -93,13 +136,7 @@ export default function Dashboard({ profile }: { profile: Profile }) {
       .sort((a, b) => rank(a) - rank(b) || (a.dueDate || '').localeCompare(b.dueDate || ''))
   }, [data.docs])
 
-  const docs = useMemo(() => {
-    const q = query.toLowerCase()
-    return [...data.docs]
-      .sort((a, b) => b.updatedAt - a.updatedAt)
-      .filter((d) => filter === 'all' || d.type === filter)
-      .filter((d) => !q || `${d.client.name} ${d.number} ${d.title ?? ''}`.toLowerCase().includes(q))
-  }, [data.docs, filter, query])
+  const recent = useMemo(() => [...data.docs].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 5), [data.docs])
 
   const sendReminder = (tone: ReminderTone) => {
     if (!remind) return
@@ -110,16 +147,30 @@ export default function Dashboard({ profile }: { profile: Profile }) {
   }
 
   const hasDocs = data.docs.length > 0
+  const monthly = useMonthly(data.docs, profile.currency)
+  const t = today()
+  const todayMade = data.docs.filter((d) => d.issueDate === t).length
+  const todayIn: Record<string, number> = {}
+  for (const d of data.docs) {
+    if (d.type === 'invoice') for (const pm of d.payments) if (pm.date === t) todayIn[d.currency] = (todayIn[d.currency] || 0) + (Number(pm.amt) || 0)
+    if (d.type === 'receipt' && !d.fromId && d.issueDate === t) todayIn[d.currency] = (todayIn[d.currency] || 0) + totals(d).total
+  }
 
   return (
     <>
       <AppHeader profile={profile} />
       <main className="wrap a-dash">
         <section className="a-hello">
-          <p className="a-date">{longToday()}</p>
-          <h1>
-            {greeting()}, <em>{first}.</em>
-          </h1>
+          <div>
+            <p className="a-date">{longToday()}</p>
+            <h1>
+              {greeting()}, <em>{first}.</em>
+            </h1>
+          </div>
+          <button className="btn p a-hellobtn" onClick={() => nav('/app/new/invoice')}>
+            <PlusIcon />
+            New invoice
+          </button>
         </section>
 
         <section className="a-tiles" aria-label="Your money at a glance">
@@ -172,6 +223,8 @@ export default function Dashboard({ profile }: { profile: Profile }) {
           </button>
         </section>
 
+        <div className="a-cols">
+        <div className="a-colmain">
         {owing.length > 0 && (
           <section className="a-owe" aria-labelledby="owe-h">
             <div className="a-head">
@@ -215,54 +268,39 @@ export default function Dashboard({ profile }: { profile: Profile }) {
 
         <section aria-labelledby="docs-h">
           <div className="a-head">
-            <h2 id="docs-h">Your documents</h2>
-            {hasDocs && <span className="mu small">{data.docs.length} saved</span>}
+            <h2 id="docs-h">Recent documents</h2>
+            {hasDocs && (
+              <Link className="a-more" to="/app/documents">
+                See all {data.docs.length}
+              </Link>
+            )}
           </div>
-
           {hasDocs ? (
-            <>
-              <div className="a-filter">
-                <input type="search" placeholder="Search by client or number" aria-label="Search your documents" value={query} onChange={(e) => setQuery(e.target.value)} />
-                <div className="seg a-seg" role="tablist" aria-label="Show">
-                  {FILTERS.map(([value, label]) => (
-                    <button key={value} role="tab" aria-selected={filter === value} className={filter === value ? 'on' : ''} onClick={() => setFilter(value)}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="card a-list">
-                {docs.length === 0 ? (
-                  <div className="empty">
-                    <b>No matches</b>Try another word or switch the filter.
-                  </div>
-                ) : (
-                  docs.map((d) => {
-                    const st = statusOf(d)
-                    const left = d.type === 'invoice' && (st === 'part' || (st === 'overdue' && paidOf(d) > 0)) ? money(balanceOf(d), d.currency) : ''
-                    const amount = d.type === 'contract' ? (d.fee ? money(d.fee, d.currency) : '') : money(totals(d).total, d.currency)
-                    return (
-                      <button key={d.id} className="row" onClick={() => nav(`/app/doc/${d.id}`)}>
-                        <span className="l">
-                          <span className={'a-dico ' + d.type}>{TYPE_ICON[d.type]}</span>
-                          <span>
-                            <b>{d.client.name || (d.type === 'contract' && d.title) || 'No client yet'}</b>
-                            <span className="mu small">
-                              {DOC_LABEL[d.type]} {d.number} · {fmtDate(d.issueDate)}
-                            </span>
-                          </span>
+            <div className="card a-list">
+              {recent.map((d) => {
+                const st = statusOf(d)
+                const left = d.type === 'invoice' && (st === 'part' || (st === 'overdue' && paidOf(d) > 0)) ? money(balanceOf(d), d.currency) : ''
+                const amount = d.type === 'contract' ? (d.fee ? money(d.fee, d.currency) : '') : money(totals(d).total, d.currency)
+                return (
+                  <button key={d.id} className="row" onClick={() => nav(`/app/doc/${d.id}`)}>
+                    <span className="l">
+                      <span className={'a-dico ' + d.type}>{TYPE_ICON[d.type]}</span>
+                      <span>
+                        <b>{d.client.name || (d.type === 'contract' && d.title) || 'No client yet'}</b>
+                        <span className="mu small">
+                          {DOC_LABEL[d.type]} {d.number} · {fmtDate(d.issueDate)}
                         </span>
-                        <span className="r">
-                          {amount && <b>{amount}</b>}
-                          {left ? <span className="mu small">{left} left</span> : null}
-                          <span className={'bd ' + st}>{STATUS_LABEL[st]}</span>
-                        </span>
-                      </button>
-                    )
-                  })
-                )}
-              </div>
-            </>
+                      </span>
+                    </span>
+                    <span className="r">
+                      {amount && <b>{amount}</b>}
+                      {left ? <span className="mu small">{left} left</span> : null}
+                      <span className={'bd ' + st}>{STATUS_LABEL[st]}</span>
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
           ) : (
             <div className="card a-first">
               <FirstDocArt />
@@ -281,6 +319,42 @@ export default function Dashboard({ profile }: { profile: Profile }) {
             </p>
           )}
         </section>
+        </div>
+
+        <aside className="a-colside">
+          <section className="card a-today" aria-label="Today">
+            <span className="a-cardlbl">Today</span>
+            <div>
+              <b className="num">{todayMade}</b>
+              <span>{todayMade === 1 ? 'document made' : 'documents made'}</span>
+            </div>
+            <div>
+              <b className="num">
+                <Amounts map={todayIn} fallback={profile.currency} />
+              </b>
+              <span>received</span>
+            </div>
+            <Link className="a-more" to="/app/documents">
+              See today’s summary
+            </Link>
+          </section>
+          <MonthChart data={monthly} currency={profile.currency} />
+          <section className="card a-cuscard">
+            <span className="a-ico">
+              <PeopleIcon />
+            </span>
+            <div>
+              <b>
+                {data.customers.length} {data.customers.length === 1 ? 'customer' : 'customers'}
+              </b>
+              <span className="mu small">Pick them when you make a document.</span>
+            </div>
+            <Link className="a-more" to="/app/customers">
+              Open
+            </Link>
+          </section>
+        </aside>
+        </div>
       </main>
       {remind && <ReminderModal onClose={() => setRemind(null)} onPick={sendReminder} />}
     </>

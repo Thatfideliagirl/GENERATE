@@ -32,6 +32,7 @@ export const emptyData = (): AppData => ({
   profile: null,
   docs: [],
   templates: [],
+  customers: [],
   seq: { invoice: 0, receipt: 0, contract: 0 },
 })
 

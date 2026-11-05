@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { AppData, Doc, Profile, SavedTemplate } from '../lib/types'
+import type { AppData, Customer, Doc, Profile, SavedTemplate } from '../lib/types'
 import { emptyData } from '../lib/factory'
 import { normalise } from './repo'
 import type { Repo } from './repo'
@@ -25,7 +25,12 @@ interface Snapshot {
   settings: string
   docs: Map<string, string>
   templates: Map<string, string>
+  customers: Map<string, string>
 }
+
+/** True when the customers table has not been made yet (the person has not run supabase/customers.sql). */
+const missingTable = (e: { code?: string; message?: string } | null) =>
+  !!e && (e.code === '42P01' || e.code === 'PGRST205' || /customers/.test(e.message ?? '') && /exist|find|schema cache/i.test(e.message ?? ''))
 
 const j = (v: unknown) => JSON.stringify(v)
 
@@ -36,15 +41,33 @@ const j = (v: unknown) => JSON.stringify(v)
 export function createSupabaseRepo(sb: SupabaseClient): Repo {
   let snap: Snapshot | null = null
   let queue: Promise<unknown> = Promise.resolve()
+  // Until the customers table exists, customers are kept on this device only, so nothing else stops working.
+  let customersTable = true
+  const LOCAL_CUSTOMERS = 'generate.customers.'
+  const keepLocal = (userId: string, list: Customer[]) => {
+    try {
+      localStorage.setItem(LOCAL_CUSTOMERS + userId, JSON.stringify(list))
+    } catch {
+      /* best effort */
+    }
+  }
+  const readLocal = (userId: string): Customer[] => {
+    try {
+      return JSON.parse(localStorage.getItem(LOCAL_CUSTOMERS + userId) || '[]')
+    } catch {
+      return []
+    }
+  }
 
   const snapshotOf = (d: AppData): Snapshot => ({
     settings: j([d.profile, d.seq]),
     docs: new Map(d.docs.map((x) => [x.id, j(x)])),
     templates: new Map(d.templates.map((x) => [x.id, j(x)])),
+    customers: new Map(d.customers.map((x) => [x.id, j(x)])),
   })
 
   async function write(data: AppData, userId: string) {
-    const prev = snap ?? { settings: '', docs: new Map<string, string>(), templates: new Map<string, string>() }
+    const prev = snap ?? { settings: '', docs: new Map<string, string>(), templates: new Map<string, string>(), customers: new Map<string, string>() }
     const now = snapshotOf(data)
     const must = (e: { message: string } | null) => {
       if (e) throw new Error(e.message)
@@ -89,19 +112,37 @@ export function createSupabaseRepo(sb: SupabaseClient): Repo {
     const goneTpl = [...prev.templates.keys()].filter((id) => !now.templates.has(id))
     if (goneTpl.length) must((await sb.from('saved_templates').delete().eq('user_id', userId).in('id', goneTpl)).error)
 
+    if (customersTable) {
+      const changedCus = data.customers.filter((c) => now.customers.get(c.id) !== prev.customers.get(c.id))
+      for (const part of chunk(changedCus)) {
+        const e = (await sb.from('customers').upsert(part.map((c) => ({ user_id: userId, id: c.id, data: c })), { onConflict: 'user_id,id' })).error
+        if (missingTable(e)) customersTable = false
+        else must(e)
+      }
+      const goneCus = [...prev.customers.keys()].filter((id) => !now.customers.has(id))
+      for (const part of chunk(goneCus)) {
+        if (!customersTable) break
+        must((await sb.from('customers').delete().eq('user_id', userId).in('id', part)).error)
+      }
+    }
+    if (!customersTable) keepLocal(userId, data.customers)
+
     snap = now
   }
 
   return {
     async load(userId) {
       if (!userId) return emptyData()
-      const [settings, docs, templates] = await Promise.all([
+      const [settings, docs, templates, customers] = await Promise.all([
         sb.from('business_settings').select('data, seq').eq('user_id', userId).maybeSingle(),
         sb.from('documents').select('data').eq('user_id', userId).order('updated_at', { ascending: false }),
         sb.from('saved_templates').select('id, title, body').eq('user_id', userId),
+        sb.from('customers').select('data').eq('user_id', userId),
       ])
-      const failed = settings.error || docs.error || templates.error
+      customersTable = !missingTable(customers.error)
+      const failed = settings.error || docs.error || templates.error || (customersTable ? customers.error : null)
       if (failed) throw new Error(failed.message)
+      const customerList: Customer[] = customersTable ? (customers.data ?? []).map((r) => r.data as Customer) : readLocal(userId)
 
       let data: AppData
       if (settings.data) {
@@ -110,6 +151,7 @@ export function createSupabaseRepo(sb: SupabaseClient): Repo {
           seq: settings.data.seq,
           docs: (docs.data ?? []).map((r) => r.data as Doc),
           templates: (templates.data ?? []) as SavedTemplate[],
+          customers: customerList,
         })
         snap = snapshotOf(data)
       } else {
@@ -123,7 +165,7 @@ export function createSupabaseRepo(sb: SupabaseClient): Repo {
           pending = null
         }
         snap = null
-        data = pending ?? normalise({ docs: (docs.data ?? []).map((r) => r.data as Doc), templates: (templates.data ?? []) as SavedTemplate[] })
+        data = pending ?? normalise({ docs: (docs.data ?? []).map((r) => r.data as Doc), templates: (templates.data ?? []) as SavedTemplate[], customers: customerList })
         if (pending) {
           await write(pending, userId)
           try {

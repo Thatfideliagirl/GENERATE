@@ -49,6 +49,8 @@ export interface Doc {
   currency: string
   payments: Payment[]
   fromId?: string
+  /** The saved customer this document was made for, when picked from the customers list. */
+  customerId?: string
   title?: string
   body?: string
   fee?: string
@@ -94,9 +96,21 @@ export interface SavedTemplate {
   body: string
 }
 
+/** Someone the business works for. Picked when making a document so the details fill in. */
+export interface Customer {
+  id: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  note?: string
+  createdAt: number
+}
+
 export interface AppData {
   profile: Profile | null
   docs: Doc[]
   templates: SavedTemplate[]
+  customers: Customer[]
   seq: Record<DocType, number>
 }

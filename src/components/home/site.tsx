@@ -44,12 +44,20 @@ export function SectionLink({ to, children, className }: { to: string; children:
   )
 }
 
-/** A search bar that types what you can do by itself. It is a link, so a click or Enter opens sign up. */
+/**
+ * A search bar people can really type in. While it is empty and not in use, it types ideas by itself.
+ * Pressing Enter or the Start free button opens sign up (or the app, for someone already signed in).
+ */
 export function TypingSearch({ phrases, label = 'Start free' }: { phrases: string[]; label?: string }) {
   const start = useStartPath()
-  const [text, setText] = useState(phrases[0])
+  const nav = useNavigate()
+  const [hint, setHint] = useState(phrases[0])
+  const [value, setValue] = useState('')
+  const [focus, setFocus] = useState(false)
+  const typing = !focus && !value
+
   useEffect(() => {
-    if (reducedMotion()) return
+    if (!typing || reducedMotion()) return
     let i = 0
     let c = phrases[0].length
     let del = true
@@ -67,21 +75,43 @@ export function TypingSearch({ phrases, label = 'Start free' }: { phrases: strin
           c = phrases[i].length + 12
         }
       }
-      setText(phrases[i].slice(0, Math.max(0, Math.min(c, phrases[i].length))) || ' ')
+      setHint(phrases[i].slice(0, Math.max(0, Math.min(c, phrases[i].length))))
     }, 70)
     return () => window.clearInterval(t)
-  }, [phrases])
+  }, [phrases, typing])
+
   return (
-    <Link className="h-search" to={start} aria-label={label + ': create your account'}>
+    <form
+      className={'h-search' + (typing ? ' h-typing' : '')}
+      role="search"
+      onSubmit={(e) => {
+        e.preventDefault()
+        nav(start)
+      }}
+    >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
         <circle cx="11" cy="11" r="7" />
         <path d="m20 20-3.5-3.5" />
       </svg>
-      <span className="h-q" aria-hidden="true">
-        {text}
+      <span className="h-qwrap">
+        <input
+          className="h-q"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          placeholder={focus ? 'What would you like to make?' : ''}
+          aria-label="What would you like to make?"
+          enterKeyHint="go"
+        />
+        {typing && (
+          <span className="h-ghost" aria-hidden="true">
+            {hint}
+          </span>
+        )}
       </span>
-      <b>{label}</b>
-    </Link>
+      <button type="submit">{label}</button>
+    </form>
   )
 }
 

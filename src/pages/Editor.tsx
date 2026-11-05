@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useWide } from '../components/useWide'
-import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import type { Client, Doc, DocType, Item, Payment, Profile } from '../lib/types'
+import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import type { Client, Customer, Doc, DocType, Item, Payment, Profile } from '../lib/types'
 import { CURRENCIES, DOC_LABEL, PAY_METHODS, STATUS_LABEL, TRADE_ITEMS, TRADES } from '../lib/constants'
 import { balanceOf, paidOf, statusOf, totals } from '../lib/calc'
 import { clone, money, today, uid } from '../lib/format'
@@ -18,6 +18,10 @@ import { ReminderModal } from '../components/ReminderModal'
 import { PageHeader } from '../components/TopBar'
 import { useToast } from '../components/Toast'
 import { useStore } from '../data/store'
+import { clientFromCustomer, customerFromClient, findCustomer } from '../lib/customers'
+import { CustomerForm, PickCustomer } from '../components/CustomerSheets'
+import { Modal } from '../components/Modal'
+import { PeopleIcon } from '../components/Icons'
 
 /* ---------- routes: open a saved document, or start a new one ---------- */
 
@@ -37,7 +41,9 @@ export function NewDoc({ profile }: { profile: Profile }) {
   const [initial] = useState<Doc | null>(() => {
     if (type !== 'invoice' && type !== 'receipt' && type !== 'contract') return null
     const tpl = [...CONTRACT_TEMPLATES, ...data.templates].find((t) => t.id === templateId)
-    return newDoc(type as DocType, profile, nextNo(type as DocType), tpl)
+    const d = newDoc(type as DocType, profile, nextNo(type as DocType), tpl)
+    const cus = data.customers.find((c) => c.id === search.get('customer'))
+    return cus ? { ...d, client: clientFromCustomer(cus), customerId: cus.id } : d
   })
   if (!initial) return <Navigate to="/app" replace />
   return <Editor key={`${type}-${templateId}`} initial={initial} profile={profile} />
@@ -45,10 +51,18 @@ export function NewDoc({ profile }: { profile: Profile }) {
 
 /* ---------- the editor ---------- */
 
+/** Client names already asked about in this visit, so the add to customers question is not repeated. */
+const ASKED = new Set<string>()
+
 function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
   const nav = useNavigate()
   const toast = useToast()
-  const { data, saveDoc, deleteDoc, addTemplate, nextNo } = useStore()
+  const { data, saveDoc, deleteDoc, addTemplate, nextNo, saveCustomers } = useStore()
+  const [picking, setPicking] = useState(false)
+  const [newCus, setNewCus] = useState(false)
+  // A new document opens again under its own address once saved, so the question about the customer travels with it.
+  const { state } = useLocation() as { state: { askAdd?: Customer } | null }
+  const [askAdd, setAskAdd] = useState<Customer | null>(state?.askAdd ?? null)
   const [doc, setDoc] = useState<Doc>(initial)
   const [tab, setTab] = useState<'edit' | 'prev'>('edit')
   const [reminder, setReminder] = useState(false)
@@ -64,11 +78,20 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
 
   useEffect(() => () => window.clearTimeout(armTimer.current), [])
   useEffect(() => {
+    // Ask once: clear the question from the page history so a reload does not bring it back.
+    if (state?.askAdd) {
+      ASKED.add(state.askAdd.name.toLowerCase())
+      nav('.', { replace: true, state: null })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
     window.scrollTo(0, 0)
   }, [tab])
 
   const patch = (p: Partial<Doc>) => setDoc((d) => ({ ...d, ...p }))
-  const patchClient = (p: Partial<Client>) => setDoc((d) => ({ ...d, client: { ...d.client, ...p } }))
+  const patchClient = (p: Partial<Client>) =>
+    setDoc((d) => ({ ...d, client: { ...d.client, ...p }, customerId: p.name !== undefined && d.customerId ? undefined : d.customerId }))
   const patchItem = (i: number, p: Partial<Item>) =>
     setDoc((d) => ({ ...d, items: d.items.map((it, k) => (k === i ? { ...it, ...p } : it)) }))
   const patchPayment = (i: number, p: Partial<Payment>) =>
@@ -76,15 +99,53 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
 
   const isEmpty = !isSaved && !doc.client.name && doc.type !== 'contract' && !doc.items.some((i) => i.d || i.p)
 
-  const persist = (d: Doc) => {
+  const persist = (d: Doc, ask?: Customer | null) => {
     saveDoc(d)
-    if (!isSaved) nav(`/app/doc/${d.id}`, { replace: true })
+    if (!isSaved) nav(`/app/doc/${d.id}`, { replace: true, state: ask ? { askAdd: ask } : null })
+    else if (ask) setAskAdd(ask)
+  }
+
+  // After saving, offer to keep a new client in the customers list. Asked once per name in a visit.
+  const askFor = (d: Doc): Customer | null => {
+    const name = d.client.name.trim()
+    if (!name) return null
+    if (d.customerId && data.customers.some((c) => c.id === d.customerId)) return null
+    if (findCustomer(data.customers, name) || ASKED.has(name.toLowerCase())) return null
+    ASKED.add(name.toLowerCase())
+    return customerFromClient(d.client)
+  }
+  const maybeAsk = (d: Doc) => {
+    const c = askFor(d)
+    if (c) setAskAdd(c)
   }
 
   const save = () => {
-    persist(doc)
+    persist(doc, askFor(doc))
     toast('Saved')
   }
+
+  const chooseCustomer = (c: Customer) => {
+    patch({ client: clientFromCustomer(c), customerId: c.id })
+    setPicking(false)
+    toast(c.name + ' added to this ' + DOC_LABEL[doc.type].toLowerCase())
+  }
+
+  const picker = (
+    <div className="a-cuspick">
+      {doc.customerId && data.customers.some((c) => c.id === doc.customerId) ? (
+        <span className="a-cusbadge">
+          <PeopleIcon />
+          From your customers
+        </span>
+      ) : (
+        <span className="mu small">Type the details, or pick someone you saved.</span>
+      )}
+      <button type="button" className="btn a-pickbtn" onClick={() => setPicking(true)}>
+        <PeopleIcon />
+        Choose from customers
+      </button>
+    </div>
+  )
 
   const back = () => {
     if (isEmpty) toast('Nothing to save yet')
@@ -233,7 +294,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
         {view === 'edit' ? (
           <>
             {doc.type === 'contract' ? (
-              <ContractForm doc={doc} profile={profile} patch={patch} patchClient={patchClient} onSaveFirst={() => persist(doc)} />
+              <ContractForm doc={doc} profile={profile} patch={patch} patchClient={patchClient} onSaveFirst={() => persist(doc)} picker={picker} />
             ) : (
               <>
                 <Section title="Details">
@@ -261,6 +322,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
                 </Section>
 
                 <Section title={doc.type === 'receipt' ? 'Received from' : 'Billed to'}>
+                  {picker}
                   <ClientFields client={doc.client} patchClient={patchClient} />
                 </Section>
 
@@ -429,7 +491,13 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
             <button className="btn" onClick={save}>
               Save
             </button>
-            <button className="btn p" onClick={() => setTab('prev')}>
+            <button
+              className="btn p"
+              onClick={() => {
+                setTab('prev')
+                maybeAsk(doc)
+              }}
+            >
               Preview
             </button>
           </>
@@ -446,6 +514,43 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
       </div>
 
       {reminder && <ReminderModal onClose={() => setReminder(false)} onPick={sendReminder} />}
+      {picking && (
+        <PickCustomer
+          onClose={() => setPicking(false)}
+          onPick={chooseCustomer}
+          onNew={() => {
+            setPicking(false)
+            setNewCus(true)
+          }}
+        />
+      )}
+      {newCus && <CustomerForm onClose={() => setNewCus(false)} onSaved={chooseCustomer} />}
+      {askAdd && (
+        <Modal label="Add to your customers" onClose={() => setAskAdd(null)}>
+          <h3 className="s a-sheet-h">Add {askAdd.name} to your customers?</h3>
+          <p className="mu" style={{ marginTop: 0 }}>
+            Next time, pick {askAdd.name.split(' ')[0]} from your list and the details fill in by themselves.
+          </p>
+          <div className="row2">
+            <button className="btn" onClick={() => setAskAdd(null)}>
+              Not now
+            </button>
+            <button
+              className="btn p"
+              onClick={() => {
+                saveCustomers([askAdd])
+                const d = { ...doc, customerId: askAdd.id }
+                setDoc(d)
+                if (isSaved || data.docs.some((x) => x.id === d.id)) saveDoc(d)
+                setAskAdd(null)
+                toast('Added to your customers')
+              }}
+            >
+              Add to customers
+            </button>
+          </div>
+        </Modal>
+      )}
     </>
   )
 }
@@ -534,12 +639,14 @@ function ContractForm({
   patch,
   patchClient,
   onSaveFirst,
+  picker,
 }: {
   doc: Doc
   profile: Profile
   patch: (p: Partial<Doc>) => void
   patchClient: (p: Partial<Client>) => void
   onSaveFirst: () => void
+  picker: JSX.Element
 }) {
   return (
     <>
@@ -561,6 +668,7 @@ function ContractForm({
       />
       </Section>
       <Section title="Client">
+        {picker}
         <Field label="Name" value={doc.client.name} onChange={(v) => patchClient({ name: v })} placeholder="Client or company name" />
         <Grid2>
           <Field label="Email" type="email" value={doc.client.email} onChange={(v) => patchClient({ email: v })} />

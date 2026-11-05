@@ -26,6 +26,7 @@ function normalise(raw: Partial<AppData> | null): AppData {
       currency: d.currency ?? raw.profile?.currency ?? '₦',
     })),
     templates: raw.templates ?? [],
+    customers: raw.customers ?? [],
     seq: { ...base.seq, ...(raw.seq ?? {}) },
   }
 }

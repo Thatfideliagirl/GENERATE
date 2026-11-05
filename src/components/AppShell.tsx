@@ -4,7 +4,7 @@ import type { Profile } from '../lib/types'
 import { useAuth } from '../data/session'
 import { BrandMark } from './TopBar'
 import { Modal } from './Modal'
-import { ContractIcon, HomeIcon, InvoiceIcon, PenIcon, PlusIcon, ReceiptIcon, ShieldIcon, UserIcon } from './Icons'
+import { ContractIcon, FolderIcon, GlobeIcon, HomeIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, ShieldIcon, UserIcon } from './Icons'
 
 const MAKE = [
   { to: '/app/new/invoice', icon: <InvoiceIcon />, t: 'Invoice', d: 'Bill a client and track the payment' },
@@ -41,7 +41,7 @@ export function MakeSheet({ onClose }: { onClose: () => void }) {
 }
 
 /** Where the bottom tabs show on a phone. Pages with their own action bar keep the bottom of the screen for it. */
-const TAB_PAGES = ['/app', '/app/contract']
+const TAB_PAGES = ['/app', '/app/contract', '/app/documents', '/app/customers', '/app/profile']
 
 /**
  * The frame around every page inside the app.
@@ -72,6 +72,14 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
             <HomeIcon />
             Home
           </NavLink>
+          <NavLink to="/app/documents">
+            <FolderIcon />
+            Documents
+          </NavLink>
+          <NavLink to="/app/customers">
+            <PeopleIcon />
+            Customers
+          </NavLink>
           <p className="a-navh">Make</p>
           {MAKE.map((m) => (
             <NavLink key={m.to} to={m.to}>
@@ -82,7 +90,7 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
           <p className="a-navh">You</p>
           <NavLink to="/app/profile">
             <UserIcon />
-            Profile
+            Profile and settings
           </NavLink>
           {session?.role === 'admin' && (
             <NavLink to="/admin">
@@ -91,7 +99,10 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
             </NavLink>
           )}
         </nav>
-        <p className="a-sidefoot">Your documents stay on your account.</p>
+        <Link to="/" className="a-site">
+          <GlobeIcon />
+          Back to the website
+        </Link>
       </aside>
 
       <div className="a-main">{children}</div>
@@ -102,16 +113,16 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
             <HomeIcon />
             Home
           </NavLink>
-          <NavLink to="/app/sign">
-            <PenIcon />
-            Sign
+          <NavLink to="/app/documents">
+            <FolderIcon />
+            Documents
           </NavLink>
           <button className="a-new" onClick={() => setSheet(true)} aria-label="Make something new">
             <PlusIcon />
           </button>
-          <NavLink to="/app/contract">
-            <ContractIcon />
-            Contracts
+          <NavLink to="/app/customers">
+            <PeopleIcon />
+            Customers
           </NavLink>
           <NavLink to="/app/profile">
             <UserIcon />

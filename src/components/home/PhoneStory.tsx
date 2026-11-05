@@ -270,12 +270,34 @@ export function PhoneStory() {
         requestAnimationFrame(pick)
       }
     }
+    // Shrink the phone so the whole of it fits in the window, on short laptop screens too.
+    const fit = () => {
+      const el = box.current
+      if (!el) return
+      const vh = window.innerHeight
+      const w = window.innerWidth
+      if (w >= 960) {
+        const k = Math.max(0.55, Math.min(1, (vh - 48) / 620))
+        el.style.setProperty('--phs', String(k))
+        el.style.setProperty('--pht', Math.max(16, Math.round((vh - 620 * k) / 2)) + 'px')
+      } else {
+        const base = w <= 400 ? 0.72 : 0.8
+        const k = Math.max(0.55, Math.min(base, (vh - 96) / 620))
+        el.style.setProperty('--phs', String(k))
+        el.style.setProperty('--pht', '70px')
+      }
+    }
+    const onResize = () => {
+      fit()
+      pick()
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', pick)
+    window.addEventListener('resize', onResize)
+    fit()
     pick()
     return () => {
       window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', pick)
+      window.removeEventListener('resize', onResize)
     }
   }, [])
 

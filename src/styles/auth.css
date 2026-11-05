@@ -1,7 +1,7 @@
 /* Sign in, sign up, reset, the owner page and privacy. Same powder blue room, navy ink and clay accent as the rest of Generate. */
 .auth,.adm{
   --bg:#E6EDF3;--sf:#FFFFFF;--sf2:#F5F8FB;--ink:#13203A;--mu:#5A6780;--ln:#D3DCE6;--clay:#B4603F;--bad:#A23A2C;
-  --ui:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;--acc:'Instrument Serif',Georgia,serif;--mono:'Geist Mono',ui-monospace,monospace;
+  --ui:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;--acc:'Instrument Serif',Georgia,serif;--mono:'Geist',system-ui,sans-serif;
   background:var(--bg);color:var(--ink);font-family:var(--ui);min-height:100vh;color-scheme:light;
 }
 .auth *,.adm *{box-sizing:border-box}

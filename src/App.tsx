@@ -7,7 +7,7 @@ import Landing from './pages/Landing'
 import Setup from './pages/Setup'
 import Dashboard from './pages/Dashboard'
 import ContractTemplates from './pages/ContractTemplates'
-import ProfilePage from './pages/Profile'
+import ProfilePage, { ProfileEdit } from './pages/Profile'
 import { NewDoc, OpenDoc } from './pages/Editor'
 import { Forgot, Reset, SignIn, SignUp } from './pages/Auth'
 import Admin from './pages/Admin'
@@ -15,6 +15,8 @@ import SignDocument from './pages/SignDocument'
 import Privacy from './pages/Privacy'
 import { AppShell } from './components/AppShell'
 import Pricing from './pages/Pricing'
+import Documents from './pages/Documents'
+import { CustomerPage, CustomersPage } from './pages/Customers'
 
 /** Pages inside the app need an account and a profile. Without an account people go to sign in, without a profile to setup. */
 function Private({ children }: { children: (profile: Profile) => ReactElement }) {
@@ -65,6 +67,10 @@ export default function App() {
         <Route path="/app/new/:type" element={<Private>{(p) => <NewDoc profile={p} />}</Private>} />
         <Route path="/app/doc/:id" element={<Private>{(p) => <OpenDoc profile={p} />}</Private>} />
         <Route path="/app/profile" element={<Private>{(p) => <ProfilePage profile={p} />}</Private>} />
+        <Route path="/app/profile/edit" element={<Private>{(p) => <ProfileEdit profile={p} />}</Private>} />
+        <Route path="/app/documents" element={<Private>{(p) => <Documents profile={p} />}</Private>} />
+        <Route path="/app/customers" element={<Private>{() => <CustomersPage />}</Private>} />
+        <Route path="/app/customers/:id" element={<Private>{(p) => <CustomerPage profile={p} />}</Private>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>

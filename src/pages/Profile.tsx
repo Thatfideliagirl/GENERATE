@@ -1,46 +1,67 @@
 import { useState } from 'react'
-import type { ChangeEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import type { ChangeEvent, ReactNode } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import type { Profile as ProfileType } from '../lib/types'
-import { BRAND } from '../lib/constants'
+import { BRAND, BUSINESS_TYPES, FONTS, LAYOUTS, TRADES } from '../lib/constants'
 import { saveFile } from '../lib/pdf'
-import { PageHeader } from '../components/TopBar'
+import { socialLines } from '../lib/social'
+import { accentOf } from '../lib/style'
+import { getTheme, setTheme, type Theme } from '../lib/theme'
+import { BrandMark, PageHeader } from '../components/TopBar'
 import { ProfileForm } from '../components/ProfileForm'
+import { EditIcon, GlobeIcon, MoonIcon, SunIcon } from '../components/Icons'
 import { useStore } from '../data/store'
 import { useAuth } from '../data/session'
 import { useToast } from '../components/Toast'
 
-export default function ProfilePage({ profile: initial }: { profile: ProfileType }) {
+function Info({ title, onEdit, children }: { title: string; onEdit: () => void; children: ReactNode }) {
+  return (
+    <section className="card a-info">
+      <div className="a-infoh">
+        <h3 className="s">{title}</h3>
+        <button className="a-pen" onClick={onEdit} aria-label={'Edit ' + title.toLowerCase()}>
+          <EditIcon />
+        </button>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function Line({ k, v }: { k: string; v?: string }) {
+  return (
+    <div className="a-line">
+      <span>{k}</span>
+      <b className={v ? '' : 'none'}>{v || 'Not added yet'}</b>
+    </div>
+  )
+}
+
+/** Your profile as others see it on your documents, with a pen to change any part, and your settings underneath. */
+export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
   const nav = useNavigate()
   const toast = useToast()
-  const { data, saveProfile, restore } = useStore()
+  const { data, restore } = useStore()
   const { session, signOut } = useAuth()
-  const [profile, setProfile] = useState<ProfileType>(initial)
-  const [error, setError] = useState('')
+  const [theme, setThemeState] = useState<Theme>(getTheme())
+  const edit = () => nav('/app/profile/edit')
 
-  const change = (patch: Partial<ProfileType>) => {
-    setProfile((p) => ({ ...p, ...patch }))
-    setError('')
+  const bizType = p.bizType === 'other' ? p.bizOther : BUSINESS_TYPES.find(([v]) => v === p.bizType)?.[1]
+  const trade = p.trade === 'other' ? p.tradeOther : TRADES[p.trade]
+  const socials = socialLines(p)
+
+  const pickTheme = (t: Theme) => {
+    setTheme(t)
+    setThemeState(t)
   }
 
-  const save = () => {
-    if (!profile.name.trim()) return setError('Enter your business name to continue.')
-    saveProfile({ ...profile, name: profile.name.trim() })
-    toast('Profile saved')
-    nav('/app')
-  }
-
-  const backup = () => {
-    saveFile(`${BRAND} backup.json`, new Blob([JSON.stringify(data)], { type: 'application/json' }))
-  }
-
+  const backup = () => saveFile(`${BRAND} backup.json`, new Blob([JSON.stringify(data)], { type: 'application/json' }))
   const restoreFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = ''
     if (!file) return
     try {
-      const ok = restore(JSON.parse(await file.text()))
-      if (!ok) throw new Error('bad file')
+      if (!restore(JSON.parse(await file.text()))) throw new Error('bad file')
       toast('Backup restored')
       nav('/app')
     } catch {
@@ -50,15 +71,101 @@ export default function ProfilePage({ profile: initial }: { profile: ProfileType
 
   return (
     <>
-      <PageHeader title="Your profile" onBack={() => nav('/app')} />
-      <main className="wrap">
-        <ProfileForm profile={profile} onChange={change} />
-        <div className="sec">
-          <h3 className="s">Your account</h3>
-          <p className="mu small" style={{ marginTop: 0 }}>
-            Signed in as {session?.email}.
-          </p>
-          <div className="chips">
+      <PageHeader
+        title="Profile"
+        onBack={() => nav('/app')}
+        right={
+          <button className="back" onClick={edit}>
+            <EditIcon />
+            Edit
+          </button>
+        }
+      />
+      <main className="wrap a-profile">
+        <section className="card a-phero">
+          <BrandMark profile={p} size={72} />
+          <div>
+            <h1>{p.name}</h1>
+            <p className="mu">{[p.owner, bizType, trade].filter(Boolean).join(' · ')}</p>
+          </div>
+          <button className="btn" onClick={edit}>
+            <EditIcon />
+            Edit profile
+          </button>
+        </section>
+
+        <div className="a-infogrid">
+          <Info title="Contact" onEdit={edit}>
+            <Line k="Email" v={p.email} />
+            <Line k="Phone or WhatsApp" v={p.phone} />
+            <Line k="Address" v={p.address} />
+          </Info>
+          <Info title="Payment details" onEdit={edit}>
+            <Line k="Bank" v={p.bank.bank} />
+            <Line k="Account number" v={p.bank.acct} />
+            <Line k="Account name" v={p.bank.name} />
+          </Info>
+          <Info title="Signature" onEdit={edit}>
+            <div className="a-sigshow">{p.signature ? <img src={p.signature} alt="Your signature" /> : <span className="mu small">No signature yet. Tap the pen to draw, type or upload one.</span>}</div>
+          </Info>
+          <Info title="Money and tax" onEdit={edit}>
+            <Line k="Main currency" v={p.currency} />
+            <Line k="VAT" v={p.vat ? `${p.vatRate}% added to new documents` : `Off (rate ${p.vatRate}%)`} />
+          </Info>
+          <Info title="Social media" onEdit={edit}>
+            {socials.length ? socials.map((s) => <Line key={s.label} k={s.label} v={s.handle} />) : <p className="mu small a-none">None added. They can print at the bottom of your documents.</p>}
+          </Info>
+          <Info title="Default look" onEdit={edit}>
+            <div className="a-lookshow">
+              <span className="a-swatch" style={{ background: accentOf(p.style) }} />
+              <span>
+                <b>{LAYOUTS[p.style.layout] ?? p.style.layout} layout</b>
+                <small>
+                  {FONTS[p.style.font] ?? p.style.font} font, {p.style.paper} paper
+                </small>
+              </span>
+            </div>
+          </Info>
+        </div>
+
+        <h2 className="a-seth">Settings</h2>
+        <section className="card a-settings">
+          <div className="a-set">
+            <div>
+              <b>Appearance</b>
+              <span className="mu small">Light is the Generate look. Dark is easier on the eyes at night.</span>
+            </div>
+            <div className="seg a-themeseg" role="radiogroup" aria-label="Appearance">
+              <button role="radio" aria-checked={theme === 'light'} className={theme === 'light' ? 'on' : ''} onClick={() => pickTheme('light')}>
+                <SunIcon />
+                Light
+              </button>
+              <button role="radio" aria-checked={theme === 'dark'} className={theme === 'dark' ? 'on' : ''} onClick={() => pickTheme('dark')}>
+                <MoonIcon />
+                Dark
+              </button>
+            </div>
+          </div>
+          <div className="a-set">
+            <div>
+              <b>Backup</b>
+              <span className="mu small">Download a copy of everything, or bring one back.</span>
+            </div>
+            <div className="a-headbtns">
+              <button className="btn" onClick={backup}>
+                Download backup
+              </button>
+              <label className="btn filebtn">
+                Restore
+                <input type="file" accept=".json,application/json" hidden onChange={restoreFile} />
+              </label>
+            </div>
+          </div>
+          <div className="a-set">
+            <div>
+              <b>Your account</b>
+              <span className="mu small">Signed in as {session?.email}.</span>
+            </div>
             <button
               className="btn"
               onClick={async () => {
@@ -69,29 +176,61 @@ export default function ProfilePage({ profile: initial }: { profile: ProfileType
               Sign out
             </button>
           </div>
-        </div>
-        <div className="sec">
-          <h3 className="s">Backup</h3>
-          <p className="mu small" style={{ marginTop: 0 }}>
-            Everything is stored on this device. Download a backup file so you never lose your documents.
-          </p>
-          <div className="chips">
-            <button className="btn" onClick={backup}>
-              Download backup
-            </button>
-            <label className="btn filebtn">
-              Restore backup
-              <input type="file" accept=".json,application/json" hidden onChange={restoreFile} />
-            </label>
+          <div className="a-set">
+            <div>
+              <b>The Generate website</b>
+              <span className="mu small">Pricing, questions and how it works.</span>
+            </div>
+            <div className="a-headbtns">
+              <Link className="btn" to="/privacy">
+                Privacy
+              </Link>
+              <Link className="btn" to="/">
+                <GlobeIcon />
+                Go to website
+              </Link>
+            </div>
           </div>
-        </div>
+        </section>
+      </main>
+    </>
+  )
+}
+
+/** Change the business details. Saving goes back to the profile. */
+export function ProfileEdit({ profile: initial }: { profile: ProfileType }) {
+  const nav = useNavigate()
+  const toast = useToast()
+  const { saveProfile } = useStore()
+  const [profile, setProfile] = useState<ProfileType>(initial)
+  const [error, setError] = useState('')
+
+  const change = (patch: Partial<ProfileType>) => {
+    setProfile((x) => ({ ...x, ...patch }))
+    setError('')
+  }
+  const save = () => {
+    if (!profile.name.trim()) return setError('Enter your business name to continue.')
+    saveProfile({ ...profile, name: profile.name.trim() })
+    toast('Profile saved')
+    nav('/app/profile')
+  }
+
+  return (
+    <>
+      <PageHeader title="Edit profile" onBack={() => nav('/app/profile')} />
+      <main className="wrap">
+        <ProfileForm profile={profile} onChange={change} />
         <p className="err" role="alert">
           {error}
         </p>
       </main>
       <div className="bar">
+        <button className="btn" onClick={() => nav('/app/profile')}>
+          Cancel
+        </button>
         <button className="btn p" onClick={save}>
-          Save profile
+          Save changes
         </button>
       </div>
     </>

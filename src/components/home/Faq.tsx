@@ -22,10 +22,17 @@ export function Faq() {
             Good to <em className="h-s">know.</em>
           </h2>
           {waHref && (
-            <a className="h-ask" href={waHref} target="_blank" rel="noreferrer">
+            <div className="h-ask">
               <b>Still have a question?</b>
-              <span>Send us a message on WhatsApp and a real person will answer.</span>
-            </a>
+              <span>Send us a message on WhatsApp. Let’s talk.</span>
+              <a className="h-wa" href={waHref} target="_blank" rel="noreferrer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4.5 19.5 5.6 16A7.6 7.6 0 1 1 8.4 18.6z" />
+                  <path d="M9.4 9.2c.2 2.5 2.4 4.9 5.3 5.4l1-1.2-1.6-.9-.8.7c-1-.4-1.9-1.3-2.4-2.4l.7-.8-.8-1.6z" />
+                </svg>
+                Chat with us on WhatsApp
+              </a>
+            </div>
           )}
         </div>
         <div className="h-qa">

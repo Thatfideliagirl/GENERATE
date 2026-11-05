@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import type { AppData, Doc, DocType, Profile } from '../lib/types'
+import type { AppData, Customer, Doc, DocType, Profile } from '../lib/types'
 import { emptyData, nextNumber } from '../lib/factory'
 import { clone } from '../lib/format'
 import { normalise } from './repo'
@@ -18,6 +18,9 @@ interface Store {
   saveDoc: (d: Doc) => void
   deleteDoc: (id: string) => void
   addTemplate: (title: string, body: string) => void
+  /** Adds or updates customers, matched by id. */
+  saveCustomers: (list: Customer[]) => void
+  deleteCustomer: (id: string) => void
   restore: (raw: unknown) => boolean
   /** The next free number for a new invoice, receipt or contract. */
   nextNo: (type: DocType) => string
@@ -103,6 +106,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [commit],
   )
 
+  const saveCustomers = useCallback(
+    (list: Customer[]) => {
+      const cur = ref.current
+      const byId = new Map(cur.customers.map((c) => [c.id, c]))
+      for (const c of list) byId.set(c.id, clone(c))
+      commit({ ...cur, customers: [...byId.values()].sort((a, b) => a.name.localeCompare(b.name)) })
+    },
+    [commit],
+  )
+
+  const deleteCustomer = useCallback(
+    (id: string) => commit({ ...ref.current, customers: ref.current.customers.filter((c) => c.id !== id) }),
+    [commit],
+  )
+
   const restore = useCallback(
     (raw: unknown) => {
       const j = raw as Partial<AppData> | null
@@ -116,8 +134,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const nextNo = useCallback((type: DocType) => nextNumber(ref.current, type), [])
 
   const value = useMemo(
-    () => ({ ready, loadError, retry: () => setAttempt((n) => n + 1), data, saveProfile, saveDoc, deleteDoc, addTemplate, restore, nextNo }),
-    [ready, loadError, data, saveProfile, saveDoc, deleteDoc, addTemplate, restore, nextNo],
+    () => ({ ready, loadError, retry: () => setAttempt((n) => n + 1), data, saveProfile, saveDoc, deleteDoc, addTemplate, saveCustomers, deleteCustomer, restore, nextNo }),
+    [ready, loadError, data, saveProfile, saveDoc, deleteDoc, addTemplate, saveCustomers, deleteCustomer, restore, nextNo],
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

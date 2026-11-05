@@ -68,3 +68,54 @@ export const ShieldIcon = () => (
     <path d="M12 3.5 5 6v5.5c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6z" />
   </svg>
 )
+export const FolderIcon = () => (
+  <svg {...base}>
+    <path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2.2h7a2 2 0 0 1 2 2v8.3a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" />
+  </svg>
+)
+export const PeopleIcon = () => (
+  <svg {...base}>
+    <circle cx="9" cy="8.5" r="3.3" />
+    <path d="M3 19.5c.9-3.2 3.2-4.8 6-4.8s5.1 1.6 6 4.8" />
+    <path d="M15.5 5.6a3.2 3.2 0 0 1 0 6.1M17.6 14.9c1.7.6 2.9 2 3.4 4.6" />
+  </svg>
+)
+export const GlobeIcon = () => (
+  <svg {...base}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M3.5 12h17M12 3.5c2.4 2.4 3.5 5.3 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.3-3.5-8.5S9.6 5.9 12 3.5z" />
+  </svg>
+)
+export const EditIcon = () => (
+  <svg {...base}>
+    <path d="m14.5 5 4.5 4.5L9 19.5H4.5V15z" />
+    <path d="m12.5 7 4.5 4.5" />
+  </svg>
+)
+export const DownloadIcon = () => (
+  <svg {...base}>
+    <path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" />
+  </svg>
+)
+export const SearchIcon = () => (
+  <svg {...base}>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="m20 20-4-4" />
+  </svg>
+)
+export const TrashIcon = () => (
+  <svg {...base}>
+    <path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5" />
+  </svg>
+)
+export const SunIcon = () => (
+  <svg {...base}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+  </svg>
+)
+export const MoonIcon = () => (
+  <svg {...base}>
+    <path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z" />
+  </svg>
+)
