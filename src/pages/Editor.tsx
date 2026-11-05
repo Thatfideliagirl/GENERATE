@@ -23,6 +23,7 @@ import { CustomerForm, PickCustomer } from '../components/CustomerSheets'
 import { Modal } from '../components/Modal'
 import { PeopleIcon, WhatsAppIcon } from '../components/Icons'
 import { payLink, signLink } from '../lib/links'
+import { openWhenReady } from '../lib/share'
 
 /* ---------- routes: open a saved document, or start a new one ---------- */
 
@@ -297,8 +298,12 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
     const d = markSent()
     setDoc(d)
     persist(d)
-    window.open(waLink(d.client.phone, sendMessage(d, profile)), '_blank')
     toast(d.status === 'sent' ? 'Marked as sent' : 'Opening WhatsApp')
+    // An unpaid invoice goes out with its pay link, so the client sees the amount and the bank details in one tap.
+    if (d.type === 'invoice' && profile.bank.acct && balanceOf(d) > 0) {
+      return openWhenReady(async () => waLink(d.client.phone, `${sendMessage(d, profile)}\n\nSee the amount and our bank details here: ${await payLink(d, profile)}`))
+    }
+    window.open(waLink(d.client.phone, sendMessage(d, profile)), '_blank')
   }
 
   const sendReminder = (tone: ReminderTone) => {
@@ -316,6 +321,16 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
     <>
       <PageHeader title={`${DOC_LABEL[doc.type]} ${doc.number}`} onBack={back} right={<span className={'bd ' + status}>{STATUS_LABEL[status]}</span>} />
       <main className="wrap a-ed">
+        {doc.type === 'contract' && doc.clientComment && status !== 'signed' && (
+          <div className="a-comment">
+            <b>
+              {doc.clientComment.name || doc.client.name || 'Your client'} asked for a change on{' '}
+              {new Date(doc.clientComment.at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+            </b>
+            <p>"{doc.clientComment.text}"</p>
+            <span className="mu small">Change the contract, save, then tap Send to sign again so they get the new version.</span>
+          </div>
+        )}
         <div className="seg a-tabsw">
           <button className={tab === 'edit' ? 'on' : ''} onClick={() => setTab('edit')}>
             Details

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import type { ContractData, SignedBack } from '../lib/links'
-import { appLink, pack, unpack } from '../lib/share'
+import { appLink, openWhenReady, pack, unpack } from '../lib/share'
 import { toBlocks } from '../lib/text'
 import { fmtDate } from '../lib/format'
 import { waLink } from '../lib/whatsapp'
@@ -51,6 +51,9 @@ export default function SignContract() {
   const [agree, setAgree] = useState(false)
   const [signedAt, setSignedAt] = useState(0)
   const [busy, setBusy] = useState(false)
+  const [asking, setAsking] = useState(false)
+  const [comment, setComment] = useState('')
+  const [commented, setCommented] = useState(false)
 
   useEffect(() => {
     unpack<ContractData>(code).then((x) => {
@@ -105,12 +108,47 @@ export default function SignContract() {
     }
   }
 
-  const sendBack = async () => {
-    const back: SignedBack = { v: 1, id: d.id, name: name.trim(), sig: await shrink(sig), at: signedAt }
-    const link = appLink('/app/signed-back/' + (await pack(back)))
-    const msg = `Hello ${d.owner}, I have signed "${d.title}". Open this link to add my signature to your copy: ${link}`
-    window.open(waLink(d.phone, msg), '_blank')
+  const sendBack = () =>
+    openWhenReady(async () => {
+      const back: SignedBack = { v: 1, id: d.id, name: name.trim(), sig: await shrink(sig), at: signedAt }
+      const link = appLink('/app/signed-back/' + (await pack(back)))
+      return waLink(d.phone, `Hello ${d.owner}, I have signed "${d.title}". Open this link to add my signature to your copy: ${link}`)
+    })
+
+  // Not ready to sign: the client says what they want changed, and it goes back to the business.
+  const sendComment = () => {
+    if (!comment.trim()) return toast('Write what you would like changed')
+    if (!name.trim()) return toast('Type your full name')
+    const text = comment.trim()
+    setCommented(true)
+    window.scrollTo(0, 0)
+    return openWhenReady(async () => {
+      const back: SignedBack = { v: 1, id: d.id, name: name.trim(), comment: text, at: Date.now() }
+      const link = appLink('/app/signed-back/' + (await pack(back)))
+      return waLink(d.phone, `Hello ${d.owner}, before I sign "${d.title}", I would like this changed: ${text}\n\nOpen this link to see it on your contract: ${link}`)
+    })
   }
+
+  if (commented)
+    return (
+      <div className="pp">
+        <main className="pp-card pp-done">
+          <span className="pp-tick ask" aria-hidden="true">
+            ?
+          </span>
+          <h1>Sent to {d.biz}</h1>
+          <p className="mu">
+            Your comment is on its way to {d.owner} on WhatsApp. When they update the contract, they will send you a new link to sign.
+          </p>
+          <button className="btn full" onClick={() => setCommented(false)}>
+            Back to the contract
+          </button>
+        </main>
+        <a className="pp-made" href="#/">
+          Made with <b>Generate</b>
+        </a>
+      </div>
+    )
 
   if (signedAt)
     return (
@@ -155,7 +193,7 @@ export default function SignContract() {
           </span>
         </div>
         <h1>{d.title}</h1>
-        <p className="mu">Please read it through. When you are happy, sign at the bottom.</p>
+        <p className="mu">Please read it through. You can sign at the bottom, or ask for a change if something is not right. The wording can only be changed by {d.biz}.</p>
         <article className="pp-text">
           {blocks.map((b, i) =>
             b.kind === 'heading' ? (
@@ -194,6 +232,27 @@ export default function SignContract() {
           <button className="btn p full" onClick={finish}>
             Sign the contract
           </button>
+          {asking ? (
+            <div className="pp-ask">
+              <label className="f">
+                <span>What would you like changed, or what is your question?</span>
+                <textarea rows={4} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="For example, can the start date be 1 December?" />
+              </label>
+              <div className="row2">
+                <button className="btn" onClick={() => setAsking(false)}>
+                  Cancel
+                </button>
+                <button className="btn wa" onClick={sendComment}>
+                  <WhatsAppIcon />
+                  Send to {d.biz}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button className="btn g full pp-asklink" onClick={() => setAsking(true)}>
+              Not ready to sign? Ask for a change
+            </button>
+          )}
           <p className="pp-note">Signed on this phone. Nothing is uploaded; you send it back yourself on WhatsApp.</p>
         </section>
       </main>

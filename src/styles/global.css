@@ -247,3 +247,9 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 .pp-sigbox img{max-height:80px;max-width:90%}
 .pp-done{text-align:center;justify-items:center}
 .pp-tick{width:64px;height:64px;border-radius:50%;background:var(--okbg);color:var(--ok);display:grid;place-items:center;font:600 30px var(--ui)}
+.pp-asklink{margin-top:4px;color:var(--mu);text-decoration:underline;text-underline-offset:3px}
+.pp-ask{margin-top:8px;border-top:1px solid var(--hair);padding-top:14px}
+.pp-tick.ask{background:var(--wrbg);color:var(--wr)}
+.a-comment{background:var(--wrbg);border-radius:18px;padding:14px 16px;margin:4px 0 14px}
+.a-comment b{display:block;color:var(--wr)}
+.a-comment p{margin:6px 0 4px;font-size:15px;color:var(--ink)}

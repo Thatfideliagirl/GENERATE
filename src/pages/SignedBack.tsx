@@ -6,7 +6,7 @@ import { useStore } from '../data/store'
 import { useToast } from '../components/Toast'
 import { PageHeader } from '../components/TopBar'
 
-/** Opened by the business from the client's WhatsApp message: adds the client's signature and marks the contract signed. */
+/** Opened by the business from the client's WhatsApp message: adds the client's signature and marks the contract signed, or saves the change they asked for. */
 export default function SignedBackPage() {
   const { code = '' } = useParams()
   const nav = useNavigate()
@@ -16,11 +16,16 @@ export default function SignedBackPage() {
 
   useEffect(() => {
     unpack<Back>(code).then((b) => {
-      if (!b || !b.id || !b.sig) return setState('bad')
+      if (!b || !b.id || (!b.sig && !b.comment)) return setState('bad')
       const doc = data.docs.find((x) => x.id === b.id)
       if (!doc) return setState('missing')
-      saveDoc({ ...doc, status: 'signed', clientSig: b.sig, clientSignedName: b.name, clientSignedAt: b.at })
-      toast(`${b.name || 'Your client'} signed. Saved to the contract.`)
+      if (b.sig) {
+        saveDoc({ ...doc, status: 'signed', clientSig: b.sig, clientSignedName: b.name, clientSignedAt: b.at, clientComment: undefined })
+        toast(`${b.name || 'Your client'} signed. Saved to the contract.`)
+      } else {
+        saveDoc({ ...doc, clientComment: { text: b.comment ?? '', name: b.name, at: b.at } })
+        toast(`${b.name || 'Your client'} asked for a change. It is on the contract.`)
+      }
       nav(`/app/doc/${doc.id}`, { replace: true })
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

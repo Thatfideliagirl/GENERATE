@@ -55,6 +55,8 @@ export interface Doc {
   clientSig?: string
   clientSignedName?: string
   clientSignedAt?: number
+  /** A question or change the client asked for instead of signing. */
+  clientComment?: { text: string; name: string; at: number }
   title?: string
   body?: string
   fee?: string

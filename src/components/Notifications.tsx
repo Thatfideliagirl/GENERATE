@@ -7,7 +7,7 @@ import { useAuth } from '../data/session'
 import { Modal } from './Modal'
 import { BellIcon } from './Icons'
 
-const DOT: Record<NoteKind, string> = { late: 'late', soon: 'soon', draft: 'draft', setup: 'setup', welcome: 'setup' }
+const DOT: Record<NoteKind, string> = { late: 'late', soon: 'soon', draft: 'draft', setup: 'setup', welcome: 'setup', ask: 'soon' }
 
 /** The bell: a count of new notifications, and the list when tapped. Opening it marks them as seen. */
 export function NotificationBell({ profile }: { profile: Profile }) {

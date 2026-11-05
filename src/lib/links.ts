@@ -77,6 +77,9 @@ export interface SignedBack {
   v: 1
   id: string
   name: string
-  sig: string
+  /** The signature, when the client signed. */
+  sig?: string
+  /** What the client wants changed, when they did not sign. */
+  comment?: string
   at: number
 }

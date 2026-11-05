@@ -40,3 +40,14 @@ export async function unpack<T>(code: string): Promise<T | null> {
 
 /** The full address of a page inside Generate, for sharing. */
 export const appLink = (path: string) => `${window.location.origin}${window.location.pathname}#${path}`
+
+/**
+ * Opens a link that takes a moment to build (like WhatsApp with a packed link) without the phone blocking it:
+ * the new tab is opened straight away on the tap, then pointed at the link once it is ready.
+ */
+export async function openWhenReady(build: () => Promise<string>) {
+  const w = window.open('', '_blank')
+  const url = await build()
+  if (w && !w.closed) w.location.href = url
+  else window.location.href = url
+}

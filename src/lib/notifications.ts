@@ -3,7 +3,7 @@ import { DOC_LABEL } from './constants'
 import { balanceOf, statusOf } from './calc'
 import { fmtDate, money, today } from './format'
 
-export type NoteKind = 'late' | 'soon' | 'draft' | 'setup' | 'welcome'
+export type NoteKind = 'late' | 'soon' | 'draft' | 'setup' | 'welcome' | 'ask'
 export interface Note {
   id: string
   kind: NoteKind
@@ -47,6 +47,16 @@ export function notesFor(docs: Doc[], profile: Profile): Note[] {
           to: `/app/doc/${d.id}`,
           weight: 200 - left,
         })
+    }
+    if (d.type === 'contract' && d.clientComment && st !== 'signed') {
+      out.push({
+        id: `ask:${d.id}:${d.clientComment.at}`,
+        kind: 'ask',
+        title: `${d.clientComment.name || who} asked for a change`,
+        text: `"${d.clientComment.text.slice(0, 90)}" on contract ${d.number}.`,
+        to: `/app/doc/${d.id}`,
+        weight: 400,
+      })
     }
     if (st === 'draft' && d.type !== 'receipt') {
       const age = days(t, new Date(d.updatedAt).toISOString().slice(0, 10))
