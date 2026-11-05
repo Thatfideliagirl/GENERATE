@@ -13,6 +13,7 @@ import { PeriodTabs } from '../components/PeriodTabs'
 import { DocRow } from '../components/DocRow'
 import { MakeSheet } from '../components/AppShell'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { NotificationBell } from '../components/Notifications'
 import { SignOutButton } from '../components/SignOutButton'
 import { useSigned } from '../components/useSigned'
 import { ContractIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, WhatsAppIcon } from '../components/Icons'
@@ -211,6 +212,9 @@ export default function Dashboard({ profile }: { profile: Profile }) {
             </h1>
           </div>
           <div className="a-hellotools">
+            <span className="a-bellwide">
+              <NotificationBell profile={profile} />
+            </span>
             <ThemeToggle />
             <SignOutButton className="a-hellosignout" />
             <button className="btn p a-hellobtn" onClick={() => setMaking(true)}>

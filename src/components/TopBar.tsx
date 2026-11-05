@@ -5,6 +5,7 @@ import { initialsOf } from '../lib/initials'
 import { BackIcon, ShieldIcon } from './Icons'
 import { useAuth } from '../data/session'
 import { ThemeToggle } from './ThemeToggle'
+import { NotificationBell } from './Notifications'
 import { SignOutButton } from './SignOutButton'
 
 export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: number }) {
@@ -34,6 +35,7 @@ export function AppHeader({ profile }: { profile: Profile }) {
             <ShieldIcon />
           </Link>
         )}
+        <NotificationBell profile={profile} />
         <ThemeToggle />
         <SignOutButton label={false} className="a-theme" />
         <Link to="/app/profile" className="a-avatar" aria-label="Your profile">

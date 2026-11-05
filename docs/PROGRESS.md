@@ -28,7 +28,7 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 ## Accounts
 1. Sign up is the full business setup in one go: business name, your name, email, WhatsApp number, what kind of business, what you sell, logo or initials, signature (draw, type or upload a photo), bank details, VAT, social handles and a password.
 2. Sign in, forgot password and reset password.
-3. Supabase is connected: real accounts, row level security so each person only ever sees their own data. The owner dashboard shows signups over time, who is signing up, usage counts, and emails from free signing, but can never open anyone's documents.
+3. Supabase is connected: real accounts, row level security so each person only ever sees their own data. The owner dashboard has its own pages (Overview, Signups, Free signing, Visitors) and shows signups over time, who is signing up, usage counts, and emails from free signing, but can never open anyone's documents.
 5. Sign out on Home, the side menu, the phone header, Settings and the website.
 4. A short guided tour the first time someone opens Home. It can be taken again from Settings.
 
@@ -41,7 +41,8 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 6. Sign a document: upload any PDF or photo, place your signature, initials, the date, text or a line anywhere on any page, and download the signed PDF. A copy is kept on the device under Signed documents.
 7. Customers: add, edit, remove, or import from phone contacts (Android), a file, or a pasted list. Pick a customer when making a document. A new client name prompts "Add them to your customers?". Each customer has a page with what they owe, what they were billed and their documents.
 8. Profile: your business shown in cards with edit pens. Settings: light or dark, accent colour, the tour again, backup and restore, sign out, privacy, and the Generate homepage.
-9. Side menu on laptops that folds to icons. Bottom bar on phones with a raised New button.
+9. A notifications bell: late invoices, payments due in the next three days, forgotten drafts and missing setup details, with a red count.
+10. Side menu on laptops that folds to icons. Bottom bar on phones with a raised New button.
 
 ## Still to do
 1. Put the site online on Vercel so it has a real address, then finish Supabase setup (site address, owner account, run supabase/customers.sql, a full live test).

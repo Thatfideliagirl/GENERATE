@@ -125,3 +125,9 @@ export const SignOutIcon = () => (
     <path d="M10.5 12h9m0 0-3.5-3.5M19.5 12 16 15.5" />
   </svg>
 )
+export const BellIcon = () => (
+  <svg {...base}>
+    <path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" />
+    <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
+  </svg>
+)

@@ -192,3 +192,12 @@
 .auth-perks span{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#FCFBF8;display:grid;place-items:center;font:600 11px var(--ui)}
 @media (min-width:960px){.auth2{display:block}.auth2 .auth-main{padding-top:24px}}
 .auth .lp-btn,.auth .lp-btn:hover{box-shadow:none;border:0;transform:none}
+/* owner pages: tabs */
+.adm-tabs{display:flex;gap:4px;background:#DCE5EE;border-radius:16px;padding:4px;margin:0 0 22px;overflow-x:auto;scrollbar-width:none}
+.adm-tabs::-webkit-scrollbar{display:none}
+.adm-tabs a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;padding:11px 16px;border-radius:12px;font:600 15px var(--ui);color:var(--mu);text-decoration:none;transition:all .2s ease}
+.adm-tabs a.on{background:var(--sf);color:var(--ink);box-shadow:0 1px 3px rgba(19,32,58,.12)}
+.adm-tabs a:not(.on):hover{color:var(--ink)}
+.adm-count{min-width:22px;height:22px;padding:0 7px;border-radius:99px;background:var(--ink);color:#FCFBF8;font:600 12px/22px var(--ui);text-align:center}
+.adm-tabs a:not(.on) .adm-count{background:#B9C6D5;color:var(--ink)}
+@media (max-width:640px){.adm-tabs a{flex:none;padding:10px 14px;font-size:14px}}

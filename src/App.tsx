@@ -60,6 +60,7 @@ export default function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/sign" element={<SignDocument isPublic />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/:tab" element={<Admin />} />
         <Route path="/setup" element={<NeedsAccount><Setup /></NeedsAccount>} />
         <Route path="/app" element={<Private>{(p) => <Dashboard profile={p} />}</Private>} />
         <Route path="/app/sign" element={<Private>{(p) => <SignDocument profile={p} />}</Private>} />
