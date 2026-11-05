@@ -202,4 +202,6 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
 
 /* a colour the person picked in Settings replaces clay everywhere inside the app */
 :root[data-accent]{--clay:var(--accent-base);--br:var(--accent-base);--brt:color-mix(in srgb,var(--accent-base) 15%,#fff)}
+/* in light mode the main buttons, New and the chosen tabs take the accent too, so the choice is easy to see */
+:root[data-accent]:not([data-theme="dark"]){--em:color-mix(in srgb,var(--accent-base) 78%,#0B1222);--em2:color-mix(in srgb,var(--accent-base) 90%,#0B1222)}
 :root[data-accent][data-theme="dark"]{--clay:color-mix(in srgb,var(--accent-base) 62%,#fff);--br:color-mix(in srgb,var(--accent-base) 62%,#fff);--brt:color-mix(in srgb,var(--accent-base) 26%,#151F35)}

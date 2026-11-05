@@ -188,6 +188,17 @@ export default function ProfilePage({ profile: p }: { profile: ProfileType }) {
               </label>
             </div>
           </div>
+          {session?.role === 'admin' && (
+            <div className="a-set">
+              <div>
+                <b>Owner page</b>
+                <span className="mu small">Signups, who is joining and how Generate is being used.</span>
+              </div>
+              <Link className="btn p" to="/admin">
+                Open the owner page
+              </Link>
+            </div>
+          )}
           <div className="a-set">
             <div>
               <b>The tour</b>

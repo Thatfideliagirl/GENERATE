@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { Profile } from '../lib/types'
 import { initialsOf } from '../lib/initials'
-import { BackIcon } from './Icons'
+import { BackIcon, ShieldIcon } from './Icons'
+import { useAuth } from '../data/session'
 import { ThemeToggle } from './ThemeToggle'
 import { SignOutButton } from './SignOutButton'
 
@@ -20,6 +21,7 @@ export function BrandMark({ profile, size = 34 }: { profile: Profile; size?: num
 
 /** The top of the home screen on a phone: your business on the left, your profile on the right. */
 export function AppHeader({ profile }: { profile: Profile }) {
+  const { session } = useAuth()
   return (
     <header className="top a-phonetop">
       <Link to="/app" className="brand">
@@ -27,6 +29,11 @@ export function AppHeader({ profile }: { profile: Profile }) {
         <span>{profile.name}</span>
       </Link>
       <span className="a-phonetools">
+        {session?.role === 'admin' && (
+          <Link to="/admin" className="a-theme" aria-label="Owner page" title="Owner page">
+            <ShieldIcon />
+          </Link>
+        )}
         <ThemeToggle />
         <SignOutButton label={false} className="a-theme" />
         <Link to="/app/profile" className="a-avatar" aria-label="Your profile">

@@ -72,7 +72,8 @@ export function SignUp() {
         setBusy(false)
         return
       }
-      nav('/app', { replace: true })
+      // The owner goes straight to the owner page; everyone else to their home.
+      nav(made.role === 'admin' ? '/admin' : '/app', { replace: true })
     } catch (err) {
       fail(err instanceof AuthError ? err.message : 'Something went wrong. Please try again.')
     }
