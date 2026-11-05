@@ -205,13 +205,14 @@ em.s{font-family:var(--acc);font-style:italic;font-weight:400;letter-spacing:-.0
 .roles button[aria-selected="true"]{color:var(--ink)}
 .roles button[aria-selected="true"] span::after{content:'.';color:var(--clay)}
 .roles button:focus-visible{outline:2px solid var(--clay);outline-offset:4px}
-.stage{position:relative;background:var(--paper);border-radius:28px;overflow:hidden;aspect-ratio:4/5;max-width:460px;width:100%;justify-self:center;box-shadow:0 30px 60px -40px rgba(19,32,58,.5)}
-.stage img{position:absolute;inset:0;width:100%;height:78%;object-fit:contain;object-position:center bottom;padding:24px 20px 0;opacity:0;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1);transform:translateY(10px)}
+.stage{position:relative;background:#C9DAE8;border-radius:28px;overflow:hidden;aspect-ratio:4/5;max-width:460px;width:100%;justify-self:center;box-shadow:0 30px 60px -40px rgba(19,32,58,.5)}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1);transform:translateY(10px)}
 .stage img.on{opacity:1;transform:none}
 .stage .cap{position:absolute;left:16px;right:16px;bottom:16px;background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 14px 30px -20px rgba(19,32,58,.5);font-size:14px}
 .stage .cap b{display:block;font-size:15px}.stage .cap p{margin:4px 0 0;color:var(--mu)}
 .stage .cap .it{font-size:13px;padding:7px 0 0;margin-top:8px}
 @media(min-width:960px){.who .wrap{grid-template-columns:1.1fr .9fr;gap:6vw}}
+@media(max-width:600px){.stage{aspect-ratio:auto;padding-top:125%;background:var(--paper)}.stage img{height:auto;aspect-ratio:4/5}.stage .cap{position:relative;left:auto;right:auto;bottom:auto;margin:0;border-radius:0;box-shadow:none;padding:16px 18px 18px}}
 
 /* faq */
 .faqw{display:grid;gap:36px}
@@ -369,10 +370,10 @@ footer .in{display:grid;gap:28px}
       </ul>
     </div>
     <div class="stage" role="tabpanel" aria-live="polite"><span class="tag" id="tag">Freelancers</span>
-      <img class="on" src="images/freelancer.webp" alt="A freelancer smiling at her laptop." width="610" height="520">
-      <img src="images/business.webp" alt="A shop owner writing beside her cakes and boxes." width="820" height="520" loading="lazy">
-      <img src="images/brand.webp" alt="A hand holding two branded shopping bags." width="640" height="520" loading="lazy">
-      <img src="images/anyone.webp" alt="Two young people chatting." width="729" height="520" loading="lazy">
+      <img class="on" src="../public/landing/freelancer.webp" alt="A freelancer at her laptop, smiling at the camera." width="614" height="768">
+      <img src="../public/landing/shop.webp" alt="A food seller in an apron holding his phone beside packed orders." width="614" height="768" loading="lazy">
+      <img src="../public/landing/brand.webp" alt="Two cofounders smiling, one holding a printed document." width="920" height="1150" loading="lazy">
+      <img src="../public/landing/anyone.webp" alt="A consultant in a head wrap holding a printed document." width="614" height="768" loading="lazy">
       <div class="cap" id="cap"><b>Look professional from your first client.</b><p>Send invoices and contracts with your own name and signature.</p><div class="it"><span>Logo design</span><span class="num">₦80,000</span></div></div>
     </div>
   </div>
