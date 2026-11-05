@@ -103,7 +103,7 @@ export const SIGNATURE_FONTS: [string, string][] = [
  * Emails that can open the owner page. Only used by the on device demo accounts.
  * With Supabase this becomes a role in the database, so change it there.
  */
-export const ADMIN_EMAILS: string[] = ['adewoyeemmanuel77@gmail.com']
+export const ADMIN_EMAILS: string[] = ['adewoyeemmanuel77@gmail.com', 'fideliajoseph111@gmail.com']
 
 /**
  * Contact details used by the site footer and FAQ. They are links only: the number and address are never printed on the page.
