@@ -138,6 +138,16 @@ export default function SignDocument({ profile, isPublic = false }: { profile?: 
   }
 
   const patch = (id: string, p: Partial<Placed>) => setItems((l) => l.map((i) => (i.id === id ? { ...i, ...p } : i)))
+
+  /** Moves the chosen item so its middle sits where the page was tapped, on whichever page that is. */
+  const place = (page: number, px: number, py: number) => {
+    const it = items.find((i) => i.id === sel)
+    const el = pageEls.current[page]
+    if (!it || !el) return
+    const r = el.getBoundingClientRect()
+    const fh = (it.fw * r.width) / it.aspect / r.height
+    patch(it.id, { page, fx: Math.min(1 - it.fw, Math.max(0, px - it.fw / 2)), fy: Math.min(1 - fh, Math.max(0, py - fh / 2)) })
+  }
   const remove = (id: string) => {
     setItems((l) => l.filter((i) => i.id !== id))
     setSel(null)
@@ -238,7 +248,9 @@ export default function SignDocument({ profile, isPublic = false }: { profile?: 
                 Line
               </button>
             </div>
-            <p className="mu small sg-hint">Scroll to the page, tap what to add, then drag it into place. Drag the corner to make it bigger or smaller.</p>
+            <p className="mu small sg-hint">
+              Tap what to add, then tap anywhere on any page to put it there, or drag it, even onto another page. Drag the corner to make it bigger or smaller. Tap the grey space between pages to let go.
+            </p>
             <div className="sg-pages" onPointerDown={(e) => e.target === e.currentTarget && setSel(null)}>
               {sizes.map((s, i) => (
                 <PageView
@@ -253,6 +265,7 @@ export default function SignDocument({ profile, isPublic = false }: { profile?: 
                   onPatch={patch}
                   onRemove={remove}
                   onEdit={(id) => (setEditId(id), setModal('text'))}
+                  onPlace={place}
                   refEl={(el) => (pageEls.current[i + 1] = el)}
                 />
               ))}
@@ -338,10 +351,12 @@ interface PageProps {
   onPatch: (id: string, p: Partial<Placed>) => void
   onRemove: (id: string) => void
   onEdit: (id: string) => void
+  /** Tapping a page while something is chosen moves it to that spot, on any page. */
+  onPlace: (page: number, px: number, py: number) => void
   refEl: (el: HTMLDivElement | null) => void
 }
 
-function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, onEdit, refEl }: PageProps) {
+function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, onEdit, onPlace, refEl }: PageProps) {
   const box = useRef<HTMLDivElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const [near, setNear] = useState(n === 1)
@@ -397,6 +412,8 @@ function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, 
     const x0 = e.clientX
     const y0 = e.clientY
     const o = { fx: it.fx, fy: it.fy, fw: it.fw }
+    // Where on the item it was picked up, so it lands under the finger on another page.
+    const grab = { x: (x0 - page.left) / page.width - it.fx, y: (y0 - page.top) / page.height - it.fy }
     const target = e.currentTarget as HTMLElement
     target.setPointerCapture(e.pointerId)
     const move = (m: PointerEvent) => {
@@ -411,7 +428,23 @@ function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, 
         onPatch(it.id, { fw, fx: Math.min(o.fx, 1 - fw), fy: Math.min(o.fy, 1 - fh) })
       }
     }
-    const up = () => {
+    const up = (u: PointerEvent) => {
+      // Let go over a different page: the item moves to that page.
+      if (mode === 'move' && u.type === 'pointerup') {
+        const other = document
+          .elementsFromPoint(u.clientX, u.clientY)
+          .map((el) => (el as HTMLElement).closest<HTMLElement>('.sg-page'))
+          .find((el) => el && Number(el.dataset.page) !== n)
+        if (other) {
+          const r = other.getBoundingClientRect()
+          const fh = (o.fw * r.width) / it.aspect / r.height
+          onPatch(it.id, {
+            page: Number(other.dataset.page),
+            fx: Math.min(1 - o.fw, Math.max(0, (u.clientX - r.left) / r.width - grab.x)),
+            fy: Math.min(1 - fh, Math.max(0, (u.clientY - r.top) / r.height - grab.y)),
+          })
+        }
+      }
       target.removeEventListener('pointermove', move)
       target.removeEventListener('pointerup', up)
       target.removeEventListener('pointercancel', up)
@@ -422,7 +455,19 @@ function PageView({ pdf, n, width, ratio, items, sel, onSel, onPatch, onRemove, 
   }
 
   return (
-    <div className="sg-page" ref={box} style={{ width, height }} data-page={n} onPointerDown={(e) => e.target === e.currentTarget && onSel(null)}>
+    <div
+      className="sg-page"
+      ref={box}
+      style={{ width, height }}
+      data-page={n}
+      onPointerDown={(e) => {
+        const t = e.target as HTMLElement
+        if (t !== e.currentTarget && t.tagName !== 'CANVAS') return
+        if (!sel) return
+        const r = e.currentTarget.getBoundingClientRect()
+        onPlace(n, (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height)
+      }}
+    >
       <canvas ref={canvas} style={{ width, height }} aria-label={`Page ${n}`} />
       <span className="sg-no">Page {n}</span>
       {items.map((it) => (

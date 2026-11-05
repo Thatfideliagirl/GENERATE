@@ -15,7 +15,7 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 
 ## The public website
 1. Hero with a search bar people can type in. The hint types itself while empty, and pressing Enter or Start free opens sign up.
-2. A phone that stays on screen while you scroll and changes screens to tell the story: the WhatsApp chat with a client (Mr. Wale), setting up your business, making an invoice, sending it, the dashboard, and signing a PDF. On phones the step cards slide over the phone. The phone always fits the screen.
+2. A phone that stays on screen while you scroll and changes screens to tell the story: the WhatsApp chat with a client (Mr. Wale), which plays one message at a time with typing dots like real WhatsApp, setting up your business, making an invoice, sending it, the dashboard, and signing a PDF. On phones the step cards slide over the phone. The phone always fits the screen.
 3. A quiet moving ribbon of short lines.
 4. Who it is for: freelancers, shop owners, growing brands and anyone, with four photos and captions that switch by themselves.
 5. Features: four documents (invoice, receipt, contract, signed PDF) that slide up like they are being printed. Then "the small things that save you time": a switcher with live mini demos for signatures, WhatsApp sending, reminders, part payments, any currency, looks and templates, the customers list and the dashboard.
@@ -28,9 +28,10 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 ## Accounts
 1. Sign up is the full business setup in one go: business name, your name, email, WhatsApp number, what kind of business, what you sell, logo or initials, signature (draw, type or upload a photo), bank details, VAT, social handles and a password.
 2. Sign in, forgot password and reset password.
-3. Supabase is connected: real accounts, row level security so each person only ever sees their own data. The owner dashboard has its own pages (Overview, Signups, Free signing, Visitors) and shows signups over time, who is signing up, usage counts, and emails from free signing, but can never open anyone's documents.
+3. Sign in and sign up are one clean card with a switch between Sign in and Start free, and three small promises under it.
+4. Supabase is connected: real accounts, row level security so each person only ever sees their own data. The owner dashboard has its own pages (Overview, Signups, Free signing, Visitors) and shows signups over time, who is signing up, usage counts, and emails from free signing, but can never open anyone's documents. The owner lands on it after signing in, and reaches it from the side menu, a shield icon on phones, or Settings.
 5. Sign out on Home, the side menu, the phone header, Settings and the website.
-4. A short guided tour the first time someone opens Home. It can be taken again from Settings.
+6. A short guided tour the first time someone opens Home. It can be taken again from Settings.
 
 ## Inside the app
 1. Home, driven by one time filter (today, this week, this month, this year, all time): money received, waiting to be paid, overdue and part paid; a chart of money received per month with the best month; counts of invoices, receipts, contracts, signed documents and customers that open their own pages; who owes you with a WhatsApp Remind button (friendly, firm or final); and recent documents.
@@ -38,15 +39,17 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 3. Invoices page, Receipts page, Contracts page and Signed documents page, each with its own summary and list. All documents page with counts and everything grouped by day, each with a download button.
 4. Invoice and receipt editor: items, discount, VAT, any currency, part payments with a receipt for each payment, notes, signature, social handles. A live preview beside the form on a laptop. Six layouts, six fonts, any colour, white or ivory paper. Download a one page PDF or send on WhatsApp with a warm ready message.
 5. Contracts: three starter templates (service agreement, creative project agreement, confidentiality agreement) that fill in your details by themselves, or start blank. Save your own templates. A note says a lawyer should check them.
-6. Sign a document: upload any PDF or photo, place your signature, initials, the date, text or a line anywhere on any page, and download the signed PDF. A copy is kept on the device under Signed documents.
+6. Sign a document: upload any PDF or photo, place your signature, initials, the date, text or a line anywhere on any page, and download the signed PDF. Tap anywhere on any page to put the chosen item there, or drag it, even from one page to another. A copy is kept on the device under Signed documents.
 7. Customers: add, edit, remove, or import from phone contacts (Android), a file, or a pasted list. Pick a customer when making a document. A new client name prompts "Add them to your customers?". Each customer has a page with what they owe, what they were billed and their documents.
 8. Profile: your business shown in cards with edit pens. Settings: light or dark, accent colour, the tour again, backup and restore, sign out, privacy, and the Generate homepage.
 9. A notifications bell: late invoices, payments due in the next three days, forgotten drafts and missing setup details, with a red count.
 10. Side menu on laptops that folds to icons. Bottom bar on phones with a raised New button.
 
 ## Still to do
-1. Put the site online on Vercel so it has a real address, then finish Supabase setup (site address, owner account, run supabase/customers.sql, a full live test).
-2. The content system: a brand brief, three ready posts a week, price list cards, promo flyers, tips flyers, mass cards, a content calendar.
-3. The template gallery (about 30 templates, Generate more) and uploading your own design.
-5. Sending a contract to a client to sign by link, and a pay page.
-6. Email change, custom email sender for Supabase, and the privacy page checked by a lawyer.
+1. Put the site online on Vercel so it has a real address, then finish Supabase setup (site address, a proper email sender, run supabase/setup_owner.sql, a full live test).
+2. Send a contract to a client to sign by link: the client opens the link on their phone with no account, reads, signs and taps Done; the business sees "Signed" and gets the signed copy.
+3. A pay page for invoices: the client opens a link and sees the amount, what is left, and the bank details with a copy button, then taps "I have paid"; the business confirms. Generate never holds money.
+4. The content system: a brand brief, three ready posts a week, price list cards, promo and tips flyers, mass cards, a content calendar.
+5. The template gallery for invoices, receipts, contracts, price lists and flyers, and uploading your own design or letterhead.
+6. Signed documents saved to the account so they show on every device; real phone notifications.
+7. Email change, the privacy page checked by a lawyer, real Instagram and LinkedIn links.
