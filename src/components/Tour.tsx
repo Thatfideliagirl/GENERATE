@@ -56,8 +56,11 @@ export function Tour({ userId, steps: all, onFinish }: { userId: string; steps: 
     const el = find(step.target)
     if (el) {
       const r = el.getBoundingClientRect()
-      const fixed = getComputedStyle(el).position === 'fixed' || !!el.closest('.a-side, .a-tabs')
-      if (!fixed && (r.top < 80 || r.bottom > window.innerHeight - 220)) el.scrollIntoView({ block: 'center', behavior: 'auto' })
+      const inMenu = !!el.closest('.a-side')
+      const fixed = getComputedStyle(el).position === 'fixed' || !!el.closest('.a-tabs')
+      // Inside the side menu, scroll the menu itself so the part shows; elsewhere scroll the page.
+      if (inMenu) el.scrollIntoView({ block: 'nearest', behavior: 'auto' })
+      else if (!fixed && (r.top < 80 || r.bottom > window.innerHeight - 220)) el.scrollIntoView({ block: 'center', behavior: 'auto' })
     }
     measure()
   }, [step, measure])
@@ -96,7 +99,10 @@ export function Tour({ userId, steps: all, onFinish }: { userId: string; steps: 
     const fitsBelow = below + 210 < vh
     const left = Math.min(Math.max(16, rect.left + rect.width / 2 - cardW / 2), vw - cardW - 16)
     const sideRoom = rect.right + pad + 14 + cardW < vw - 16
-    if (rect.height > vh * 0.5 && sideRoom) cardStyle = { width: cardW, left: rect.right + pad + 14, top: Math.max(16, Math.min(rect.top, vh - 260)) }
+    // Parts of the side menu get the card beside them, so it never covers what it points at.
+    const inMenu = !!find(step.target)?.closest('.a-side')
+    if ((inMenu || rect.height > vh * 0.5) && sideRoom)
+      cardStyle = { width: cardW, left: rect.right + pad + 14, top: Math.max(16, Math.min(rect.top + rect.height / 2 - 110, vh - 260)) }
     else cardStyle = fitsBelow ? { width: cardW, left, top: below } : { width: cardW, left, top: Math.max(16, rect.top - pad - 14 - 200) }
   }
 
