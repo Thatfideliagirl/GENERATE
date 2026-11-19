@@ -2,7 +2,7 @@ import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Profile } from './types'
 import type { CardContent, Category } from './studio'
-import { StudioCard } from '../components/StudioCard'
+import { StudioCard, fitCard } from '../components/StudioCard'
 
 const FONTS = ['Geist', 'Fraunces', 'Caveat', 'Cormorant Garamond', 'Bodoni Moda', 'Hanken Grotesk', 'Playfair Display', 'Great Vibes', 'Instrument Serif']
 
@@ -22,6 +22,7 @@ async function draw(cat: Category, style: string, c: CardContent, profile: Profi
       /* fonts are a nice to have */
     }
     const el = host.firstElementChild as HTMLElement
+    fitCard(el)
     return await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: null, width: cat.size.w, height: cat.size.h })
   } finally {
     host.remove()

@@ -14,7 +14,86 @@ export interface Row {
   a: string
   b: string
   c: string
+  /** Highlighted line, like a best seller. */
+  h?: boolean
 }
+
+export type Align = '' | 'l' | 'c' | 'r'
+export type PicShape = 'square' | 'rounded' | 'circle'
+
+/** How the design is shown: what to include, colours, background, fonts, sizes and an added picture. */
+export interface CardOptions {
+  showLogo: boolean
+  /** A logo picked just for this design. Empty uses the profile logo. */
+  logo: string
+  showPhone: boolean
+  showSocials: boolean
+  showSign: boolean
+  /** The small "Made with Generate" line. */
+  mark: boolean
+  align: Align
+  /** Main colour. Empty keeps the design's own colour. */
+  color: string
+  /** Background colour. Empty keeps the design's own background. */
+  bg: string
+  bgImage: string
+  /** How strongly the background picture shows, 0 to 1. */
+  bgOpacity: number
+  headFont: string
+  textFont: string
+  headSize: number
+  textSize: number
+  pic: string
+  /** Picture height divided by width. */
+  picAspect: number
+  /** Top left corner of the picture as a fraction of the card. */
+  picX: number
+  picY: number
+  /** Picture width as a fraction of the card. */
+  picW: number
+  picShape: PicShape
+}
+
+export const DEFAULT_OPTIONS: CardOptions = {
+  showLogo: true,
+  logo: '',
+  showPhone: true,
+  showSocials: true,
+  showSign: false,
+  mark: true,
+  align: '',
+  color: '',
+  bg: '',
+  bgImage: '',
+  bgOpacity: 0.35,
+  headFont: '',
+  textFont: '',
+  headSize: 1,
+  textSize: 1,
+  pic: '',
+  picAspect: 1,
+  picX: 0.5,
+  picY: 0.12,
+  picW: 0.4,
+  picShape: 'rounded',
+}
+
+export const optionsOf = (c: CardContent): CardOptions => ({ ...DEFAULT_OPTIONS, ...(c.o || {}) })
+
+/** Fonts people can choose for headings and text. All of them are already loaded by the app. */
+export const CARD_FONTS: [string, string][] = [
+  ['', 'The design\'s own'],
+  ["'Geist', sans-serif", 'Modern'],
+  ["'Hanken Grotesk', sans-serif", 'Bold and clean'],
+  ["'Fraunces', serif", 'Classic serif'],
+  ["'Playfair Display', serif", 'Elegant'],
+  ["'Bodoni Moda', serif", 'Fashion'],
+  ["'Cormorant Garamond', serif", 'Soft serif'],
+  ["'Instrument Serif', serif", 'Editorial'],
+  ["'Caveat', cursive", 'Handwritten'],
+  ["'Dancing Script', cursive", 'Casual script'],
+  ["'Great Vibes', cursive", 'Flowing script'],
+]
 
 /** One flat set of fields. Each category uses the ones it needs. */
 export interface CardContent {
@@ -36,6 +115,7 @@ export interface CardContent {
   address: string
   phone: string
   currency: string
+  o?: Partial<CardOptions>
 }
 
 export type FieldKind = 'text' | 'area' | 'items'
@@ -70,6 +150,8 @@ export interface Category {
   styles: StyleDef[]
   /** Delivery notes are documents, so they also download as a PDF. */
   pdf?: boolean
+  /** Designs that have a place for the owner's signature. */
+  sign?: boolean
 }
 
 export const CATEGORIES: Category[] = [
@@ -85,7 +167,7 @@ export const CATEGORIES: Category[] = [
       { key: 'subtitle', label: 'Small line under the heading' },
       { key: 'items', label: 'What you sell', kind: 'items', cols: ['Item', 'Price', 'Short note'] },
       { key: 'currency', label: 'Currency sign', hint: 'For example ₦, $ or £' },
-      { key: 'message', label: 'Note at the bottom', hint: 'Delivery, opening hours, how to order' },
+      { key: 'message', label: 'Note at the bottom', kind: 'area', hint: 'Delivery, opening hours, how to order' },
     ],
     styles: [
       { id: 'ledger', name: 'Ledger', blurb: 'Cream paper, serif type and dotted lines, like a classic menu' },
@@ -102,6 +184,7 @@ export const CATEGORIES: Category[] = [
     lead: 'A warm note for a customer after they buy or pay. People remember who thanked them.',
     use: 'Send after a sale, a payment or a first order',
     size: { w: 540, h: 675 },
+    sign: true,
     fields: [
       { key: 'title', label: 'Big words' },
       { key: 'to', label: 'Who it is for', hint: 'Their name, or leave it empty' },
@@ -128,7 +211,7 @@ export const CATEGORIES: Category[] = [
       { key: 'bank', label: 'Bank' },
       { key: 'acct', label: 'Account number' },
       { key: 'acctName', label: 'Account name' },
-      { key: 'message', label: 'Note', hint: 'For example: send your proof of payment on WhatsApp' },
+      { key: 'message', label: 'Note', kind: 'area', hint: 'For example: send your proof of payment on WhatsApp' },
       { key: 'phone', label: 'WhatsApp number' },
     ],
     styles: [
@@ -190,6 +273,7 @@ export const CATEGORIES: Category[] = [
     use: 'For shops and brands that send goods',
     size: { w: 540, h: 764 },
     pdf: true,
+    sign: true,
     fields: [
       { key: 'number', label: 'Number' },
       { key: 'date', label: 'Date' },
@@ -268,6 +352,7 @@ export function defaultContent(cat: CatId, profile: Profile, styleId?: string): 
     case 'thankyou':
       return {
         ...base,
+        o: { showSign: !!profile.signature },
         title: 'Thank you',
         to: '',
         message: 'Thank you for choosing us. It was a joy working with you, and we hope to see you again soon.',

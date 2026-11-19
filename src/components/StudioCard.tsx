@@ -1,9 +1,11 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { createContext, useContext, type CSSProperties, type ReactNode } from 'react'
 import type { Profile } from '../lib/types'
-import type { CardContent, CatId } from '../lib/studio'
+import { catOf, optionsOf, type CardContent, type CardOptions, type CatId } from '../lib/studio'
 import { accentOf } from '../lib/style'
 import { initialsOf } from '../lib/initials'
 import { socialLines } from '../lib/social'
+
+const Opt = createContext<{ o: CardOptions; profile: Profile }>({ o: optionsOf({} as CardContent), profile: {} as Profile })
 
 /**
  * A gallery design drawn at its real size (540 wide). The same markup is shown on screen
@@ -11,8 +13,17 @@ import { socialLines } from '../lib/social'
  * Kept to plain boxes, borders and gradients so the picture comes out exactly like the screen.
  */
 export function StudioCard({ cat, style, c, profile }: { cat: CatId; style: string; c: CardContent; profile: Profile }) {
-  const vars = { '--sa': accentOf(profile.style) } as CSSProperties
-  const cls = `st-card st-${cat} s-${style}`
+  const o = optionsOf(c)
+  const size = catOf(cat)?.size ?? { w: 540, h: 675 }
+  const vars = {
+    '--sa': o.color || accentOf(profile.style),
+    '--hs': o.headSize,
+    '--ts': o.textSize,
+    ...(o.headFont ? { '--hf': o.headFont } : {}),
+    ...(o.textFont ? { '--tf': o.textFont } : {}),
+    ...(o.bg ? { background: o.bg } : {}),
+  } as CSSProperties
+  const cls = ['st-card', `st-${cat}`, `s-${style}`, o.align && `al-${o.align}`, o.headFont && 'hf', o.textFont && 'tf', o.color && 'own'].filter(Boolean).join(' ')
   const body = (() => {
     switch (cat) {
       case 'pricelist':
@@ -29,10 +40,22 @@ export function StudioCard({ cat, style, c, profile }: { cat: CatId; style: stri
         return <Delivery style={style} c={c} profile={profile} />
     }
   })()
+  const picW = Math.round(o.picW * size.w)
+  const picH = o.picShape === 'circle' ? picW : Math.round(picW * (o.picAspect || 1))
   return (
-    <div className={cls} style={vars}>
-      {body}
-    </div>
+    <Opt.Provider value={{ o, profile }}>
+      <div className={cls} style={vars} data-hs={o.headSize} data-ts={o.textSize}>
+        {o.bgImage && <div className="st-bgimg" style={{ backgroundImage: `url(${o.bgImage})`, opacity: o.bgOpacity }} />}
+        {body}
+        {o.pic && (
+          <div
+            className={`st-pic ${o.picShape}`}
+            style={{ left: Math.round(o.picX * size.w), top: Math.round(o.picY * size.h), width: picW, height: picH, backgroundImage: `url(${o.pic})` }}
+          />
+        )}
+        {o.mark && <div className="st-wm">Made with Generate</div>}
+      </div>
+    </Opt.Provider>
   )
 }
 
@@ -46,7 +69,10 @@ const price = (v: string, cur: string) => {
 }
 
 function Mark({ profile, size = 44 }: { profile: Profile; size?: number }) {
-  if (profile.logo) return <img className="st-logo" src={profile.logo} alt="" style={{ height: size, maxWidth: size * 3 }} />
+  const { o } = useContext(Opt)
+  if (!o.showLogo) return null
+  const logo = o.logo || profile.logo
+  if (logo) return <img className="st-logo" src={logo} alt="" style={{ height: size, maxWidth: size * 3 }} />
   return (
     <span className="st-mono" style={{ width: size, height: size, fontSize: size * 0.38 }}>
       {initialsOf(profile.name)}
@@ -63,21 +89,63 @@ function Brand({ profile, size }: { profile: Profile; size?: number }) {
   )
 }
 
-/** Phone and social handles in one quiet line. */
+/** Phone and social handles in one quiet line, each only when it is switched on. */
 function Contact({ profile, phone }: { profile: Profile; phone?: string }) {
-  const bits = [phone ?? profile.phone, ...socialLines(profile).map((s) => s.handle)].filter(Boolean)
+  const { o } = useContext(Opt)
+  const bits = [o.showPhone ? phone ?? profile.phone : '', ...(o.showSocials ? socialLines(profile).map((s) => s.handle) : [])].filter(Boolean)
   if (!bits.length) return null
   return <div className="st-contact">{bits.join('   ·   ')}</div>
 }
 
+/** The owner's signature, when the design has a place for it and it is switched on. */
+function Sig() {
+  const { o, profile } = useContext(Opt)
+  if (!o.showSign || !profile.signature) return null
+  return <img className="st-sig" src={profile.signature} alt="" />
+}
+
+/** Words between == and == are highlighted. */
+function Marked({ text }: { text: string }) {
+  const parts = text.split(/==(.+?)==/g)
+  return (
+    <>
+      {parts.map((t, i) =>
+        i % 2 ? (
+          <mark key={i} className="st-hl">
+            {t}
+          </mark>
+        ) : (
+          t
+        ),
+      )}
+    </>
+  )
+}
+
+/** Text with line breaks, bullet lines (starting with • or -), numbered lines (1. ) and highlights. Spans only, so it fits inside a paragraph. */
 function Lines({ text }: { text: string }) {
   return (
     <>
-      {text.split('\n').map((l, i) => (
-        <span key={i} className="st-ln">
-          {l || ' '}
-        </span>
-      ))}
+      {text.split('\n').map((l, i) => {
+        const bullet = /^\s*[•\-*]\s+/.exec(l)
+        const num = /^\s*(\d+)[.)]\s+/.exec(l)
+        if (bullet || num) {
+          const rest = l.slice((bullet || num)![0].length)
+          return (
+            <span key={i} className="st-ln st-li">
+              <span className="st-lm">{num ? num[1] + '.' : '•'}</span>
+              <span>
+                <Marked text={rest} />
+              </span>
+            </span>
+          )
+        }
+        return (
+          <span key={i} className="st-ln">
+            {l ? <Marked text={l} /> : '\u00a0'}
+          </span>
+        )
+      })}
     </>
   )
 }
@@ -90,7 +158,7 @@ function PriceList({ style, c, profile }: P) {
   const list = (
     <ul className={'st-items' + dense}>
       {items.map((it, k) => (
-        <li key={k}>
+        <li key={k} className={it.h ? 'hl' : undefined}>
           <div className="st-row">
             <span className="st-name">{it.a}</span>
             <span className="st-dots" />
@@ -111,7 +179,11 @@ function PriceList({ style, c, profile }: P) {
         </div>
         <div className="st-pad">{list}</div>
         <div className="st-foot">
-          {c.message && <p className="st-msg">{c.message}</p>}
+          {c.message && (
+            <p className="st-msg">
+              <Lines text={c.message} />
+            </p>
+          )}
           <Contact profile={profile} />
         </div>
       </>
@@ -128,7 +200,11 @@ function PriceList({ style, c, profile }: P) {
       </div>
       {list}
       <div className="st-foot">
-        {c.message && <p className="st-msg">{c.message}</p>}
+        {c.message && (
+            <p className="st-msg">
+              <Lines text={c.message} />
+            </p>
+          )}
         <Contact profile={profile} />
       </div>
     </>
@@ -145,6 +221,7 @@ function ThankYou({ style, c, profile }: P) {
       <p className="st-msg">
         <Lines text={c.message} />
       </p>
+      <Sig />
       {c.from && <p className="st-from">{c.from}</p>}
     </>
   )
@@ -225,7 +302,11 @@ function PayCard({ style, c, profile }: P) {
           </div>
         </div>
         <div className="st-foot">
-          {c.message && <p className="st-msg">{c.message}</p>}
+          {c.message && (
+            <p className="st-msg">
+              <Lines text={c.message} />
+            </p>
+          )}
           <Contact profile={profile} phone={c.phone} />
         </div>
       </>
@@ -241,7 +322,11 @@ function PayCard({ style, c, profile }: P) {
           <h2 className="st-title">{c.title}</h2>
           {rows}
           <div className="st-dash" />
-          {c.message && <p className="st-msg">{c.message}</p>}
+          {c.message && (
+            <p className="st-msg">
+              <Lines text={c.message} />
+            </p>
+          )}
           <Contact profile={profile} phone={c.phone} />
         </div>
         <div className="st-teeth" />
@@ -256,7 +341,11 @@ function PayCard({ style, c, profile }: P) {
       </div>
       {rows}
       <div className="st-foot">
-        {c.message && <p className="st-msg">{c.message}</p>}
+        {c.message && (
+            <p className="st-msg">
+              <Lines text={c.message} />
+            </p>
+          )}
         <Contact profile={profile} phone={c.phone} />
       </div>
     </>
@@ -492,7 +581,9 @@ function Delivery({ style, c, profile }: P) {
       )}
       <div className="st-signs">
         <div>
-          <span className="st-line" />
+          <span className="st-line">
+            <Sig />
+          </span>
           <span className="st-k">Delivered by</span>
         </div>
         <div>
@@ -503,4 +594,23 @@ function Delivery({ style, c, profile }: P) {
       {style === 'stamp' && <div className="st-stampbox">Received in good condition</div>}
     </>
   )
+}
+
+/**
+ * Shrinks the words a little at a time until everything fits inside the card.
+ * Used on screen and before the picture is made, so both always match.
+ */
+export function fitCard(el: HTMLElement) {
+  const hs = Number(el.dataset.hs) || 1
+  const ts = Number(el.dataset.ts) || 1
+  let k = 1
+  const apply = () => {
+    el.style.setProperty('--hs', String(hs * k))
+    el.style.setProperty('--ts', String(ts * k))
+  }
+  apply()
+  while (el.scrollHeight > el.clientHeight + 1 && k > 0.55) {
+    k = Math.round((k - 0.04) * 100) / 100
+    apply()
+  }
 }

@@ -35,3 +35,29 @@ export function readImage(file: File, maxWidth: number, removeWhite: boolean): P
     reader.readAsDataURL(file)
   })
 }
+
+/** Reads a photo for a design, shrinks it and returns a JPEG data URL with its height to width ratio. Photos stay small so they fit in the browser's storage. */
+export function readPhoto(file: File, maxSide: number): Promise<{ url: string; aspect: number }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Could not read the file'))
+    reader.onload = () => {
+      const img = new Image()
+      img.onerror = () => reject(new Error('That file is not a picture'))
+      img.onload = () => {
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height))
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.max(1, Math.round(img.width * scale))
+        canvas.height = Math.max(1, Math.round(img.height * scale))
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return reject(new Error('Could not use the picture'))
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        resolve({ url: canvas.toDataURL('image/jpeg', 0.85), aspect: canvas.height / canvas.width })
+      }
+      img.src = String(reader.result)
+    }
+    reader.readAsDataURL(file)
+  })
+}
