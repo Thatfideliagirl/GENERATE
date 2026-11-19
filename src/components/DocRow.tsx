@@ -5,6 +5,7 @@ import { DOC_LABEL, STATUS_LABEL } from '../lib/constants'
 import { balanceOf, paidOf, statusOf, totals } from '../lib/calc'
 import { fmtDate, money } from '../lib/format'
 import { makePdf, pdfName, saveFile } from '../lib/pdf'
+import { ReceiptPrinter } from './ReceiptPrinter'
 import { ContractIcon, DownloadIcon, InvoiceIcon, ReceiptIcon } from './Icons'
 import { useToast } from './Toast'
 
@@ -19,7 +20,9 @@ export function DocRow({ d, profile, showDate = true, download = true }: { d: Do
   const left = d.type === 'invoice' && (st === 'part' || (st === 'overdue' && paidOf(d) > 0)) ? money(balanceOf(d), d.currency) : ''
   const amount = d.type === 'contract' ? (d.fee ? money(d.fee, d.currency) : '') : money(totals(d).total, d.currency)
 
+  const [printing, setPrinting] = useState(false)
   const get = async () => {
+    if (d.type === 'receipt') return setPrinting(true)
     setBusy(true)
     toast('Preparing your PDF')
     try {
@@ -33,6 +36,7 @@ export function DocRow({ d, profile, showDate = true, download = true }: { d: Do
 
   return (
     <div className="a-docrow">
+      {printing && <ReceiptPrinter doc={d} profile={profile} onClose={() => setPrinting(false)} />}
       <button className="row" onClick={() => nav(`/app/doc/${d.id}`)}>
         <span className="l">
           <span className={'a-dico ' + d.type}>{TYPE_ICON[d.type]}</span>

@@ -9,6 +9,7 @@ import { newDoc } from '../lib/factory'
 import { socialLines } from '../lib/social'
 import { CONTRACT_TEMPLATES } from '../lib/templates'
 import { makePdf, pdfName, saveFile } from '../lib/pdf'
+import { ReceiptPrinter } from '../components/ReceiptPrinter'
 import { reminderMessage, sendMessage, waLink } from '../lib/whatsapp'
 import type { ReminderTone } from '../lib/whatsapp'
 import { Field, Grid2, Section, SelectField, TextArea } from '../components/Fields'
@@ -279,8 +280,10 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
     nav('/app', { replace: true })
   }
 
+  const [printing, setPrinting] = useState(false)
   const download = async () => {
     persist(doc)
+    if (doc.type === 'receipt') return setPrinting(true)
     setBusy(true)
     toast('Preparing your PDF')
     try {
@@ -319,6 +322,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
 
   return (
     <>
+      {printing && <ReceiptPrinter doc={doc} profile={profile} onClose={() => setPrinting(false)} />}
       <PageHeader title={`${DOC_LABEL[doc.type]} ${doc.number}`} onBack={back} right={<span className={'bd ' + status}>{STATUS_LABEL[status]}</span>} />
       <main className="wrap a-ed">
         {doc.type === 'contract' && doc.clientComment && status !== 'signed' && (
@@ -532,7 +536,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
               Save
             </button>
             <button className="btn p" onClick={download} disabled={busy}>
-              Download PDF
+              {doc.type === 'receipt' ? 'Print receipt' : 'Download PDF'}
             </button>
             <button className="btn wa" onClick={sendOnWhatsApp}>
               Send on WhatsApp
@@ -556,7 +560,7 @@ function Editor({ initial, profile }: { initial: Doc; profile: Profile }) {
         ) : (
           <>
             <button className="btn p" onClick={download} disabled={busy}>
-              Download PDF
+              {doc.type === 'receipt' ? 'Print receipt' : 'Download PDF'}
             </button>
             <button className="btn wa" onClick={sendOnWhatsApp}>
               Send on WhatsApp

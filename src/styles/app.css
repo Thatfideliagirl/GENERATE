@@ -415,3 +415,37 @@
 .a-linkcard p{margin:-6px 0 14px}
 .a-linkcard .btn{margin-bottom:14px}
 .a-linkbox{font:400 13px var(--ui);color:var(--mu);background:var(--sf2);border:1px solid var(--ln);border-radius:12px;padding:10px 12px;max-height:84px;overflow:auto;word-break:break-all}
+
+/* Receipt printer: a slip feeds out of a small printer while the PDF is made */
+.rp-veil{position:fixed;inset:0;z-index:90;background:rgba(19,32,58,.55);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px;animation:rp-fade .25s ease both}
+.rp-stage{display:flex;flex-direction:column;align-items:center;width:min(340px,100%);max-height:100%}
+.rp-printer{position:relative;z-index:2;width:100%;height:78px;border-radius:18px 18px 10px 10px;background:linear-gradient(#1c2b4a,#13203a);box-shadow:0 18px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
+.rp-top{display:flex;align-items:center;gap:10px;padding:16px 20px}
+.rp-brand{font:600 12px var(--ui);color:rgba(255,255,255,.55);letter-spacing:.06em}
+.rp-led{width:8px;height:8px;border-radius:50%;background:#e2a33a;box-shadow:0 0 8px #e2a33a;animation:rp-blink .5s steps(2) infinite}
+.rp-led.done{background:#4cc38a;box-shadow:0 0 8px #4cc38a;animation:none}
+.rp-led.failed{background:#e5484d;box-shadow:0 0 8px #e5484d;animation:none}
+.rp-slot{position:absolute;left:24px;right:24px;bottom:12px;height:6px;border-radius:4px;background:#070d1a;box-shadow:inset 0 2px 3px rgba(0,0,0,.8)}
+.rp-feed{position:relative;z-index:1;width:calc(100% - 64px);margin-top:-18px;overflow:hidden;flex:0 1 auto;min-height:0;padding-bottom:14px}
+.rp-slip{clip-path:inset(0 0 100% 0);animation:rp-print 3s steps(24,end) .2s forwards,rp-buzz .09s linear 34 .2s;filter:drop-shadow(0 10px 14px rgba(0,0,0,.25))}
+.rp-slip.out{animation:none;clip-path:none}
+.rp-paper{background:#fdfcf8;color:#1d1d1d;padding:26px 16px 10px;font:400 12.5px/1.5 var(--ui);font-variant-numeric:tabular-nums;max-height:calc(100vh - 260px);overflow:auto;background-image:linear-gradient(rgba(0,0,0,.035),transparent 30px)}
+.rp-tear{height:10px;background:linear-gradient(-45deg,transparent 7px,#fdfcf8 0) 0 0/14px 10px repeat-x,linear-gradient(45deg,transparent 7px,#fdfcf8 0) 0 0/14px 10px repeat-x}
+.rp-c{text-align:center}
+.rp-biz{font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase}
+.rp-kind{font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.rp-mu{color:#6b6b6b}
+.rp-small{font-size:11px}
+.rp-row{display:flex;justify-content:space-between;gap:12px}
+.rp-row span:last-child{text-align:right}
+.rp-item{margin-bottom:6px}
+.rp-total{font-weight:700;font-size:15px;margin:4px 0}
+.rp-rule{border-top:1.5px dashed #b9b6ad;margin:10px 0}
+.rp-thanks{font-family:'Instrument Serif',serif;font-style:italic;font-size:22px;margin-top:2px}
+.rp-msg{text-align:center;color:#fff;min-height:96px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.rp-msg p{margin:6px 0 0;font:500 15px var(--ui)}
+@keyframes rp-print{to{clip-path:inset(0 0 0 0)}}
+@keyframes rp-buzz{50%{transform:translateX(.6px)}}
+@keyframes rp-blink{50%{opacity:.25}}
+@keyframes rp-fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rp-slip{animation:none;clip-path:none}.rp-led{animation:none}}
