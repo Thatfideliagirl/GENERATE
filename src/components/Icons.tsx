@@ -131,3 +131,12 @@ export const BellIcon = () => (
     <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
   </svg>
 )
+
+export const GalleryIcon = () => (
+  <svg {...base}>
+    <rect x="3.5" y="3.5" width="7.5" height="9" rx="2" />
+    <rect x="13" y="3.5" width="7.5" height="5.5" rx="2" />
+    <rect x="13" y="11" width="7.5" height="9.5" rx="2" />
+    <rect x="3.5" y="14.5" width="7.5" height="6" rx="2" />
+  </svg>
+)

@@ -6,13 +6,14 @@ import { BrandMark } from './TopBar'
 import { Modal } from './Modal'
 import { ThemeToggle } from './ThemeToggle'
 import { SignOutButton } from './SignOutButton'
-import { ContractIcon, FolderIcon, HomeIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, ShieldIcon, UserIcon } from './Icons'
+import { ContractIcon, FolderIcon, GalleryIcon, HomeIcon, InvoiceIcon, PenIcon, PeopleIcon, PlusIcon, ReceiptIcon, ShieldIcon, UserIcon } from './Icons'
 
 const MAKE = [
   { to: '/app/new/invoice', icon: <InvoiceIcon />, t: 'Invoice', d: 'Bill a client and track the payment' },
   { to: '/app/new/receipt', icon: <ReceiptIcon />, t: 'Receipt', d: 'Confirm money you have received' },
   { to: '/app/contract', icon: <ContractIcon />, t: 'Contract', d: 'Start from a ready agreement' },
   { to: '/app/sign', icon: <PenIcon />, t: 'Sign a document', d: 'Upload a PDF or photo and sign it' },
+  { to: '/app/templates', icon: <GalleryIcon />, t: 'From the template gallery', d: 'Price lists, thank you cards, flyers and more' },
 ]
 
 /** The list of things you can make. Opens from the New button on a phone. */
@@ -43,7 +44,7 @@ export function MakeSheet({ onClose }: { onClose: () => void }) {
 }
 
 /** Where the bottom tabs show on a phone. Pages with their own action bar keep the bottom of the screen for it. */
-const TAB_PAGES = ['/app', '/app/contract', '/app/documents', '/app/customers', '/app/profile', '/app/invoices', '/app/receipts', '/app/contracts', '/app/signed']
+const TAB_PAGES = ['/app', '/app/contract', '/app/documents', '/app/customers', '/app/profile', '/app/invoices', '/app/receipts', '/app/contracts', '/app/signed', '/app/templates', '/app/templates/pricelist', '/app/templates/thankyou', '/app/templates/paycard', '/app/templates/promo', '/app/templates/festive', '/app/templates/delivery']
 
 const SIDE = 'generate.side'
 const readFolded = () => {
@@ -120,6 +121,8 @@ export function AppShell({ profile, children }: { profile: Profile; children: Re
           {link('/app/contracts', <ContractIcon />, 'Contracts')}
           {link('/app/signed', <PenIcon />, 'Signed documents')}
           {link('/app/customers', <PeopleIcon />, 'Customers')}
+          <p className="a-navh">Create</p>
+          {link('/app/templates', <GalleryIcon />, 'Template gallery')}
           <p className="a-navh">You</p>
           {link('/app/profile', <UserIcon />, 'Profile and settings')}
           {session?.role === 'admin' && link('/admin', <ShieldIcon />, 'Owner page')}

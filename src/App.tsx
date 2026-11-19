@@ -20,6 +20,7 @@ import { AppShell } from './components/AppShell'
 import Documents from './pages/Documents'
 import { DocSection, SignedDocs } from './pages/Sections'
 import { CustomerPage, CustomersPage } from './pages/Customers'
+import { CategoryPage, GalleryPage, MakerPage } from './pages/Studio'
 
 /** Pages inside the app need an account and a profile. Without an account people go to sign in, without a profile to setup. */
 function Private({ children }: { children: (profile: Profile) => ReactElement }) {
@@ -82,6 +83,9 @@ export default function App() {
         <Route path="/app/documents" element={<Private>{(p) => <Documents profile={p} />}</Private>} />
         <Route path="/app/customers" element={<Private>{() => <CustomersPage />}</Private>} />
         <Route path="/app/customers/:id" element={<Private>{(p) => <CustomerPage profile={p} />}</Private>} />
+        <Route path="/app/templates" element={<Private>{(p) => <GalleryPage profile={p} />}</Private>} />
+        <Route path="/app/templates/:cat" element={<Private>{(p) => <CategoryPage profile={p} />}</Private>} />
+        <Route path="/app/templates/:cat/:style" element={<Private>{(p) => <MakerPage profile={p} />}</Private>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>
