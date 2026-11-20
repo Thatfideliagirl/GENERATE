@@ -21,7 +21,7 @@ import { useStore } from '../data/store'
 import { useAuth } from '../data/session'
 import { Tour, tourDone, type TourStep } from '../components/Tour'
 import { useToast } from '../components/Toast'
-import { BoardView, CalendarView, ViewSwitch, readView, type HomeView } from '../components/HomeViews'
+import { BoardView, CalendarView, ViewSwitch, WeekView, readView, type HomeView } from '../components/HomeViews'
 
 type Money = Record<string, number>
 const add = (m: Money, c: string, v: number) => {
@@ -229,6 +229,7 @@ export default function Dashboard({ profile }: { profile: Profile }) {
 
         <ViewSwitch value={view} onChange={setView} />
 
+        {view === 'week' && <WeekView docs={data.docs} profile={profile} onRemind={(d) => (d.client.phone ? setRemind(d) : toast('Add the client’s phone number to send a reminder'))} />}
         {view === 'calendar' && <CalendarView docs={data.docs} profile={profile} />}
         {view === 'board' && <BoardView docs={data.docs} />}
 

@@ -5,12 +5,12 @@ import { DOC_LABEL, STATUS_LABEL } from '../lib/constants'
 import { balanceOf, statusOf, totals } from '../lib/calc'
 import { fmtDate, money } from '../lib/format'
 import { docsFor, initialsOfName } from '../lib/customers'
-import { waLink } from '../lib/whatsapp'
 import { PageHeader } from '../components/TopBar'
 import { CustomerForm, ImportCustomers } from '../components/CustomerSheets'
 import { EditIcon, InvoiceIcon, PeopleIcon, PlusIcon, ReceiptIcon, TrashIcon, WhatsAppIcon } from '../components/Icons'
 import { useStore } from '../data/store'
 import { useToast } from '../components/Toast'
+import { MessageSheet } from '../components/MessageSheet'
 
 /** Money still owed by a customer, grouped by currency. */
 function owedBy(docs: Doc[]) {
@@ -131,6 +131,7 @@ export function CustomerPage({ profile }: { profile: Profile }) {
   const { data, deleteCustomer } = useStore()
   const [editing, setEditing] = useState(false)
   const [armed, setArmed] = useState(false)
+  const [messaging, setMessaging] = useState(false)
   const c = data.customers.find((x) => x.id === id)
   const docs = useMemo(() => (c ? docsFor(c, data.docs).sort((a, b) => b.updatedAt - a.updatedAt) : []), [c, data.docs])
   if (!c) return <Navigate to="/app/customers" replace />
@@ -194,10 +195,10 @@ export function CustomerPage({ profile }: { profile: Profile }) {
               New receipt
             </button>
             {c.phone && (
-              <a className="btn" href={waLink(c.phone, `Hello ${c.name.split(' ')[0]}, `)} target="_blank" rel="noreferrer">
+              <button className="btn" onClick={() => setMessaging(true)}>
                 <WhatsAppIcon />
-                WhatsApp
-              </a>
+                Message on WhatsApp
+              </button>
             )}
           </div>
         </section>
@@ -238,6 +239,7 @@ export function CustomerPage({ profile }: { profile: Profile }) {
         </button>
       </main>
       {editing && <CustomerForm initial={c} onClose={() => setEditing(false)} />}
+      {messaging && <MessageSheet customer={c} profile={profile} owed={owed} onClose={() => setMessaging(false)} />}
     </>
   )
 }

@@ -357,13 +357,13 @@ export function BoardView({ docs }: { docs: Doc[] }) {
 
 /* ---------------- The switch between views ---------------- */
 
-export type HomeView = 'overview' | 'calendar' | 'board'
+export type HomeView = 'overview' | 'week' | 'calendar' | 'board'
 const VIEW_KEY = 'generate.homeview'
 
 export function readView(): HomeView {
   try {
     const v = localStorage.getItem(VIEW_KEY)
-    return v === 'calendar' || v === 'board' ? v : 'overview'
+    return v === 'calendar' || v === 'board' || v === 'week' ? v : 'overview'
   } catch {
     return 'overview'
   }
@@ -386,6 +386,14 @@ export function ViewSwitch({ value, onChange }: { value: HomeView; onChange: (v:
         <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
         <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
         <path d="M4 20v-4M9 20v-6M14 20v-3M19 20v-7" />
+      </svg>,
+    ],
+    [
+      'week',
+      'Week ahead',
+      <svg key="w" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="m4 6.5 1.6 1.6L8.5 5M4 12.5l1.6 1.6 2.9-3.1M4 18.5l1.6 1.6 2.9-3.1" />
+        <path d="M11.5 7h8.5M11.5 13h8.5M11.5 19h8.5" />
       </svg>,
     ],
     [
@@ -416,5 +424,198 @@ export function ViewSwitch({ value, onChange }: { value: HomeView; onChange: (v:
         </button>
       ))}
     </div>
+  )
+}
+
+/* ---------------- This week: what needs doing, day by day ---------------- */
+
+const DAY_MS = 86400000
+
+function addDaysIso(iso: string, n: number): string {
+  return isoDay(new Date(new Date(iso + 'T12:00:00').getTime() + n * DAY_MS))
+}
+
+function dayName(iso: string, today: string): string {
+  if (iso === today) return 'Today'
+  if (iso === addDaysIso(today, 1)) return 'Tomorrow'
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
+}
+
+export function WeekView({ docs, profile, onRemind }: { docs: Doc[]; profile: Profile; onRemind: (d: Doc) => void }) {
+  const nav = useNavigate()
+  const today = isoDay(new Date())
+  const end = addDaysIso(today, 6)
+  const weekStart = addDaysIso(today, -((new Date().getDay() + 6) % 7))
+
+  const w = useMemo(() => {
+    const overdue: Doc[] = []
+    const drafts: Doc[] = []
+    const unsigned: Doc[] = []
+    const comments: Doc[] = []
+    const days = new Map<string, Doc[]>()
+    const expected: Record<string, number> = {}
+    const received: Record<string, number> = {}
+    for (const d of docs) {
+      const st = statusOf(d)
+      if (d.type === 'invoice') {
+        if (st === 'overdue') overdue.push(d)
+        if ((st === 'sent' || st === 'part') && d.dueDate >= today && d.dueDate <= end) {
+          const list = days.get(d.dueDate) || []
+          list.push(d)
+          days.set(d.dueDate, list)
+          expected[d.currency] = (expected[d.currency] || 0) + balanceOf(d)
+        }
+        for (const p of d.payments) if (p.date >= weekStart && p.date <= today) received[d.currency] = (received[d.currency] || 0) + (Number(p.amt) || 0)
+      }
+      if (d.type === 'receipt' && !d.fromId && d.issueDate >= weekStart && d.issueDate <= today) received[d.currency] = (received[d.currency] || 0) + totals(d).total
+      if (st === 'draft' && d.type !== 'receipt') drafts.push(d)
+      if (d.type === 'contract' && st === 'sent') (d.clientComment ? comments : unsigned).push(d)
+    }
+    overdue.sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || ''))
+    drafts.sort((a, b) => a.updatedAt - b.updatedAt)
+    return { overdue, drafts, unsigned, comments, days, expected, received }
+  }, [docs, today, end, weekStart])
+
+  const sum = (m: Record<string, number>) => {
+    const e = Object.entries(m).filter(([, v]) => v > 0)
+    return e.length ? e.map(([c, v]) => money(v, c)).join(' · ') : money(0, profile.currency)
+  }
+  const todo = w.overdue.length + w.drafts.length + w.unsigned.length + w.comments.length
+  const ago = (t: number) => {
+    if (!t || t < 1e11) return 'a while ago'
+    const n = Math.floor((Date.now() - t) / DAY_MS)
+    return n <= 0 ? 'today' : n === 1 ? 'yesterday' : `${n} days ago`
+  }
+  const lateBy = (iso: string) => {
+    const n = Math.round((new Date(today + 'T12:00:00').getTime() - new Date(iso + 'T12:00:00').getTime()) / DAY_MS)
+    return n === 1 ? '1 day late' : `${n} days late`
+  }
+
+  const nextDays = Array.from({ length: 7 }, (_, i) => addDaysIso(today, i))
+
+  return (
+    <section className="a-week" aria-label="Week ahead">
+      <div className="a-calsum">
+        <div>
+          <span>Coming in the next 7 days</span>
+          <b className="num">{sum(w.expected)}</b>
+        </div>
+        <div>
+          <span>Received this week</span>
+          <b className="num">{sum(w.received)}</b>
+        </div>
+        <div>
+          <span>Things to do</span>
+          <b className="num">{todo}</b>
+        </div>
+      </div>
+
+      <div className="a-cols2">
+        <div>
+          <div className="a-head">
+            <h2>
+              Needs you <em>now</em>
+            </h2>
+          </div>
+          <div className="card a-todo">
+            {todo === 0 && (
+              <div className="empty a-calm">
+                <b>You are all caught up</b>
+                Nothing is late and nothing is waiting on you. Enjoy your week.
+              </div>
+            )}
+            {w.overdue.map((d) => (
+              <div key={d.id} className="a-task late">
+                <span className="a-tdot" />
+                <button className="a-tbody" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  <b>{d.client.name || 'No client name'} has not paid</b>
+                  <small>
+                    Invoice {d.number} · {money(balanceOf(d), d.currency)} · {lateBy(d.dueDate)}
+                  </small>
+                </button>
+                <button className="a-tbtn" onClick={() => onRemind(d)}>
+                  Remind
+                </button>
+              </div>
+            ))}
+            {w.comments.map((d) => (
+              <div key={d.id} className="a-task ask">
+                <span className="a-tdot" />
+                <button className="a-tbody" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  <b>{d.clientComment?.name || d.client.name || 'Your client'} asked for a change</b>
+                  <small>Contract {d.number}: "{d.clientComment?.text}"</small>
+                </button>
+                <button className="a-tbtn" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  Open
+                </button>
+              </div>
+            ))}
+            {w.unsigned.map((d) => (
+              <div key={d.id} className="a-task">
+                <span className="a-tdot" />
+                <button className="a-tbody" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  <b>Waiting for {d.client.name || 'your client'} to sign</b>
+                  <small>
+                    Contract {d.number} · sent {ago(d.updatedAt)}
+                  </small>
+                </button>
+                <button className="a-tbtn" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  Open
+                </button>
+              </div>
+            ))}
+            {w.drafts.map((d) => (
+              <div key={d.id} className="a-task draft">
+                <span className="a-tdot" />
+                <button className="a-tbody" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  <b>Finish and send {DOC_LABEL[d.type].toLowerCase()} {d.number}</b>
+                  <small>
+                    {d.client.name ? `For ${d.client.name} · ` : ''}started {ago(d.updatedAt)}
+                  </small>
+                </button>
+                <button className="a-tbtn" onClick={() => nav(`/app/doc/${d.id}`)}>
+                  Finish
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="a-head">
+            <h2>
+              The next <em>7 days</em>
+            </h2>
+          </div>
+          <div className="card a-days">
+            {nextDays.map((day) => {
+              const due = w.days.get(day) || []
+              return (
+                <div key={day} className={'a-wday' + (day === today ? ' now' : '') + (due.length ? '' : ' quiet')}>
+                  <div className="a-wdh">
+                    <b>{dayName(day, today)}</b>
+                    {!due.length && <small>Nothing due</small>}
+                  </div>
+                  {due.map((d) => (
+                    <div key={d.id} className="a-task">
+                      <span className="a-tdot due" />
+                      <button className="a-tbody" onClick={() => nav(`/app/doc/${d.id}`)}>
+                        <b>{d.client.name || 'No client name'} should pay</b>
+                        <small>
+                          Invoice {d.number} · {money(balanceOf(d), d.currency)}
+                        </small>
+                      </button>
+                      <button className="a-tbtn" onClick={() => onRemind(d)}>
+                        Remind
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
