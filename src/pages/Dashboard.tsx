@@ -21,6 +21,7 @@ import { useStore } from '../data/store'
 import { useAuth } from '../data/session'
 import { Tour, tourDone, type TourStep } from '../components/Tour'
 import { useToast } from '../components/Toast'
+import { BoardView, CalendarView, ViewSwitch, readView, type HomeView } from '../components/HomeViews'
 
 type Money = Record<string, number>
 const add = (m: Money, c: string, v: number) => {
@@ -138,6 +139,8 @@ export default function Dashboard({ profile }: { profile: Profile }) {
   const [making, setMaking] = useState(false)
   const { session } = useAuth()
   const [touring, setTouring] = useState(() => !!session && !tourDone(session.userId))
+  const [viewPicked, setView] = useState<HomeView>(readView)
+  const view: HomeView = touring ? 'overview' : viewPicked
   const from = startOf(period)
   const first = (profile.owner || profile.name).trim().split(' ')[0]
   const steps = useMemo(() => tourSteps(first), [first])
@@ -224,6 +227,13 @@ export default function Dashboard({ profile }: { profile: Profile }) {
           </div>
         </section>
 
+        <ViewSwitch value={view} onChange={setView} />
+
+        {view === 'calendar' && <CalendarView docs={data.docs} profile={profile} />}
+        {view === 'board' && <BoardView docs={data.docs} />}
+
+        {view === 'overview' && (
+        <>
         <div data-tour="filter">
           <PeriodTabs value={period} onChange={setPeriod} label="Show numbers for" />
         </div>
@@ -346,6 +356,8 @@ export default function Dashboard({ profile }: { profile: Profile }) {
             </div>
           </section>
         </div>
+        </>
+        )}
       </main>
       {remind && <ReminderModal onClose={() => setRemind(null)} onPick={sendReminder} />}
       {making && <MakeSheet onClose={() => setMaking(false)} />}

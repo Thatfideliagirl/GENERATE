@@ -35,6 +35,7 @@ Powder blue background, white cards, navy ink, one clay accent. Geist for text a
 
 ## Inside the app
 1. Home, driven by one time filter (today, this week, this month, this year, all time): money received, waiting to be paid, overdue and part paid; a chart of money received per month with the best month; counts of invoices, receipts, contracts, signed documents and customers that open their own pages; who owes you with a WhatsApp Remind button (friendly, firm or final); and recent documents.
+1b. Three ways to see Home: Overview (the money dashboard), Calendar (a month calendar with colourful paper stickers on each day: money in, invoiced, due, overdue and contracts, each with its amount; tap a colour to change it, tap a name to hide it, tap a day to see what happened), and Board (like Notion: invoices in columns from draft to paid, or contracts from draft to signed). Home remembers the view you picked.
 2. A New button that opens a menu: invoice, receipt, contract, or sign a document.
 3. Invoices page, Receipts page, Contracts page and Signed documents page, each with its own summary and list. All documents page with counts and everything grouped by day, each with a download button.
 4. Receipts print like a real receipt printer: tapping Print receipt (or the download button on a receipt) shows a small printer feeding out the real receipt, exactly as it looks in the preview, with a printer sound (it can be turned off), while the PDF downloads.
